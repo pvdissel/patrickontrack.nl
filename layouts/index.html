@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{{ block "title" . }}{{ with .Params.Title }}{{ . }} | {{ end }}{{ .Site.Title }}{{ end }}</title>
+    <meta name="description" content="{{ .Description }}">
+    <meta property="og:image" content="{{ .Site.BaseURL }}/favicons/nationalpark/android-chrome-512x512.png">
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="{{ .Description }}">
+    <link rel="apple-touch-icon" type="image/png" sizes="180x180"
+          href="/favicons/nationalpark/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="180x180" href="/favicons/nationalpark/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicons/nationalpark/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicons/nationalpark/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicons/nationalpark/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicons/nationalpark/android-chrome-512x512.png">
+    <link rel="manifest" href="//favicons/nationalpark/site.webmanifest">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&amp;display=swap">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://kit.fontawesome.com/da7a643c66.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+<!-- Page Header-->
+<header class="masthead" style="background-image: url('{{ .Param "featured_image" | absLangURL }}');">
+</header>
+
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary" id="mainNav">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="index.html">{{ .Site.Title }}</a>
+        <span class="navbar-text" id="site-subtitle">{{ .Site.Params.description }}</span>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler"
+                aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggler">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="adventures.html">Adventures</a></li>
+                <li class="nav-item"><a class="nav-link" href="gear.html">Gear</a></li>
+                <li class="nav-item"><a class="nav-link" href="tracks.html">Tracks</a></li>
+                <li class="nav-item"><a class="nav-link" href="videos.html">Videos</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="mx-auto">
+    {{ .Content }}
+</main>
+<footer>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!-- Page Header-->
+{{- $images := $.Resources.ByType "image" -}}
+{{ range $images}}
+    {{ . }}
+{{ end }}
+
+{{/* TODO: Why do feature/cover/thumbnail page resources not work? */}}
+
+{{- $featured_image := .Param "featured_image" -}}
+{{- with $.Params.images -}}
+    {{- $featured_image = index . 0 | absURL -}}
+{{- else -}}
+    {{- $images := $.Resources.ByType "image" -}}
+    {{- $featured := $images.GetMatch "*feature*" -}}
+    {{- if not $featured }}{{ $featured = $images.GetMatch "{*cover*,*thumbnail*}" }}{{ end -}}
+    {{- with $featured -}}
+        {{- $featured_image = $featured.Permalink -}}
+    {{- else -}}
+        {{- with $.Site.Params.images -}}
+            {{- $featured_image = index . 0 | absURL -}}
+        {{- end -}}
+    {{- end -}}
+{{- end }}
+
+{{ with $featured_image }}
+<header class="masthead" style="background-image: url('{{ $featured_image | absLangURL }}');">
+</header>
+{{ end }}
+{{ partial "site-navigation.html" . }}

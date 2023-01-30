@@ -1,0 +1,32 @@
+[[main]]
+    identifier = 'about'
+    name = 'About'
+    url = '/about/'
+    weight = -110
+[[main]]
+    identifier = 'adventures'
+    name = 'Adventures'
+    url = '/adventures/'
+    post = "<i class='fa fa-person-hiking'></i>"
+    weight = -100
+[[main]]
+    identifier = 'trails'
+    name = 'Trails'
+    post = "<i class='fa fa-road'></i>"
+    url = '/trails/'
+    weight = -90
+[[main]]
+    identifier = 'tracks'
+    name = 'Tracks'
+    url = '/tracks/'
+    weight = -80
+[[main]]
+    identifier = 'videos'
+    name = 'Videos'
+    url = '/videos/'
+    weight = -70
+[[main]]
+    identifier = 'gear'
+    name = 'Gear'
+    url = '/gear/'
+    weight = -60

@@ -1,0 +1,2 @@
+{{- $m := dict "Campsite" "tent" "Farm campsite" "barn" "Nivon house" "house" "Hut" "hut" "Wild camp" "tarp" "Paalkamperen" "tarp" "B&B" "bed" "Hotel" "bed" "Hostel" "bed" -}}
+{{- return (index $m (string .) | default "tent") -}}

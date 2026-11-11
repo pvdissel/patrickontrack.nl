@@ -1,0 +1,10 @@
+{{ define "main" }}
+<section class="wrap page-head stack" style="--gap: 18px">
+  <p class="eyebrow">Gear</p>
+  <h1 class="title-l">{{ .Params.heading | default "What I carried." }}</h1>
+  {{- with .Params.intro }}<p class="lead">{{ . }}</p>{{ end }}
+</section>
+<section class="wrap" style="margin-top: 40px">
+  <div class="grid" style="--min: 300px">{{ range .Pages.ByDate.Reverse }}{{ partial "cards/gear.html" . }}{{ end }}</div>
+</section>
+{{ end }}

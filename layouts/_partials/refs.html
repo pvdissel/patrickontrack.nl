@@ -1,0 +1,9 @@
+{{- /* Resolve a list (or a single value) of references. Returns a slice of pages. */ -}}
+{{- $list := .refs -}}
+{{- if not $list }}{{ $list = slice }}{{ end -}}
+{{- if not (reflect.IsSlice $list) }}{{ $list = slice $list }}{{ end -}}
+{{- $out := slice -}}
+{{- range $list -}}
+  {{- with partial "ref.html" (dict "ref" . "section" $.section) }}{{ $out = $out | append . }}{{ end -}}
+{{- end -}}
+{{- return $out -}}

@@ -1,5 +1,5 @@
-/.hugo/hugo
-/.idea/
 /public/
-/resources/
-/.hugo_build.lock
+/resources/_gen/
+.hugo_build.lock
+.DS_Store
+node_modules/

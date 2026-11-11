@@ -1,0 +1,17 @@
+{{ define "main" }}
+<section class="wrap page-head stack" style="--gap: 18px">
+  <p class="eyebrow">Trails</p>
+  <h1 class="title-l">{{ .Params.heading | default "The routes behind the stories." }}</h1>
+  {{- with .Params.intro }}<p class="lead">{{ . }}</p>{{ end }}
+  <div class="filters" role="group" aria-label="Filter trails" data-filter-group="trails" style="margin-top: 16px">
+    <button class="filter" type="button" data-filter="all" aria-pressed="true">All</button>
+    <button class="filter" type="button" data-filter="completed" aria-pressed="false">Completed</button>
+    <button class="filter" type="button" data-filter="in-progress" aria-pressed="false">In progress</button>
+    <button class="filter" type="button" data-filter="netherlands" aria-pressed="false">Netherlands</button>
+    <button class="filter" type="button" data-filter="abroad" aria-pressed="false">Abroad</button>
+  </div>
+</section>
+<section class="wrap" style="margin-top: 40px">
+  <div class="grid" style="--min: 330px">{{ range .Pages.ByWeight }}{{ partial "cards/trail.html" . }}{{ end }}</div>
+</section>
+{{ end }}

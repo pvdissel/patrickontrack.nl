@@ -1,0 +1,9 @@
+{{- /* Published stories that link to this trail, oldest first. */ -}}
+{{- $trail := . -}}
+{{- $out := slice -}}
+{{- range $p := (where site.RegularPages "Section" "stories").ByDate -}}
+  {{- with partial "ref.html" (dict "ref" $p.Params.trail "section" "trails") -}}
+    {{- if eq .Path $trail.Path }}{{ $out = $out | append $p }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $out -}}

@@ -1,0 +1,30 @@
+{{- $st := partialCached "data/stats.html" . .Path -}}
+{{- $pr := partialCached "data/trail-progress.html" . .Path -}}
+{{- $stages := partialCached "data/trail-stages.html" . .Path -}}
+{{- $statusKey := $pr.status | urlize -}}
+<article class="card" data-filter-item="trails" data-tags="{{ $statusKey }} {{ cond (eq (.Params.country | default "NL") "NL") "netherlands" "abroad" }}">
+  <div class="card__media">
+    {{- with .Params.cover }}{{ partial "img.html" (dict "src" . "w" 640 "h" 360 "alt" "") }}
+    {{- else -}}
+      {{- $lines := slice -}}
+      {{- range $i, $s := $stages }}{{ with (partialCached "data/stats.html" $s $s.Path).gpx }}{{ $lines = $lines | append (dict "points" .points "kind" (cond (eq (mod $i 2) 0) "stage-a" "stage-b")) }}{{ end }}{{ end -}}
+      {{ partial "trace.html" (dict "lines" $lines "label" (printf "Route of %s" .Title)) }}
+    {{- end }}
+    <span class="chip {{ if eq $pr.status "Completed" }}chip--ember{{ else }}chip--stage{{ end }}">{{ $pr.status }}</span>
+  </div>
+  <div class="card__body">
+    <p class="subtle-label">{{ with .Params.country }}{{ . }} · {{ end }}{{ .Params.region }}</p>
+    <h3 class="card__title" style="font-size: 28px"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    {{- with .Description }}<p class="card__text">{{ . }}</p>{{ end }}
+    <div class="metas">
+      <span class="meta">{{ partial "icon.html" (dict "name" "route" "size" 15) }}{{ with $st.distance }}{{ partial "num.html" (dict "v" . "unit" "km") }} km{{ else }}<span class="placeholder">[km]</span>{{ end }}</span>
+      <span class="meta">{{ partial "icon.html" (dict "name" "flag" "size" 15) }}{{ if gt $pr.total 1 }}{{ $pr.total }} stages{{ else }}Single route{{ end }}</span>
+    </div>
+    {{- if gt $pr.total 0 }}
+    <div class="progress">
+      <div class="progress__label"><span>Hiked</span><span>{{ $pr.hiked }} / {{ $pr.total }}</span></div>
+      <div class="progress__bar" role="img" aria-label="{{ $pr.hiked }} of {{ $pr.total }} stages hiked"><span style="width: {{ div (mul $pr.hiked 100) $pr.total }}%"></span></div>
+    </div>
+    {{- end }}
+  </div>
+</article>

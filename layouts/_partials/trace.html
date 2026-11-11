@@ -1,0 +1,53 @@
+{{- /*
+  A small static drawing of one or more GPX lines (used as a thumbnail when there is no photo).
+  dict "lines" [dict "points" [{lat,lng}...] "kind" "official|mine|stage-a|stage-b"] "w" 400 "h" 225 "label" ""
+*/ -}}
+{{- $W := float (.w | default 400) }}{{ $H := float (.h | default 225) }}{{ $pad := 22.0 -}}
+{{- $minLat := 999.0 }}{{ $maxLat := -999.0 }}{{ $minLon := 999.0 }}{{ $maxLon := -999.0 -}}
+{{- range .lines }}{{ range .points -}}
+  {{- $la := float .lat }}{{ $lo := float .lng -}}
+  {{- if lt $la $minLat }}{{ $minLat = $la }}{{ end }}{{ if gt $la $maxLat }}{{ $maxLat = $la }}{{ end -}}
+  {{- if lt $lo $minLon }}{{ $minLon = $lo }}{{ end }}{{ if gt $lo $maxLon }}{{ $maxLon = $lo }}{{ end -}}
+{{- end }}{{ end -}}
+{{- if lt $minLat 999.0 -}}
+{{- $k := math.Cos (math.ToRadians (div (add $minLat $maxLat) 2)) -}}
+{{- $dx := math.Max 0.0001 (mul (sub $maxLon $minLon) $k) -}}
+{{- $dy := math.Max 0.0001 (sub $maxLat $minLat) -}}
+{{- $s := math.Min (div (sub $W (mul 2 $pad)) $dx) (div (sub $H (mul 2 $pad)) $dy) -}}
+{{- $ox := div (sub $W (mul $dx $s)) 2 }}{{ $oy := div (sub $H (mul $dy $s)) 2 -}}
+<svg class="trace" viewBox="0 0 {{ $W }} {{ $H }}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="{{ .label | default "Route drawing" }}">
+  <g opacity=".5" fill="none" stroke="#CBD2C1" stroke-width="1">
+    <ellipse cx="{{ mul $W 0.3 }}" cy="{{ mul $H 0.4 }}" rx="{{ mul $W 0.18 }}" ry="{{ mul $H 0.22 }}"/>
+    <ellipse cx="{{ mul $W 0.3 }}" cy="{{ mul $H 0.4 }}" rx="{{ mul $W 0.28 }}" ry="{{ mul $H 0.36 }}"/>
+    <ellipse cx="{{ mul $W 0.74 }}" cy="{{ mul $H 0.62 }}" rx="{{ mul $W 0.14 }}" ry="{{ mul $H 0.2 }}"/>
+    <ellipse cx="{{ mul $W 0.74 }}" cy="{{ mul $H 0.62 }}" rx="{{ mul $W 0.24 }}" ry="{{ mul $H 0.34 }}"/>
+  </g>
+  {{- range .lines -}}
+    {{- $d := "" -}}
+    {{- range $i, $p := .points -}}
+      {{- $x := add $ox (mul (mul (sub (float $p.lng) $minLon) $k) $s) -}}
+      {{- $y := sub $H (add $oy (mul (sub (float $p.lat) $minLat) $s)) -}}
+      {{- $d = printf "%s%s%.1f %.1f" $d (cond (eq $i 0) "M" "L") $x $y -}}
+    {{- end -}}
+    {{- $c := dict "official" "#2F5D46" "stage-a" "#1E3D2F" "stage-b" "#4E8A68" "mine" "#C8641E" "faded" "#97A597" -}}
+    <path d="{{ $d }}" stroke="#fff" stroke-width="7"/>
+    <path d="{{ $d }}" stroke="{{ index $c (.kind | default "official") }}" stroke-width="{{ cond (eq .kind "mine") 4 3.5 }}"{{ if eq .kind "official" }} stroke-dasharray="8 6"{{ end }}/>
+  {{- end }}
+</svg>
+{{- else -}}
+<svg class="trace" viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <g fill="none" stroke="#CDD5C3" stroke-width="1.2">
+    <ellipse cx="110" cy="95" rx="60" ry="42"/><ellipse cx="110" cy="95" rx="95" ry="68"/><ellipse cx="110" cy="95" rx="132" ry="96"/>
+    <ellipse cx="300" cy="150" rx="44" ry="32"/><ellipse cx="300" cy="150" rx="80" ry="58"/><ellipse cx="300" cy="150" rx="118" ry="86"/>
+  </g>
+  {{- with .icon }}
+  <circle cx="200" cy="112" r="34" fill="#FCFCF9" stroke="#D9DCD3"/>
+  <g transform="translate(182 94) scale(1.5)" fill="none" stroke="#2F5D46" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">{{ partial "icon-paths.html" . | safeHTML }}</g>
+  {{- else }}
+  <g transform="translate(152 66) scale(2)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 31L16 16l6.5 8.5 7.5-12L43 31" stroke="#2F5D46" stroke-width="2.4"/>
+    <path d="M7 39c7-4 14 1 21-1.5s8-3 11-3" stroke="#C8641E" stroke-width="2" stroke-dasharray="0.1 4.5"/>
+  </g>
+  {{- end }}
+</svg>
+{{- end -}}

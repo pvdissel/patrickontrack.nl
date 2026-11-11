@@ -1,0 +1,10 @@
+{{- /* Published stories whose night was spent at this stay. */ -}}
+{{- $stay := . -}}
+{{- $out := slice -}}
+{{- range (where site.RegularPages "Section" "stories").ByDate -}}
+  {{- $story := . -}}
+  {{- range partial "refs.html" (dict "refs" .Params.stays "section" "stays") -}}
+    {{- if eq .Path $stay.Path }}{{ $out = $out | append $story }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $out -}}

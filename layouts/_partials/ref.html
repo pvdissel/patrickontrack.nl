@@ -1,0 +1,20 @@
+{{- /*
+  Resolve a Pages CMS reference to a Hugo page.
+  Accepts "content/trails/dutch-mountain-trail.md", "/trails/dutch-mountain-trail",
+  "trails/dutch-mountain-trail" or just "dutch-mountain-trail" (needs "section").
+  Usage: partial "ref.html" (dict "ref" .Params.trail "section" "trails")
+*/ -}}
+{{- $r := strings.TrimSpace (string .ref) -}}
+{{- $p := false -}}
+{{- if $r -}}
+  {{- $r = strings.TrimPrefix "/" $r -}}
+  {{- $r = strings.TrimPrefix "content/" $r -}}
+  {{- $r = strings.TrimSuffix ".md" $r -}}
+  {{- $r = strings.TrimSuffix "/_index" $r -}}
+  {{- $r = strings.TrimSuffix "/index" $r -}}
+  {{- if and (not (strings.Contains $r "/")) .section -}}
+    {{- $r = printf "%s/%s" .section $r -}}
+  {{- end -}}
+  {{- with site.GetPage (printf "/%s" $r) }}{{ $p = . }}{{ end -}}
+{{- end -}}
+{{- return $p -}}

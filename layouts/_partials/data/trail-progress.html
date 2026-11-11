@@ -1,0 +1,18 @@
+{{- /* Which stages of a trail have published stories. Returns dict total, hiked, status, hikedPaths */ -}}
+{{- $stages := partialCached "data/trail-stages.html" . .Path -}}
+{{- $hiked := dict -}}
+{{- range partialCached "data/trail-stories.html" . .Path -}}
+  {{- range partial "refs.html" (dict "refs" .Params.stages "section" "stages") -}}
+    {{- $hiked = merge $hiked (dict .Path true) -}}
+  {{- end -}}
+{{- end -}}
+{{- $n := 0 -}}
+{{- range $stages }}{{ if index $hiked .Path }}{{ $n = add $n 1 }}{{ end }}{{ end -}}
+{{- $total := len $stages -}}
+{{- $stories := partialCached "data/trail-stories.html" . .Path -}}
+{{- $status := "Planned" -}}
+{{- if and (gt $total 0) (eq $n $total) }}{{ $status = "Completed" -}}
+{{- else if gt $n 0 }}{{ $status = "In progress" -}}
+{{- else if and (eq $total 0) (gt (len $stories) 0) }}{{ $status = "Walked" }}{{ end -}}
+{{- with .Params.status }}{{ $status = . }}{{ end -}}
+{{- return dict "total" $total "hiked" $n "status" $status "hikedPaths" $hiked -}}

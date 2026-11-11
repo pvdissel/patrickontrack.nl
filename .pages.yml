@@ -1,148 +1,518 @@
 # Pages CMS configuration for patrickontrack.nl (Hugo)
 # Docs: https://pagescms.org/docs/configuration/
+#
+# Content model
+#   Trails  → the official route (one file per trail)
+#   Stages  → the stages (etappes) of a trail, each with its own GPX
+#   Stories → one post per hiking day; links a trail, the stages walked, my GPX, stays and a gear list
+#   Stays   → campsites, huts, Nivon houses, …
+#   Gear    → one gear list per hike
+#
+# Links between content use "reference" fields; Hugo resolves the stored path.
 
 media:
-  input: static/images     # uploads are committed here
-  output: /images          # path written into front matter / markdown
-  categories: [image]
+  - name: images
+    label: Photos
+    input: static/images
+    output: /images
+    categories: [image]
+  - name: gpx
+    label: GPX files
+    input: static/gpx
+    output: /gpx
+    extensions: [gpx]
 
-# ---------------------------------------------------------------------------
-# Content
-# ---------------------------------------------------------------------------
 content:
-  - name: adventures
-    label: Adventures
+  # ------------------------------------------------------------------ Stories
+  - name: stories
+    label: Stories
     type: collection
-    path: content/en/adventures
-    subfolders: true                        # one folder per adventure/trip
+    path: content/stories
     exclude: [_index.md]
     filename:
       template: "{year}-{month}-{day}-{primary}.md"
-      field: create                         # adjust the date prefix when creating
+      field: create
     view:
-      fields: [title, date, trips, draft]
+      fields: [title, date, trail, draft]
       primary: title
-      search: [title, description, adventures, trips, trails, tags]
+      search: [title, description, trips]
       sort: [date, title]
       default:
         sort: date
         order: desc
-    fields: &post_fields
-      - &title
-        name: title
+    fields:
+      - name: title
         label: Title
         type: string
         required: true
-      - &description
-        name: description
-        label: Description
-        type: string
-      - &date
-        name: date
+      - name: date
         label: Date
+        description: The day of the hike (time = when you started)
         type: date
         options:
           time: true
-          format: "yyyy-MM-dd'T'HH:mm:ssXXX"   # e.g. 2022-09-10T06:00:00+02:00
-      - &draft
-        name: draft
+          format: "yyyy-MM-dd'T'HH:mm:ssXXX"
+      - name: draft
         label: Draft
+        description: Drafts are only visible locally (hugo server -D)
         type: boolean
-        default: true                           # same as archetypes/default.md
-      - &adventures
-        name: adventures
-        label: Adventures
-        description: The bigger goal, e.g. "Dutch Mountain Trail in 3 days"
-        type: string
-        list: true
-      - &trips
-        name: trips
-        label: Trips
-        description: One or more connected days, e.g. "2022-09 DMT"
-        type: string
-        list: true
-      - &trails
-        name: trails
-        label: Trails
-        description: Must match the trail title exactly, e.g. "Dutch Mountain Trail"
-        type: string
-        list: true
-      - &tracks
-        name: tracks
-        label: Tracks
-        description: A specific version or section of a trail
-        type: string
-        list: true
-      - &tags
-        name: tags
-        label: Tags
-        type: string
-        list: true
-      - &featured_image
-        name: featured_image
-        label: Featured image
+        default: true
+      - name: description
+        label: Short summary
+        description: One or two sentences, shown on cards and in search results
+        type: text
+      - name: cover
+        label: Cover photo
         type: image
-      - &body
-        name: body
-        label: Body
+        options:
+          media: images
+      - name: cover_alt
+        label: Cover photo description (alt text)
+        type: string
+      - name: trips
+        label: Trip / series
+        description: Groups days into a series, e.g. "Dutch Mountain Trail in 3 days"
+        type: string
+        list: true
+      - name: trail
+        label: Trail
+        type: reference
+        options:
+          collection: trails
+          search: title
+      - name: stages
+        label: Stages walked
+        description: The official stages this day covers
+        type: reference
+        options:
+          collection: stages
+          multiple: true
+          search: title
+          label: "{primary} (stage {number})"
+      - name: track
+        label: My GPX track
+        description: What you actually walked (export from Komoot, Garmin, Strava…)
+        type: file
+        options:
+          media: gpx
+          extensions: [gpx]
+      - name: stays
+        label: Where I slept
+        type: reference
+        options:
+          collection: stays
+          multiple: true
+          search: title
+      - name: gear
+        label: Gear list
+        type: reference
+        options:
+          collection: gear
+          search: title
+      - name: youtube
+        label: YouTube video
+        description: Video URL or ID
+        type: string
+      - name: route_note
+        label: Compared to the plan
+        description: e.g. "Stages 1 and 2, then off the trail to a campsite"
+        type: string
+      - name: moments
+        label: The day in moments
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{time} {title}"
+        fields:
+          - name: time
+            label: Time
+            type: string
+          - name: title
+            label: What happened
+            type: string
+          - name: text
+            label: Details
+            type: string
+      - name: start_time
+        label: Start time (overrides GPX)
+        description: "HH:MM — only needed without a GPX with timestamps"
+        type: string
+      - name: end_time
+        label: Finish time (overrides GPX)
+        type: string
+      - name: distance_km
+        label: Distance in km (overrides GPX)
+        type: number
+      - name: ascent_m
+        label: Ascent in m (overrides GPX)
+        type: number
+      - name: body
+        label: Story
         type: rich-text
         options:
           format: markdown
+          media: images
 
-  - name: gear
-    label: Gear
+  # ------------------------------------------------------------------ Trails
+  - name: trails
+    label: Trails
     type: collection
-    path: content/en/gear
+    path: content/trails
+    exclude: [_index.md]
+    filename:
+      template: "{primary}.md"
+      field: create
+    view:
+      fields: [title, region, country]
+      primary: title
+      sort: [weight, title]
+      default:
+        sort: weight
+        order: asc
+    fields:
+      - name: title
+        label: Name
+        type: string
+        required: true
+      - name: short
+        label: Short name
+        description: Used on small chips, e.g. "DMT"
+        type: string
+      - name: description
+        label: One-line description
+        type: text
+      - name: country
+        label: Country code
+        type: string
+        default: NL
+      - name: region
+        label: Region
+        type: string
+      - name: route_type
+        label: Route type
+        type: select
+        options:
+          values: [Linear, Circular, Summit, Network]
+      - name: start
+        label: Start
+        type: string
+      - name: finish
+        label: Finish
+        type: string
+      - name: distance_km
+        label: Total distance in km
+        description: Leave empty to add up the stages' GPX files
+        type: number
+      - name: ascent_m
+        label: Total ascent in m
+        description: Leave empty to add up the stages' GPX files
+        type: number
+      - name: gpx
+        label: GPX of the whole trail (optional)
+        type: file
+        options:
+          media: gpx
+          extensions: [gpx]
+      - name: website
+        label: Official website
+        type: string
+      - name: cover
+        label: Cover photo
+        type: image
+        options:
+          media: images
+      - name: cover_alt
+        label: Cover photo description (alt text)
+        type: string
+      - name: status
+        label: Status (optional)
+        description: Normally worked out from your stories (Planned / In progress / Completed)
+        type: string
+      - name: good_to_know
+        label: Good to know
+        type: object
+        list: true
+        fields:
+          - name: icon
+            label: Icon
+            type: select
+            options:
+              values: [train, water, tent, info, map, clock, food, euro, flag, compass]
+          - name: text
+            label: Text
+            type: string
+      - name: weight
+        label: Order
+        description: Lower numbers come first on the Trails page
+        type: number
+        default: 10
+      - name: body
+        label: About the trail
+        type: rich-text
+        options:
+          format: markdown
+          media: images
+
+  # ------------------------------------------------------------------ Stages
+  - name: stages
+    label: Stages
+    type: collection
+    path: content/stages
+    exclude: [_index.md]
+    filename:
+      template: "{primary}.md"
+      field: create
+    view:
+      fields: [title, trail, number]
+      primary: title
+      search: [title, from, to]
+      sort: [number, title]
+      default:
+        sort: number
+        order: asc
+    fields:
+      - name: title
+        label: Name
+        description: e.g. "Gulpen → Sint-Martens-Voeren"
+        type: string
+        required: true
+      - name: trail
+        label: Trail
+        type: reference
+        required: true
+        options:
+          collection: trails
+          search: title
+      - name: number
+        label: Stage number
+        type: number
+        required: true
+      - name: from
+        label: From
+        type: string
+      - name: to
+        label: To
+        type: string
+      - name: gpx
+        label: Official GPX of this stage
+        type: file
+        options:
+          media: gpx
+          extensions: [gpx]
+      - name: distance_km
+        label: Distance in km (overrides GPX)
+        type: number
+      - name: ascent_m
+        label: Ascent in m (overrides GPX)
+        type: number
+      - name: descent_m
+        label: Descent in m (overrides GPX)
+        type: number
+      - name: walking_time
+        label: Walking time
+        description: e.g. "6:30"
+        type: string
+      - name: start_transport
+        label: Public transport at the start
+        type: string
+      - name: finish_transport
+        label: Public transport at the finish
+        type: string
+      - name: water
+        label: Water
+        type: string
+      - name: body
+        label: Description
+        type: rich-text
+        options:
+          format: markdown
+          media: images
+
+  # ------------------------------------------------------------------ Stays
+  - name: stays
+    label: Stays
+    type: collection
+    path: content/stays
+    exclude: [_index.md]
+    filename:
+      template: "{primary}.md"
+      field: create
+    view:
+      fields: [title, stay_type, place, draft]
+      primary: title
+      search: [title, place]
+      sort: [title]
+    fields:
+      - name: title
+        label: Name
+        type: string
+        required: true
+      - name: draft
+        label: Draft
+        type: boolean
+        default: true
+      - name: stay_type
+        label: Type
+        type: select
+        options:
+          values: [Campsite, Farm campsite, Nivon house, Hut, Wild camp, Paalkamperen, Hostel, "B&B", Hotel]
+      - name: description
+        label: One-line memory
+        type: text
+      - name: place
+        label: Place
+        type: string
+      - name: lat
+        label: Latitude
+        description: For the map, e.g. 50.8935 (right-click in Google Maps to copy)
+        type: number
+      - name: lon
+        label: Longitude
+        type: number
+      - name: trail
+        label: Trail
+        type: reference
+        options:
+          collection: trails
+          search: title
+      - name: stage
+        label: Near the end of stage
+        type: reference
+        options:
+          collection: stages
+          search: title
+          label: "{primary} (stage {number})"
+      - name: website
+        label: Website
+        type: string
+      - name: access
+        label: Getting there
+        description: e.g. "1 km from bus stop Zilverschoon"
+        type: string
+      - name: price
+        label: What I paid
+        description: e.g. "€ 12 per night"
+        type: string
+      - name: booking
+        label: Booking
+        description: e.g. "Not needed on weekdays"
+        type: string
+      - name: to_trail_km
+        label: Distance to the trail (km)
+        type: number
+      - name: facilities
+        label: Facilities
+        type: string
+        list: true
+      - name: would_return
+        label: Would stay again
+        type: boolean
+      - name: cover
+        label: Cover photo
+        type: image
+        options:
+          media: images
+      - name: photos
+        label: Photos
+        type: image
+        options:
+          media: images
+          multiple:
+            max: 6
+      - name: body
+        label: My night here
+        type: rich-text
+        options:
+          format: markdown
+          media: images
+
+  # ------------------------------------------------------------------ Gear
+  - name: gear
+    label: Gear lists
+    type: collection
+    path: content/gear
     exclude: [_index.md]
     filename:
       template: "{year}-{month}-{primary}.md"
       field: create
     view:
-      fields: [title, date, trails, draft]
+      fields: [title, date, draft]
       primary: title
       sort: [date, title]
       default:
         sort: date
         order: desc
-    fields: *post_fields
-
-  - name: trails
-    label: Trails
-    type: collection
-    path: content/en/trails
-    subfolders: true
-    # Each trail is a Hugo branch bundle: trails/<trail-slug>/_index.md.
-    # The folder name must equal the slug of the `trails` taxonomy term
-    # (e.g. "Dutch Mountain Trail" -> dutch-mountain-trail) for Hugo to
-    # attach this page to that term.
-    filename: "{primary}/_index.md"
-    view:
-      layout: tree
-      fields: [title]
-      primary: title
-      node:
-        filename: _index.md
-        hideDirs: nodes
     fields:
-      - *title
-      - *description
-      - *date
-      - *featured_image
-      - name: trail_info
-        label: Trail info
+      - name: title
+        label: Name
+        description: e.g. "Dutch Mountain Trail · Sep 2022"
+        type: string
+        required: true
+      - name: date
+        label: Date
+        type: date
+        options:
+          time: true
+          format: "yyyy-MM-dd'T'HH:mm:ssXXX"
+      - name: draft
+        label: Draft
+        type: boolean
+        default: true
+      - name: description
+        label: Summary
+        type: text
+      - name: nights
+        label: Nights
+        type: number
+      - name: total_kg
+        label: Total weight on my back (kg)
+        description: If you weighed the full pack. Otherwise it is added up from the items.
+        type: number
+      - name: trail
+        label: Trail
+        type: reference
+        options:
+          collection: trails
+          search: title
+      - name: items
+        label: Items
         type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{category} · {name}"
         fields:
-          - name: total_length
-            label: Total length (km)
+          - name: category
+            label: Category
+            type: select
+            options:
+              values: [Pack, Shelter, Sleep, Kitchen, Water, Clothing, Electronics, "Navigation & safety", Hygiene, Other, Food]
+          - name: name
+            label: Item
             type: string
-          - name: altimeters
-            label: Elevation gain (m)
+          - name: notes
+            label: Notes
             type: string
-          - name: website
-            label: Website
-            type: string
-      - *body
+          - name: weight_g
+            label: Weight (grams)
+            type: number
+          - name: kind
+            label: Counts as
+            type: select
+            options:
+              values: [base, worn, consumable]
+      - name: lessons
+        label: Next time…
+        type: string
+        list: true
+      - name: body
+        label: Notes
+        type: rich-text
+        options:
+          format: markdown
 
+  # ------------------------------------------------------------------ Pages
   - name: pages
     label: Pages
     type: group
@@ -150,45 +520,92 @@ content:
       - name: home
         label: Home
         type: file
-        path: content/en/_index.md
+        path: content/_index.md
         fields:
-          - *featured_image
-          - *body
+          - name: heading
+            label: Heading
+            type: string
+          - name: intro
+            label: Intro
+            type: text
+          - name: cover
+            label: Hero photo
+            type: image
+            options:
+              media: images
+          - name: cover_alt
+            label: Hero photo description
+            type: string
+          - name: cover_caption
+            label: Hero photo caption
+            type: string
+          - name: featured_trail
+            label: Trail in focus
+            type: reference
+            options:
+              collection: trails
+              search: title
 
       - name: about
         label: About
         type: file
-        path: content/en/about.md
+        path: content/about.md
         fields:
-          - *title
-          - *description
-          - *featured_image
-          - *body
+          - name: title
+            label: Title
+            type: string
+          - name: heading
+            label: Heading
+            type: string
+          - name: description
+            label: Description
+            type: string
+          - name: layout
+            label: Layout
+            type: string
+            hidden: true
+            default: about
+          - name: cover
+            label: Photo
+            type: image
+            options:
+              media: images
+          - name: cover_alt
+            label: Photo description
+            type: string
+          - name: body
+            label: Text
+            type: rich-text
+            options:
+              format: markdown
+              media: images
 
-      - name: videos
-        label: Videos
+      - name: stories-index
+        label: Stories (section page)
         type: file
-        path: content/en/videos.md
-        fields:
-          - *title
-          - *body
-
-      - name: adventures-index
-        label: Adventures (section page)
+        path: content/stories/_index.md
+        fields: &section_fields
+          - name: title
+            label: Title
+            type: string
+          - name: heading
+            label: Heading
+            type: string
+          - name: intro
+            label: Intro
+            type: text
+      - name: trails-index
+        label: Trails (section page)
         type: file
-        path: content/en/adventures/_index.md
-        fields:
-          - *title
-          - *date
-          - *featured_image
-          - *body
-
+        path: content/trails/_index.md
+        fields: *section_fields
+      - name: stays-index
+        label: Stays (section page)
+        type: file
+        path: content/stays/_index.md
+        fields: *section_fields
       - name: gear-index
         label: Gear (section page)
         type: file
-        path: content/en/gear/_index.md
-        fields:
-          - *title
-          - *date
-          - *body
-          
+        path: content/gear/_index.md
+        fields: *section_fields

@@ -1,0 +1,13 @@
+{{- /* Markdown images: resize photos from static/images; a standalone image becomes a figure with the title as caption. */ -}}
+{{- $src := .Destination -}}
+{{- $img := "" -}}
+{{- if hasPrefix $src "/images/" -}}
+  {{- $img = partial "img.html" (dict "src" $src "w" 680 "alt" .PlainText) -}}
+{{- else -}}
+  {{- $img = printf `<img src="%s" alt="%s" loading="lazy">` ($src | safeURL) .PlainText -}}
+{{- end -}}
+{{- if .IsBlock -}}
+<figure>{{ $img | safeHTML }}{{ with .Title }}<figcaption>{{ . }}</figcaption>{{ end }}</figure>
+{{- else -}}
+{{ $img | safeHTML }}
+{{- end -}}

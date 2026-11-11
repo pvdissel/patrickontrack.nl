@@ -1,0 +1,7 @@
+{{- /* Stays linked to a trail */ -}}
+{{- $trail := . -}}
+{{- $out := slice -}}
+{{- range $p := where site.RegularPages "Section" "stays" -}}
+  {{- with partial "ref.html" (dict "ref" $p.Params.trail "section" "trails") }}{{ if eq .Path $trail.Path }}{{ $out = $out | append $p }}{{ end }}{{ end -}}
+{{- end -}}
+{{- return $out -}}

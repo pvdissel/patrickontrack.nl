@@ -1,0 +1,28 @@
+{{- $trail := partial "ref.html" (dict "ref" .Params.trail "section" "trails") -}}
+{{- $stages := partial "refs.html" (dict "refs" .Params.stages "section" "stages") -}}
+{{- $stays := partial "refs.html" (dict "refs" .Params.stays "section" "stays") -}}
+{{- $st := partialCached "data/stats.html" . .Path -}}
+{{- $series := index (.Params.trips | default slice) 0 -}}
+<article class="story-row" data-filter-item="stories" data-tags="{{ with $trail }}{{ .File.ContentBaseName }}{{ end }}">
+  <div class="story-row__date"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format "2 Jan" }}</time></div>
+  <div class="story-row__body">
+    {{- with $series }}<p class="story-row__series">{{ . }}</p>{{ end }}
+    <h3 class="story-row__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    <div class="row" style="--gap: 6px 14px">
+      {{- with $trail }}<a class="chip chip--trail" href="{{ .RelPermalink }}">{{ .Params.short | default .Title }}</a>{{ end }}
+      {{- with $stages }}{{ partial "stage-chip.html" . }}{{ end }}
+      {{- with $st.distance }}<span class="meta">{{ partial "icon.html" (dict "name" "route" "size" 15) }}{{ partial "num.html" (dict "v" . "unit" "km") }} km</span>{{ end }}
+      {{- range $stays }}<span class="meta">{{ partial "icon.html" (dict "name" "moon" "size" 15) }}{{ .Title }}</span>{{ end }}
+      {{- if .Draft }}<span class="draft-badge">Draft</span>{{ end }}
+    </div>
+  </div>
+  <div class="story-row__thumb">
+    {{- with .Params.cover }}{{ partial "img.html" (dict "src" . "w" 200 "h" 130 "alt" "") }}
+    {{- else -}}
+      {{- $lines := slice -}}
+      {{- with $st.gpx }}{{ $lines = $lines | append (dict "points" .points "kind" "mine") }}{{ end -}}
+      {{- if not $lines }}{{ range $stages }}{{ with (partialCached "data/stats.html" . .Path).gpx }}{{ $lines = $lines | append (dict "points" .points "kind" "official") }}{{ end }}{{ end }}{{ end -}}
+      {{ partial "trace.html" (dict "lines" $lines "w" 400 "h" 260) }}
+    {{- end }}
+  </div>
+</article>

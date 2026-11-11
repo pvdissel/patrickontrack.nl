@@ -1,0 +1,102 @@
+baseURL = "https://patrickontrack.nl/"
+locale = "en"
+title = "Patrick on Track"
+enableRobotsTXT = true
+timeZone = "Europe/Amsterdam"
+
+[params]
+  author = "Patrick van Dissel"
+  tagline = "Taking it one step at a time."
+  description = "Stories from long-distance trails, the routes and stages behind them, the places I slept and what I carried."
+  since = "2021"
+  youtube = "https://www.youtube.com/"   # TODO: your channel URL
+  email = ""                              # optional contact address shown on About
+
+  # Map tiles. OpenTopoMap shows contour lines; swap for OSM if you prefer.
+  [params.map]
+    tiles = "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+    attribution = "Map data © <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, SRTM · Style © <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    maxZoom = 17
+
+[taxonomies]
+  trip = "trips"   # groups stories into a series, e.g. "Dutch Mountain Trail in 3 days"
+  tag = "tags"
+
+[permalinks]
+  [permalinks.page]
+    stories = "/stories/:year/:slug/"
+    stages = "/trails/stages/:contentbasename/"
+
+[menus]
+  [[menus.main]]
+    name = "Stories"
+    pageRef = "/stories"
+    weight = 10
+  [[menus.main]]
+    name = "Trails"
+    pageRef = "/trails"
+    weight = 20
+  [[menus.main]]
+    name = "Stays"
+    pageRef = "/stays"
+    weight = 30
+  [[menus.main]]
+    name = "Gear"
+    pageRef = "/gear"
+    weight = 40
+  [[menus.main]]
+    name = "About"
+    pageRef = "/about"
+    weight = 50
+
+[outputs]
+  home = ["html", "rss"]
+  section = ["html", "rss"]
+  taxonomy = ["html"]
+  term = ["html"]
+
+[markup.goldmark.renderer]
+  unsafe = false
+  hardWraps = true   # a new line in the editor is a new line on the page
+[markup.goldmark.parser]
+  wrapStandAloneImageWithinParagraph = false
+
+[imaging]
+  resampleFilter = "Lanczos"
+  [imaging.webp]
+    quality = 78
+  [imaging.jpeg]
+    quality = 80
+  [imaging.exif]
+    disableDate = true
+    disableLatLong = true   # never leak GPS from photo EXIF
+
+# Pages CMS uploads to static/; mount those folders into assets/ too, so
+# templates can resize photos and read GPX files at build time.
+[module]
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+  [[module.mounts]]
+    source = "static/images"
+    target = "assets/images"
+  [[module.mounts]]
+    source = "static/gpx"
+    target = "assets/gpx"
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+    # originals are only used as sources for resized WebP copies (no EXIF/GPS leaks, smaller deploy)
+    files = ['! images/**']
+  [[module.mounts]]
+    source = "content"
+    target = "content"
+  [[module.mounts]]
+    source = "layouts"
+    target = "layouts"
+  [[module.mounts]]
+    source = "data"
+    target = "data"
+  [[module.mounts]]
+    source = "archetypes"
+    target = "archetypes"

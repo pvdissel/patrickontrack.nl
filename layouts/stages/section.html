@@ -1,0 +1,16 @@
+{{ define "main" }}
+<section class="wrap page-head stack" style="--gap: 18px">
+  <p class="eyebrow">Stages</p>
+  <h1 class="title-l">All stages</h1>
+  <p class="lead">Every stage belongs to a trail. Pick a trail to see its stages on the map.</p>
+</section>
+<section class="wrap" style="margin-top: 32px">
+  {{- range (where site.RegularPages "Section" "trails").ByTitle }}
+  {{- $t := . }}
+  {{- with partialCached "data/trail-stages.html" . .Path }}
+  <h2 class="title-s" style="margin: 32px 0 12px"><a href="{{ $t.RelPermalink }}" style="color: inherit; text-decoration: none">{{ $t.Title }}</a></h2>
+  <ul class="facilities">{{ range . }}<li><span class="stage-no">{{ .Params.number }}</span><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ul>
+  {{- end }}
+  {{- end }}
+</section>
+{{ end }}

@@ -1,0 +1,18 @@
+{{- $n := len (partialCached "data/stay-stories.html" . .Path) -}}
+{{- $trail := partial "ref.html" (dict "ref" .Params.trail "section" "trails") -}}
+<article class="card" data-filter-item="stays" data-tags="{{ .Params.stay_type | urlize }}">
+  <div class="card__media">
+    {{- with .Params.cover }}{{ partial "img.html" (dict "src" . "w" 640 "h" 360 "alt" "") }}
+    {{- else }}{{ partial "trace.html" (dict "lines" slice "icon" (partial "stay-icon.html" .Params.stay_type)) }}{{ end }}
+  </div>
+  <div class="card__body">
+    <p class="card__kind">{{ partial "icon.html" (dict "name" (partial "stay-icon.html" .Params.stay_type) "size" 16) }}{{ .Params.stay_type | default "Stay" }}</p>
+    <h3 class="card__title" style="font-size: 22px"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    <div class="metas">
+      {{- with .Params.place }}<span class="meta">{{ partial "icon.html" (dict "name" "pin" "size" 15) }}{{ . }}</span>{{ end }}
+      {{- if $n }}<span class="meta">{{ partial "icon.html" (dict "name" "moon" "size" 15) }}{{ $n }} {{ cond (eq $n 1) "night" "nights" }}</span>{{ end }}
+    </div>
+    {{- with .Description }}<p class="card__text">{{ . }}</p>{{ end }}
+    {{- with $trail }}<div class="chips"><a class="chip chip--trail" href="{{ .RelPermalink }}">{{ .Params.short | default .Title }}</a></div>{{ end }}
+  </div>
+</article>

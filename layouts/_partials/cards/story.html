@@ -1,0 +1,32 @@
+{{- $p := . -}}
+{{- $trail := partial "ref.html" (dict "ref" .Params.trail "section" "trails") -}}
+{{- $stages := partial "refs.html" (dict "refs" .Params.stages "section" "stages") -}}
+{{- $st := partialCached "data/stats.html" . .Path -}}
+{{- $nights := len (partial "refs.html" (dict "refs" .Params.stays "section" "stays")) -}}
+<article class="card">
+  <div class="card__media">
+    {{- with .Params.cover }}{{ partial "img.html" (dict "src" . "w" 640 "h" 360 "alt" "") }}
+    {{- else -}}
+      {{- $lines := slice -}}
+      {{- with $st.gpx }}{{ $lines = $lines | append (dict "points" .points "kind" "mine") }}{{ end -}}
+      {{- if not $lines }}{{ range $stages }}{{ with (partialCached "data/stats.html" . .Path).gpx }}{{ $lines = $lines | append (dict "points" .points "kind" "official") }}{{ end }}{{ end }}{{ end -}}
+      {{ partial "trace.html" (dict "lines" $lines "label" (printf "Route of %s" .Title)) }}
+    {{- end }}
+  </div>
+  <div class="card__body">
+    {{- if or $trail $stages }}
+    <div class="chips">
+      {{- with $trail }}<a class="chip chip--trail" href="{{ .RelPermalink }}">{{ .Params.short | default .Title }}</a>{{ end }}
+      {{- with $stages }}{{ partial "stage-chip.html" . }}{{ end }}
+    </div>
+    {{- end }}
+    <h3 class="card__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    {{- with .Description }}<p class="card__text">{{ . }}</p>{{ end }}
+    <div class="metas">
+      <span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format "2 Jan 2006" }}</time></span>
+      {{- with $st.distance }}<span class="meta">{{ partial "icon.html" (dict "name" "route" "size" 15) }}{{ partial "num.html" (dict "v" . "unit" "km") }} km</span>{{ end }}
+      {{- if $nights }}<span class="meta">{{ partial "icon.html" (dict "name" "moon" "size" 15) }}{{ $nights }} {{ cond (eq $nights 1) "night" "nights" }}</span>{{ end }}
+      {{- if .Draft }}<span class="draft-badge">Draft</span>{{ end }}
+    </div>
+  </div>
+</article>

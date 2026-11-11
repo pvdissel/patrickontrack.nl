@@ -1,0 +1,27 @@
+{{ define "main" }}
+{{- $stories := .Pages.ByDate.Reverse -}}
+{{- $trails := slice -}}
+{{- range $stories }}{{ with partial "ref.html" (dict "ref" .Params.trail "section" "trails") }}{{ $trails = $trails | append . }}{{ end }}{{ end -}}
+{{- $trails = $trails | uniq -}}
+<section class="wrap page-head stack" style="--gap: 18px">
+  <p class="eyebrow">Stories</p>
+  <h1 class="title-l">{{ .Params.heading | default "Every walk, written down." }}</h1>
+  {{- with .Params.intro }}<p class="lead">{{ . }}</p>{{ end }}
+  {{- if gt (len $trails) 1 }}
+  <div class="filters" role="group" aria-label="Filter by trail" data-filter-group="stories" style="margin-top: 16px">
+    <button class="filter" type="button" data-filter="all" aria-pressed="true">All</button>
+    {{- range $trails }}<button class="filter" type="button" data-filter="{{ .File.ContentBaseName }}" aria-pressed="false">{{ .Params.short | default .Title }}</button>{{ end }}
+  </div>
+  {{- end }}
+</section>
+<section class="wrap">
+  {{- range $stories.GroupByDate "2006" }}
+  <div data-filter-block>
+    <div class="year" data-filter-heading="stories"><h2>{{ .Key }}</h2><span class="meta">{{ len .Pages }} {{ cond (eq (len .Pages) 1) "story" "stories" }}</span></div>
+    {{- range .Pages }}{{ partial "story-row.html" . }}{{ end }}
+  </div>
+  {{- else }}
+  <p class="empty" style="margin-top: 40px">No stories published yet.</p>
+  {{- end }}
+</section>
+{{ end }}

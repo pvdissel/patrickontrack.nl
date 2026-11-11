@@ -1,0 +1,9 @@
+/* Self-hosted fonts (SIL Open Font License, see assets/fonts/licenses). No third-party requests. */
+@font-face { font-family: "Barlow Condensed"; font-weight: 600; font-style: normal; font-display: swap; src: url("{{ (resources.Get "fonts/BarlowCondensed-SemiBold.woff2").RelPermalink }}") format("woff2"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 700; font-style: normal; font-display: swap; src: url("{{ (resources.Get "fonts/BarlowCondensed-Bold.woff2").RelPermalink }}") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("{{ (resources.Get "fonts/Inter-Regular.woff2").RelPermalink }}") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-style: italic; font-display: swap; src: url("{{ (resources.Get "fonts/Inter-Italic.woff2").RelPermalink }}") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 500; font-style: normal; font-display: swap; src: url("{{ (resources.Get "fonts/Inter-Medium.woff2").RelPermalink }}") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("{{ (resources.Get "fonts/Inter-SemiBold.woff2").RelPermalink }}") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-style: normal; font-display: swap; src: url("{{ (resources.Get "fonts/IBMPlexMono-Regular.woff2").RelPermalink }}") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-style: normal; font-display: swap; src: url("{{ (resources.Get "fonts/IBMPlexMono-Medium.woff2").RelPermalink }}") format("woff2"); }

@@ -1,0 +1,30 @@
+<footer class="site-footer">
+  <svg class="ridges" viewBox="0 0 1440 150" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <path d="M0 150V92l80-30 70 22 110-58 90 44 70-20 120 62 100-50 90 18 110-70 110 66 80-22 100 40 90-30 70 20 80-12 70 8V150z" fill="#B9C8B4"/>
+    <path d="M0 150V112l120-28 90 26 130-46 110 50 90-18 140 40 120-44 110 30 120-52 120 46 110-14 80 22 100-6V150z" fill="#5E8068"/>
+    <path d="M0 150V128l140-20 120 18 160-30 140 26 150-22 160 24 140-26 150 20 140-16 140 18V150z" fill="#1E3D2F"/>
+  </svg>
+  <div class="site-footer__body">
+    <div class="wrap site-footer__inner">
+      <div class="site-footer__about">
+        <a class="brand brand--light" href="{{ "/" | relURL }}">{{ partial "logo.html" (dict "size" 36 "variant" "light") }}<span class="wordmark">Patrick <span>on</span> Track</span></a>
+        <p>{{ site.Params.tagline }} Stories, trails and the places I slept along the way.</p>
+      </div>
+      <div class="site-footer__cols">
+        <div>
+          <h2 class="eyebrow">Explore</h2>
+          <ul>{{ range site.Menus.main }}{{ if ne .Name "About" }}<li><a href="{{ .URL }}">{{ .Name }}</a></li>{{ end }}{{ end }}</ul>
+        </div>
+        <div>
+          <h2 class="eyebrow">Elsewhere</h2>
+          <ul>
+            {{- with site.Params.youtube }}<li><a href="{{ . }}" rel="me">YouTube</a></li>{{ end }}
+            <li><a href="{{ "stories/index.xml" | relURL }}">RSS feed</a></li>
+            <li><a href="{{ "about/" | relURL }}">About me</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="wrap site-footer__legal">© {{ now.Year }} {{ site.Params.author }} · Built with Hugo · Maps © OpenStreetMap contributors</div>
+  </div>
+</footer>

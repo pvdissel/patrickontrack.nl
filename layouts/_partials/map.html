@@ -1,0 +1,21 @@
+{{- /*
+  Interactive map (Leaflet), progressively enhanced.
+  dict
+    "page"    the current page (to load the map script once)
+    "id"      unique id
+    "layers"  [dict "kind" "official|faded|stage-a|stage-b|mine" "points" [{lat,lng}...] "name" "" "url" ""]
+    "markers" [dict "lat" "lon" "kind" "stage|stay|start|finish" "label" "" "url" ""]
+    "size"    "" | "tall" | "short"
+    "label"   accessible description
+*/ -}}
+{{- $layers := .layers | default slice -}}
+{{- $markers := .markers | default slice -}}
+{{- if or $layers $markers -}}
+{{- .page.Store.Set "needsMap" true -}}
+{{- $cfg := site.Params.map -}}
+<div class="map{{ with .size }} map--{{ . }}{{ end }}" id="{{ .id }}" role="region" aria-label="{{ .label | default "Map" }}"
+  {{ if .mineHidden }}data-mine-hidden {{ end }}data-tiles="{{ $cfg.tiles }}" data-attribution="{{ $cfg.attribution }}" data-maxzoom="{{ $cfg.maxZoom | default 17 }}">
+  <script type="application/json">{{ dict "layers" $layers "markers" $markers | jsonify | safeJS }}</script>
+  <noscript><p class="map__noscript">The map needs JavaScript. The GPX files below work in any map app.</p></noscript>
+</div>
+{{- end -}}

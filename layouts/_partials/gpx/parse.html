@@ -1,0 +1,115 @@
+{{- /*
+  Parse a GPX file at build time.
+  Usage: partialCached "gpx/parse.html" "/gpx/my-track.gpx" "/gpx/my-track.gpx"
+  Returns a dict:
+    ok        bool
+    sample    bool   (file lives in /gpx/samples/)
+    distance  km
+    ascent    m      (4 m hysteresis to ignore GPS noise)
+    descent   m
+    min, max  m
+    start,end time.Time or nil (from <time> elements, if present)
+    points    [{lat, lng}, ...]          downsampled for the map
+    profile   [{km, ele}, ...]           downsampled for the elevation chart
+    first,last {lat, lng}
+*/ -}}
+{{- $path := strings.TrimPrefix "/" (string .) -}}
+{{- $out := dict "ok" false "sample" false -}}
+{{- with resources.Get $path -}}
+  {{- $g := .Content | transform.Unmarshal -}}
+  {{- $raw := slice -}}
+  {{- $trks := $g.trk -}}
+  {{- if reflect.IsMap $trks }}{{ $trks = slice $trks }}{{ end -}}
+  {{- range $trks -}}
+    {{- $segs := .trkseg -}}
+    {{- if reflect.IsMap $segs }}{{ $segs = slice $segs }}{{ end -}}
+    {{- range $segs -}}
+      {{- $p := .trkpt -}}
+      {{- if reflect.IsMap $p }}{{ $p = slice $p }}{{ end -}}
+      {{- with $p }}{{ $raw = $raw | append . }}{{ end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $rtes := $g.rte -}}
+  {{- if reflect.IsMap $rtes }}{{ $rtes = slice $rtes }}{{ end -}}
+  {{- range $rtes -}}
+    {{- $p := .rtept -}}
+    {{- if reflect.IsMap $p }}{{ $p = slice $p }}{{ end -}}
+    {{- with $p }}{{ $raw = $raw | append . }}{{ end -}}
+  {{- end -}}
+
+  {{- $n := len $raw -}}
+  {{- if gt $n 1 -}}
+    {{- $stride := 1 -}}
+    {{- if gt $n 5000 }}{{ $stride = int (math.Ceil (div (float $n) 5000)) }}{{ end -}}
+    {{- $pts := slice -}}
+    {{- $dist := 0.0 -}}
+    {{- $up := 0.0 -}}{{- $down := 0.0 -}}
+    {{- $ref := -99999.0 -}}
+    {{- $min := 99999.0 -}}{{- $max := -99999.0 -}}
+    {{- $plat := 0.0 -}}{{- $plon := 0.0 -}}{{- $first := true -}}
+    {{- $t0 := "" -}}{{- $t1 := "" -}}
+    {{- range $i, $p := $raw -}}
+      {{- if or (eq (mod $i $stride) 0) (eq $i (sub $n 1)) -}}
+        {{- $lat := float (index $p "-lat") -}}
+        {{- $lon := float (index $p "-lon") -}}
+        {{- $ele := 0.0 -}}{{- $hasEle := false -}}
+        {{- with $p.ele }}{{ $ele = float . }}{{ $hasEle = true }}{{ end -}}
+        {{- with $p.time }}{{ if not $t0 }}{{ $t0 = . }}{{ end }}{{ $t1 = . }}{{ end -}}
+        {{- if not $first -}}
+          {{- $dlat := math.ToRadians (sub $lat $plat) -}}
+          {{- $dlon := math.ToRadians (sub $lon $plon) -}}
+          {{- $s1 := math.Sin (div $dlat 2) -}}
+          {{- $s2 := math.Sin (div $dlon 2) -}}
+          {{- $a := add (mul $s1 $s1) (mul (math.Cos (math.ToRadians $plat)) (math.Cos (math.ToRadians $lat)) $s2 $s2) -}}
+          {{- if gt $a 1.0 }}{{ $a = 1.0 }}{{ end -}}
+          {{- $dist = add $dist (mul 12742.0 (math.Asin (math.Sqrt $a))) -}}
+        {{- end -}}
+        {{- if $hasEle -}}
+          {{- if lt $ref -9999.0 }}{{ $ref = $ele }}{{ end -}}
+          {{- $diff := sub $ele $ref -}}
+          {{- if gt $diff 4.0 }}{{ $up = add $up $diff }}{{ $ref = $ele }}{{ end -}}
+          {{- if lt $diff -4.0 }}{{ $down = sub $down $diff }}{{ $ref = $ele }}{{ end -}}
+          {{- if lt $ele $min }}{{ $min = $ele }}{{ end -}}
+          {{- if gt $ele $max }}{{ $max = $ele }}{{ end -}}
+        {{- end -}}
+        {{- $pts = $pts | append (dict "lat" $lat "lng" $lon "ele" $ele "km" $dist) -}}
+        {{- $plat = $lat }}{{ $plon = $lon }}{{ $first = false -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- /* downsample for output */ -}}
+    {{- $m := len $pts -}}
+    {{- $mapStride := int (math.Max 1 (math.Ceil (div (float $m) 600))) -}}
+    {{- $proStride := int (math.Max 1 (math.Ceil (div (float $m) 280))) -}}
+    {{- $mapPts := slice -}}{{- $profile := slice -}}
+    {{- range $i, $p := $pts -}}
+      {{- $last := eq $i (sub $m 1) -}}
+      {{- if or (eq (mod $i $mapStride) 0) $last -}}
+        {{- $mapPts = $mapPts | append (dict "lat" (float (printf "%.5f" $p.lat)) "lng" (float (printf "%.5f" $p.lng))) -}}
+      {{- end -}}
+      {{- if or (eq (mod $i $proStride) 0) $last -}}
+        {{- $profile = $profile | append (dict "km" $p.km "ele" $p.ele) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $start := "" }}{{ $end := "" -}}
+    {{- with $t0 }}{{ $start = time.AsTime . }}{{ end -}}
+    {{- with $t1 }}{{ $end = time.AsTime . }}{{ end -}}
+    {{- $f := index $pts 0 }}{{ $l := index $pts (sub $m 1) -}}
+    {{- $out = dict
+        "ok" true
+        "sample" (strings.Contains $path "/samples/")
+        "distance" $dist
+        "ascent" $up
+        "descent" $down
+        "min" (cond (lt $min 99999.0) $min 0.0)
+        "max" (cond (gt $max -99999.0) $max 0.0)
+        "start" $start
+        "end" $end
+        "points" $mapPts
+        "profile" $profile
+        "first" (dict "lat" $f.lat "lng" $f.lng)
+        "last" (dict "lat" $l.lat "lng" $l.lng)
+      -}}
+  {{- end -}}
+{{- end -}}
+{{- return $out -}}

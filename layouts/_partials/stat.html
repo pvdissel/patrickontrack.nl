@@ -1,0 +1,5 @@
+{{- /* dict "label" "value" "unit" "icon" — value may be empty, then a placeholder is shown */ -}}
+<div class="stat">
+  <span class="stat__label">{{ with .icon }}{{ partial "icon.html" (dict "name" . "size" 15) }}{{ end }}{{ .label }}</span>
+  <span class="stat__value">{{ with .value }}{{ . }}{{ else }}<span class="placeholder" style="font-size: 20px">—</span>{{ end }}{{ if and .value .unit }}<span class="stat__unit">{{ .unit }}</span>{{ end }}</span>
+</div>

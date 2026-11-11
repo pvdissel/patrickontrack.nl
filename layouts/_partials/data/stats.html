@@ -1,0 +1,43 @@
+{{- /*
+  Numbers for a story, stage or trail. Front matter wins; otherwise computed from GPX.
+  Returns dict: distance ascent descent (float or nil), start end (string "15:04" or ""),
+                duration (string), gpx (parsed dict or false), sample (bool)
+*/ -}}
+{{- $p := . -}}
+{{- $file := or $p.Params.track $p.Params.gpx -}}
+{{- $g := false -}}
+{{- with $file }}{{ $g = partialCached "gpx/parse.html" . . }}{{ if not $g.ok }}{{ $g = false }}{{ end }}{{ end -}}
+{{- $d := $p.Params.distance_km -}}{{- $a := $p.Params.ascent_m -}}{{- $de := $p.Params.descent_m -}}
+{{- $sample := false -}}
+{{- if and (not $d) $g }}{{ $d = $g.distance }}{{ $sample = $g.sample }}{{ end -}}
+{{- if and (not $a) $g }}{{ $a = $g.ascent }}{{ end -}}
+{{- if and (not $de) $g }}{{ $de = $g.descent }}{{ end -}}
+{{- if and (eq $p.Section "trails") (not $d) -}}
+  {{- $sd := 0.0 }}{{ $sa := 0.0 }}{{ $sde := 0.0 }}{{ $any := false -}}
+  {{- range partialCached "data/trail-stages.html" $p $p.Path -}}
+    {{- $s := partialCached "data/stats-leaf.html" . .Path -}}
+    {{- with $s.distance }}{{ $sd = add $sd (float .) }}{{ $any = true }}{{ end -}}
+    {{- with $s.ascent }}{{ $sa = add $sa (float .) }}{{ end -}}
+    {{- with $s.descent }}{{ $sde = add $sde (float .) }}{{ end -}}
+    {{- if $s.sample }}{{ $sample = true }}{{ end -}}
+  {{- end -}}
+  {{- if $any }}{{ $d = $sd }}{{ if not $a }}{{ $a = $sa }}{{ end }}{{ if not $de }}{{ $de = $sde }}{{ end }}{{ end -}}
+{{- end -}}
+{{- $start := $p.Params.start_time | default "" -}}
+{{- $end := $p.Params.end_time | default "" -}}
+{{- $dur := "" -}}
+{{- if $g -}}
+  {{- if and (not $start) $g.start }}{{ $start = $g.start | time.Format "15:04" }}{{ end -}}
+  {{- if and (not $end) $g.end }}{{ $end = $g.end | time.Format "15:04" }}{{ end -}}
+  {{- if and $g.start $g.end -}}
+    {{- $mins := int (div ($g.end.Sub $g.start).Minutes 1) -}}
+    {{- $dur = printf "%d:%02d" (div $mins 60) (mod $mins 60) -}}
+  {{- end -}}
+{{- end -}}
+{{- if and $start $end (not $dur) -}}
+  {{- $s := time.AsTime (printf "2000-01-01T%s:00" $start) -}}
+  {{- $e := time.AsTime (printf "2000-01-01T%s:00" $end) -}}
+  {{- $mins := int ($e.Sub $s).Minutes -}}
+  {{- if gt $mins 0 }}{{ $dur = printf "%d:%02d" (div $mins 60) (mod $mins 60) }}{{ end -}}
+{{- end -}}
+{{- return dict "distance" $d "ascent" $a "descent" $de "start" $start "end" $end "duration" $dur "gpx" $g "sample" $sample -}}

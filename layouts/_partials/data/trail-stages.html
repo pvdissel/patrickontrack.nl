@@ -1,0 +1,9 @@
+{{- /* Stages belonging to a trail page, sorted by number. */ -}}
+{{- $trail := . -}}
+{{- $out := slice -}}
+{{- range $p := where site.RegularPages "Section" "stages" -}}
+  {{- with partial "ref.html" (dict "ref" $p.Params.trail "section" "trails") -}}
+    {{- if eq .Path $trail.Path }}{{ $out = $out | append $p }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- return sort $out "Params.number" -}}

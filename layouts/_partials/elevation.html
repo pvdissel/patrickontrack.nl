@@ -1,0 +1,55 @@
+{{- /*
+  Elevation profile as inline SVG, rendered at build time.
+  dict "profile" [{km, ele}, ...]  "dividers" [dict "km" 28 "label" "2"]  "label" "aria label"
+*/ -}}
+{{- $pro := .profile -}}
+{{- if and $pro (gt (len $pro) 1) -}}
+{{- $W := 1100.0 }}{{ $H := 170.0 }}{{ $L := 48.0 }}{{ $R := 14.0 }}{{ $T := 14.0 }}{{ $B := 28.0 -}}
+{{- $pw := sub $W $L $R }}{{ $ph := sub $H $T $B -}}
+{{- $km := float (index $pro (sub (len $pro) 1)).km -}}
+{{- if le $km 0.0 }}{{ $km = 1.0 }}{{ end -}}
+{{- $lo := 99999.0 }}{{ $hi := -99999.0 -}}
+{{- range $pro }}{{ $e := float .ele }}{{ if lt $e $lo }}{{ $lo = $e }}{{ end }}{{ if gt $e $hi }}{{ $hi = $e }}{{ end }}{{ end -}}
+{{- $range := sub $hi $lo -}}
+{{- $step := 50.0 }}{{ if gt $range 400.0 }}{{ $step = 100.0 }}{{ end }}{{ if gt $range 1200.0 }}{{ $step = 250.0 }}{{ end }}{{ if lt $range 60.0 }}{{ $step = 20.0 }}{{ end -}}
+{{- $y0 := mul (math.Floor (div $lo $step)) $step -}}
+{{- $y1 := mul (math.Ceil (div $hi $step)) $step -}}
+{{- if le $y1 $y0 }}{{ $y1 = add $y0 $step }}{{ end -}}
+{{- $line := "" -}}
+{{- range $i, $p := $pro -}}
+  {{- $x := add $L (mul $pw (div (float $p.km) $km)) -}}
+  {{- $y := add $T (mul $ph (sub 1 (div (sub (float $p.ele) $y0) (sub $y1 $y0)))) -}}
+  {{- $line = printf "%s%s%.1f %.1f" $line (cond (eq $i 0) "M" " L") $x $y -}}
+{{- end -}}
+{{- $area := printf "%s L%.1f %.1f L%.1f %.1f Z" $line (add $L $pw) (add $T $ph) $L (add $T $ph) -}}
+{{- $kmStep := 1.0 -}}
+{{- range slice 2.0 5.0 10.0 20.0 50.0 }}{{ if gt (div $km $kmStep) 10.0 }}{{ $kmStep = . }}{{ end }}{{ end -}}
+<figure class="elevation">
+<svg viewBox="0 0 1100 170" role="img" aria-label="{{ .label | default (printf "Elevation profile from %.0f to %.0f metres over %.1f km" $lo $hi $km) }}">
+  {{- $g := $y0 -}}
+  {{- range seq 0 20 -}}
+    {{- if le $g $y1 -}}
+      {{- $y := add $T (mul $ph (sub 1 (div (sub $g $y0) (sub $y1 $y0)))) -}}
+      <path d="M{{ $L }} {{ printf "%.1f" $y }}H{{ sub $W $R }}" class="grid"/>
+      <text x="{{ sub $L 8 }}" y="{{ printf "%.1f" (add $y 4) }}" text-anchor="end" class="lbl">{{ printf "%.0f" $g }} m</text>
+    {{- end -}}
+    {{- $g = add $g $step -}}
+  {{- end }}
+  <path d="{{ $area }}" class="area"/>
+  <path d="{{ $line }}" class="line"/>
+  {{- range .dividers -}}
+    {{- $x := add $L (mul $pw (div (float .km) $km)) }}
+  <path d="M{{ printf "%.1f" $x }} {{ $T }}V{{ add $T $ph }}" class="div"/>
+  <text x="{{ printf "%.1f" (add $x 5) }}" y="{{ add $T 12 }}" class="divlbl">{{ .label }}</text>
+  {{- end -}}
+  {{- $k := 0.0 -}}
+  {{- range seq 0 60 -}}
+    {{- if le $k (add $km 0.001) }}
+  <text x="{{ printf "%.1f" (add $L (mul $pw (div $k $km))) }}" y="{{ sub $H 8 }}" text-anchor="middle" class="lbl">{{ $k }}</text>
+    {{- end -}}
+    {{- $k = add $k $kmStep -}}
+  {{- end }}
+  <text x="{{ sub $W $R }}" y="{{ sub $H 8 }}" text-anchor="end" class="lbl">km</text>
+</svg>
+</figure>
+{{- end -}}

@@ -1,0 +1,10 @@
+{{- /* Published stories that walked this stage. */ -}}
+{{- $stage := . -}}
+{{- $out := slice -}}
+{{- range (where site.RegularPages "Section" "stories").ByDate -}}
+  {{- $story := . -}}
+  {{- range partial "refs.html" (dict "refs" .Params.stages "section" "stages") -}}
+    {{- if eq .Path $stage.Path }}{{ $out = $out | append $story }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- return (uniq $out) -}}

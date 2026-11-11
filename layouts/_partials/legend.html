@@ -1,0 +1,6 @@
+{{- /* Map legend. Pass a slice of [kind, label] pairs. */ -}}
+<ul class="legend">
+{{- range . }}
+  <li><span class="legend__swatch legend__swatch--{{ index . 0 }}" aria-hidden="true"></span>{{ index . 1 }}</li>
+{{- end }}
+</ul>

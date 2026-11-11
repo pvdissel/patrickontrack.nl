@@ -1,0 +1,10 @@
+{{- $main := resources.Get "js/main.js" | js.Build (dict "minify" hugo.IsProduction "target" "es2018") -}}
+{{- if hugo.IsProduction }}{{ $main = $main | fingerprint }}{{ end }}
+<script src="{{ $main.RelPermalink }}" defer></script>
+{{- if .Store.Get "needsMap" }}
+{{- $leaflet := resources.Get "vendor/leaflet/leaflet.js" -}}
+{{- $map := resources.Get "js/map.js" | js.Build (dict "minify" hugo.IsProduction "target" "es2018") -}}
+{{- if hugo.IsProduction }}{{ $leaflet = $leaflet | fingerprint }}{{ $map = $map | fingerprint }}{{ end }}
+<script src="{{ $leaflet.RelPermalink }}" defer></script>
+<script src="{{ $map.RelPermalink }}" defer></script>
+{{- end }}

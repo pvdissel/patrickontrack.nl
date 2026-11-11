@@ -1,0 +1,23 @@
+{{- /*
+  Totals for a gear list. Item weights are grams in front matter; results are kg.
+  total      = what was on your back (front matter total_kg if you weighed it, else base + consumables)
+  base       = total minus consumables (food, water, fuel)
+  worn       = clothes and items worn or carried in hand (not in the pack)
+*/ -}}
+{{- $base := 0.0 }}{{ $worn := 0.0 }}{{ $cons := 0.0 }}{{ $n := 0 -}}
+{{- $cats := dict -}}
+{{- range .Params.items -}}
+  {{- $n = add $n 1 -}}
+  {{- $w := float (.weight_g | default 0) -}}
+  {{- $kind := .kind | default "base" -}}
+  {{- if eq $kind "worn" }}{{ $worn = add $worn $w }}{{ else if eq $kind "consumable" }}{{ $cons = add $cons $w }}{{ else }}{{ $base = add $base $w }}{{ end -}}
+  {{- if ne $kind "worn" -}}
+    {{- $c := .category | default "Other" -}}
+    {{- $cats = merge $cats (dict $c (add (index $cats $c | default 0.0) $w)) -}}
+  {{- end -}}
+{{- end -}}
+{{- $total := div (add $base $cons) 1000.0 -}}
+{{- $weighed := false -}}
+{{- with .Params.total_kg }}{{ $total = float . }}{{ $weighed = true }}{{ end -}}
+{{- $unlisted := sub $total (div (add $base $cons) 1000.0) -}}
+{{- return dict "total" $total "weighed" $weighed "base" (sub $total (div $cons 1000.0)) "worn" (div $worn 1000.0) "consumable" (div $cons 1000.0) "count" $n "categories" $cats "unlisted" $unlisted -}}

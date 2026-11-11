@@ -1,0 +1,42 @@
+{{- /*
+  Build Leaflet layers + markers.
+  dict
+    "trail"     trail page or false
+    "stages"    optional slice of stage pages to draw (default: all stages of trail)
+    "highlight" optional dict {stagePath: true}; others drawn faded. Without it stages alternate colours.
+    "tracks"    slice of story pages whose GPX track is drawn as "mine"
+    "stays"     slice of stay pages (with lat/lon) drawn as markers
+*/ -}}
+{{- $layers := slice -}}{{- $markers := slice -}}
+{{- $stages := .stages | default slice -}}
+{{- if and (not $stages) .trail }}{{ $stages = partialCached "data/trail-stages.html" .trail .trail.Path }}{{ end -}}
+{{- $hl := .highlight -}}
+{{- $n := len $stages -}}
+{{- range $i, $s := $stages -}}
+  {{- $st := partialCached "data/stats.html" $s $s.Path -}}
+  {{- with $st.gpx -}}
+    {{- $kind := cond (eq (mod $i 2) 0) "stage-a" "stage-b" -}}
+    {{- if $hl }}{{ $kind = cond (isset $hl $s.Path) "official" "faded" }}{{ end -}}
+    {{- $layers = $layers | append (dict "kind" $kind "points" .points "name" (printf "Stage %v · %s" $s.Params.number $s.Title) "url" $s.RelPermalink) -}}
+    {{- if eq $i 0 -}}
+      {{- $markers = $markers | append (dict "lat" .first.lat "lon" .first.lng "kind" "end" "label" (printf "Start · %s" ($s.Params.from | default $s.Title))) -}}
+    {{- else -}}
+      {{- $markers = $markers | append (dict "lat" .first.lat "lon" .first.lng "kind" "stage" "label" (string $s.Params.number) "popup" (printf "Stage %v · %s" $s.Params.number $s.Title) "url" $s.RelPermalink) -}}
+    {{- end -}}
+    {{- if eq $i (sub $n 1) -}}
+      {{- $markers = $markers | append (dict "lat" .last.lat "lon" .last.lng "kind" "end" "label" (printf "Finish · %s" ($s.Params.to | default $s.Title))) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- range $t := .tracks -}}
+  {{- with $t.Params.track -}}
+    {{- $g := partialCached "gpx/parse.html" . . -}}
+    {{- if $g.ok }}{{ $layers = $layers | append (dict "kind" "mine" "points" $g.points "name" (printf "My track · %s" $t.Title) "url" $t.RelPermalink) }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- range .stays -}}
+  {{- if and .Params.lat .Params.lon -}}
+    {{- $markers = $markers | append (dict "lat" (float .Params.lat) "lon" (float .Params.lon) "kind" "stay" "label" .Title "popup" (printf "%s · %s" .Title (.Params.stay_type | default "Stay")) "url" .RelPermalink) -}}
+  {{- end -}}
+{{- end -}}
+{{- return dict "layers" $layers "markers" $markers -}}

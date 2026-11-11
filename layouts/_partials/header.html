@@ -1,0 +1,24 @@
+{{- $current := . -}}
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="brand" href="{{ "/" | relURL }}" aria-label="{{ site.Title }}, home">
+      {{ partial "logo.html" (dict "size" 40) }}
+      <span class="wordmark">Patrick <span>on</span> Track</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
+      {{ partial "icon.html" (dict "name" "menu" "size" 24 "class" "nav-toggle__open") }}{{ partial "icon.html" (dict "name" "close" "size" 24 "class" "nav-toggle__close") }}
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      {{- range site.Menus.main }}
+        {{- $active := or ($current.IsMenuCurrent "main" .) ($current.HasMenuCurrent "main" .) -}}
+        {{- with .Page }}{{ if and (not $active) (eq $current.Section .Section) (ne $current.Kind "home") }}{{ $active = true }}{{ end }}{{ end -}}
+        {{- /* stage pages belong to Trails */ -}}
+        {{- if and (eq $current.Section "stages") (eq .Name "Trails") }}{{ $active = true }}{{ end }}
+      <a href="{{ .URL }}"{{ if $active }} aria-current="page"{{ end }}>{{ .Name }}</a>
+      {{- end }}
+      {{- with site.Params.youtube }}
+      <a class="site-nav__icon" href="{{ . }}" aria-label="YouTube channel" rel="me">{{ partial "icon.html" (dict "name" "play" "size" 22) }}</a>
+      {{- end }}
+    </nav>
+  </div>
+</header>

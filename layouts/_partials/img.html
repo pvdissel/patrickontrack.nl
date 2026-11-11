@@ -1,0 +1,26 @@
+{{- /*
+  Responsive image from static/images (mounted as assets/images).
+  Usage: partial "img.html" (dict "src" "/images/x.jpg" "w" 1200 "h" 600 "alt" "" "class" "" "eager" false)
+  Without h the image keeps its aspect ratio.
+*/ -}}
+{{- $src := .src -}}
+{{- $w := .w | default 1200 -}}
+{{- $h := .h | default 0 -}}
+{{- $alt := .alt | default "" -}}
+{{- $loading := cond (.eager | default false) "eager" "lazy" -}}
+{{- with $src -}}
+{{- $res := resources.Get (strings.TrimPrefix "/" .) -}}
+{{- if and $res (eq $res.MediaType.MainType "image") (ne $res.MediaType.SubType "svg") -}}
+  {{- $one := "" }}{{ $two := "" -}}
+  {{- if $h -}}
+    {{- $one = $res.Fill (printf "%dx%d webp Smart" $w $h) -}}
+    {{- if ge $res.Width (mul $w 2) }}{{ $two = $res.Fill (printf "%dx%d webp Smart" (mul $w 2) (mul $h 2)) }}{{ end -}}
+  {{- else -}}
+    {{- $one = $res.Resize (printf "%dx webp" (cond (lt $res.Width $w) $res.Width $w)) -}}
+    {{- if ge $res.Width (mul $w 2) }}{{ $two = $res.Resize (printf "%dx webp" (mul $w 2)) }}{{ end -}}
+  {{- end -}}
+  <img src="{{ $one.RelPermalink }}"{{ with $two }} srcset="{{ $one.RelPermalink }} 1x, {{ .RelPermalink }} 2x"{{ end }} width="{{ $one.Width }}" height="{{ $one.Height }}" alt="{{ $alt }}" loading="{{ $loading }}" decoding="async"{{ with $.class }} class="{{ . }}"{{ end }}>
+{{- else -}}
+  <img src="{{ . | relURL }}" alt="{{ $alt }}" loading="{{ $loading }}" decoding="async"{{ with $.class }} class="{{ . }}"{{ end }}>
+{{- end -}}
+{{- end -}}

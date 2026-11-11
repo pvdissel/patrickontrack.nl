@@ -1,0 +1,8 @@
+{{- /* Format a number: km with one decimal under 100, kg with one decimal unless whole, metres as integers. dict "v" "unit" */ -}}
+{{- $v := .v -}}
+{{- if $v -}}
+  {{- $f := float $v -}}
+  {{- if eq .unit "km" -}}{{- if lt $f 100.0 }}{{ lang.FormatNumber 1 $f }}{{ else }}{{ lang.FormatNumber 0 $f }}{{ end -}}
+  {{- else if eq .unit "kg" -}}{{- if eq (math.Round $f) $f }}{{ lang.FormatNumber 0 $f }}{{ else }}{{ lang.FormatNumber 1 $f }}{{ end -}}
+  {{- else -}}{{- lang.FormatNumber 0 $f -}}{{- end -}}
+{{- end -}}

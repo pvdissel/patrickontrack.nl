@@ -1,0 +1,28 @@
+{{ define "main" }}
+<section class="wrap hero" style="padding-top: 48px; gap: 56px">
+  <div class="hero__media" style="flex: 1 1 380px">
+    {{ partial "img.html" (dict "src" .Params.cover "w" 600 "h" 560 "alt" (.Params.cover_alt | default "") "eager" true "class" "about-photo") }}
+  </div>
+  <div class="hero__text stack" style="--gap: 20px; flex: 1 1 440px">
+    <p class="eyebrow">About</p>
+    <h1 class="title-xl" style="font-size: clamp(46px, 6vw, 68px)">{{ .Params.heading | default .Title }}</h1>
+    <div class="prose">{{ .Content }}</div>
+    <div class="row">
+      {{- with site.Params.youtube }}<a class="btn btn--ember" href="{{ . }}" rel="me">{{ partial "icon.html" (dict "name" "play" "size" 17) }}YouTube channel</a>{{ end }}
+      {{- with site.Params.email }}<a class="btn btn--ghost" href="mailto:{{ . }}">Get in touch</a>{{ end }}
+    </div>
+  </div>
+</section>
+<section class="wrap section">
+  <div class="section-head"><div class="stack" style="--gap: 10px"><p class="eyebrow">How this site works</p><h2 class="title-m">Four kinds of pages</h2></div></div>
+  <div class="how">
+    {{- range slice (slice "calendar" "Stories" "One post per day on the trail. Each links to the trail, the stages I walked, my GPX track and where I slept." "stories/") (slice "flag" "Trails" "The official route with its stages and GPX files, plus how much of it I have walked so far." "trails/") (slice "tent" "Stays" "Every campsite, hut and Nivon house I slept in: what it had, what it cost, and whether I’d go back." "stays/") (slice "pack" "Gear" "A gear list per hike, with weights and the lessons I learned the hard way." "gear/") }}
+    <a class="panel" href="{{ index . 3 | relURL }}" style="padding: 24px; display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: var(--ink)">
+      <span style="color: var(--pine)">{{ partial "icon.html" (dict "name" (index . 0) "size" 26) }}</span>
+      <span class="title-s">{{ index . 1 }}</span>
+      <span class="card__text">{{ index . 2 }}</span>
+    </a>
+    {{- end }}
+  </div>
+</section>
+{{ end }}

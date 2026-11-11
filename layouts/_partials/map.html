@@ -14,8 +14,8 @@
 {{- .page.Store.Set "needsMap" true -}}
 {{- $cfg := site.Params.map -}}
 <div class="map{{ with .size }} map--{{ . }}{{ end }}" id="{{ .id }}" role="region" aria-label="{{ .label | default "Map" }}"
-  {{ if .mineHidden }}data-mine-hidden {{ end }}data-tiles="{{ $cfg.tiles }}" data-attribution="{{ $cfg.attribution }}" data-maxzoom="{{ $cfg.maxZoom | default 17 }}">
+  {{ if .mineHidden }}data-mine-hidden {{ end }}data-show="{{ T "show_my_tracks" }}" data-showing="{{ T "showing_my_tracks" }}" data-tiles="{{ $cfg.tiles }}" data-attribution="{{ $cfg.attribution }}" data-maxzoom="{{ $cfg.maxZoom | default 17 }}">
   <script type="application/json">{{ dict "layers" $layers "markers" $markers | jsonify | safeJS }}</script>
-  <noscript><p class="map__noscript">The map needs JavaScript. The GPX files below work in any map app.</p></noscript>
+  <noscript><p class="map__noscript">{{ T "map_needs_js" }}</p></noscript>
 </div>
 {{- end -}}

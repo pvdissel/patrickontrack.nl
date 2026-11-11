@@ -3,6 +3,6 @@
 {{- with findRESubmatch `(?:v=|youtu\.be/|embed/|shorts/)([A-Za-z0-9_-]{11})` $id 1 }}{{ $id = index (index . 0) 1 }}{{ end -}}
 <div class="video" data-youtube="{{ $id }}" data-title="{{ .title }}">
   <img src="https://i.ytimg.com/vi/{{ $id }}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer">
-  <button class="video__play" type="button" aria-label="Play video: {{ .title }}">{{ partial "icon.html" (dict "name" "play" "size" 34) }}</button>
-  <noscript><a class="video__label" href="https://www.youtube.com/watch?v={{ $id }}">Watch on YouTube</a></noscript>
+  <button class="video__play" type="button" aria-label="{{ T "play_video" .title }}">{{ partial "icon.html" (dict "name" "play" "size" 34) }}</button>
+  <noscript><a class="video__label" href="https://www.youtube.com/watch?v={{ $id }}">{{ T "watch_on_youtube" }}</a></noscript>
 </div>

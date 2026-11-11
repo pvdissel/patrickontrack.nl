@@ -88,7 +88,7 @@ function initMap(el) {
       if (on) map.removeLayer(mine); else mine.addTo(map);
       btn.setAttribute('aria-pressed', String(!on));
       const label = btn.querySelector('[data-label]');
-      if (label) label.textContent = on ? 'Show my tracks' : 'Showing my tracks';
+      if (label) label.textContent = on ? (el.dataset.show || 'Show my tracks') : (el.dataset.showing || 'Showing my tracks');
     });
   });
 }

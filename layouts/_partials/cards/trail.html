@@ -8,9 +8,9 @@
     {{- else -}}
       {{- $lines := slice -}}
       {{- range $i, $s := $stages }}{{ with (partialCached "data/stats.html" $s $s.Path).gpx }}{{ $lines = $lines | append (dict "points" .points "kind" (cond (eq (mod $i 2) 0) "stage-a" "stage-b")) }}{{ end }}{{ end -}}
-      {{ partial "trace.html" (dict "lines" $lines "label" (printf "Route of %s" .Title)) }}
+      {{ partial "trace.html" (dict "lines" $lines "label" (T "route_of" .Title)) }}
     {{- end }}
-    <span class="chip {{ if eq $pr.status "Completed" }}chip--ember{{ else }}chip--stage{{ end }}">{{ $pr.status }}</span>
+    <span class="chip {{ if eq $pr.status "Completed" }}chip--ember{{ else }}chip--stage{{ end }}">{{ T (printf "status_%s" $statusKey) }}</span>
   </div>
   <div class="card__body">
     <p class="subtle-label">{{ with .Params.country }}{{ . }} · {{ end }}{{ .Params.region }}</p>
@@ -18,12 +18,12 @@
     {{- with .Description }}<p class="card__text">{{ . }}</p>{{ end }}
     <div class="metas">
       <span class="meta">{{ partial "icon.html" (dict "name" "route" "size" 15) }}{{ with $st.distance }}{{ partial "num.html" (dict "v" . "unit" "km") }} km{{ else }}<span class="placeholder">[km]</span>{{ end }}</span>
-      <span class="meta">{{ partial "icon.html" (dict "name" "flag" "size" 15) }}{{ if gt $pr.total 1 }}{{ $pr.total }} stages{{ else }}Single route{{ end }}</span>
+      <span class="meta">{{ partial "icon.html" (dict "name" "flag" "size" 15) }}{{ if gt $pr.total 1 }}{{ T "stage_count" (dict "Count" $pr.total) }}{{ else }}{{ T "single_route" }}{{ end }}</span>
     </div>
     {{- if gt $pr.total 0 }}
     <div class="progress">
-      <div class="progress__label"><span>Hiked</span><span>{{ $pr.hiked }} / {{ $pr.total }}</span></div>
-      <div class="progress__bar" role="img" aria-label="{{ $pr.hiked }} of {{ $pr.total }} stages hiked"><span style="width: {{ div (mul $pr.hiked 100) $pr.total }}%"></span></div>
+      <div class="progress__label"><span>{{ T "hiked" }}</span><span>{{ $pr.hiked }} / {{ $pr.total }}</span></div>
+      <div class="progress__bar" role="img" aria-label="{{ T "stages_hiked" }}: {{ $pr.hiked }}/{{ $pr.total }}"><span style="width: {{ div (mul $pr.hiked 100) $pr.total }}%"></span></div>
     </div>
     {{- end }}
   </div>

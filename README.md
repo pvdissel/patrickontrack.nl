@@ -11,19 +11,31 @@ Built with [Hugo](https://gohugo.io) (no theme, everything lives in this repo), 
 hugo server -D        # -D also shows drafts
 ```
 
-Open http://localhost:1313. All migrated stories are still **drafts**, so without `-D` the site only shows the trails and pages.
+Open http://localhost:1313 (English) or http://localhost:1313/nl/ (Nederlands). All migrated stories are still **drafts**, so without `-D` the site only shows the trails and pages.
+
+## Two languages
+
+The site is in **English** (at `/`) and **Dutch** (at `/nl/`), with a language switch in the header.
+
+- Content lives in `content/en/…` and `content/nl/…` with the **same file names**; that is how Hugo knows two files are translations of each other.
+- **A page that exists in only one language still appears in the other**, with a short note ("This page is only available in Dutch"), a language badge on cards, and a canonical link to the original. Your stories are written in Dutch, so they live in `content/nl/stories/` and the English site shows them with that note. Translate one by adding the same file name under `content/en/stories/`.
+- Trails, stages, stays, gear lists and pages exist in both languages.
+- Interface text (menus, labels, buttons) is in `i18n/en.yaml` and `i18n/nl.yaml`. Dates and numbers follow the language (`za 10 sep 2022`, `29,6 km`).
+- Values chosen from a list in the CMS (stay type, gear category, route type) are stored in English and translated on the page.
+- In Pages CMS you get a **Nederlands** and an **English** section. References always point to the same language. To change the CMS fields, edit `scripts/pages.base.yml` and run `python3 scripts/pages-config.py`, which writes `.pages.yml` for both languages.
+- Want Dutch at `/` and English at `/en/`? Swap `defaultContentLanguage` in `hugo.toml` and swap the language weights.
 
 ## Content model
 
 | Type | Folder | What it is | Links to |
 |---|---|---|---|
-| **Trail** | `content/trails/` | The official route: region, start/finish, website, cover | — |
-| **Stage** (etappe) | `content/stages/` | One stage of a trail, with its own official GPX | trail |
-| **Story** | `content/stories/` | One day on the trail (the blog post) | trail, stages walked, my GPX track, stays, gear list, YouTube |
-| **Stay** | `content/stays/` | Campsite, hut, Nivon house…: type, price, facilities, coordinates | trail, stage |
-| **Gear list** | `content/gear/` | Items with category, weight and base/worn/consumable | trail |
+| **Trail** | `content/<lang>/trails/` | The official route: region, start/finish, website, cover | — |
+| **Stage** (etappe) | `content/<lang>/stages/` | One stage of a trail, with its own official GPX | trail |
+| **Story** | `content/<lang>/stories/` | One day on the trail (the blog post) | trail, stages walked, my GPX track, stays, gear list, YouTube |
+| **Stay** | `content/<lang>/stays/` | Campsite, hut, Nivon house…: type, price, facilities, coordinates | trail, stage |
+| **Gear list** | `content/<lang>/gear/` | Items with category, weight and base/worn/consumable | trail |
 
-Links are stored as paths (`content/trails/dutch-mountain-trail.md`), which is what Pages CMS reference fields save. The reverse links are worked out by Hugo:
+Links are stored as paths (`content/nl/trails/dutch-mountain-trail.md`), which is what Pages CMS reference fields save. Hugo looks the page up in the language being built, so a Dutch story linked to the Dutch trail links to the English trail on the English site. The reverse links are worked out by Hugo:
 
 - a trail page lists its stages, the stories on it, the stays along it, and **how many stages I've hiked** (stages linked from published stories);
 - a stage page shows who walked it (my stories) and stays near its end;
@@ -47,7 +59,7 @@ Everything under `static/gpx/samples/` is **made-up GPX** so the maps have somet
 - [ ] Replace `dmt-stage-1..4.gpx` with the official DMT stage files and check the stage names (**stages 1 and 2 especially: Eygelshoven → Vaals → Gulpen is a guess**).
 - [ ] Replace `dmt-2022-day-1..3.gpx` with your own recorded tracks from September 2022.
 - [ ] Delete `static/gpx/samples/` when done.
-- [ ] Fill in the names of the DMT day 1 and day 2 campsites (`content/stays/farm-campsite-past-the-vaalserberg.md`, `campsite-noorbeek.md`).
+- [ ] Fill in the names of the DMT day 1 and day 2 campsites (`stays/farm-campsite-past-the-vaalserberg.md`, `stays/campsite-noorbeek.md`, in both languages).
 - [ ] Add `lat`/`lon` to stays so they appear on the maps (none have coordinates yet).
 - [ ] Section stubs for Veluwe Zwerfpad (8), Roots Natuurpad (5) and Utrechtse Mountain Trail (9) only have a number. Add names and GPX files when you have them.
 - [ ] Set your YouTube channel URL in `hugo.toml` → `params.youtube`.
@@ -55,7 +67,7 @@ Everything under `static/gpx/samples/` is **made-up GPX** so the maps have somet
 
 ## What was migrated from the old site
 
-- All 16 posts from `content/en/adventures/` → `content/stories/`, **text untouched**. Kept: title, date, draft, description, series (`adventures` → `trips`). Converted: `trails` → `trail` reference and `tags: ["section N"]` → `stages` references. Each post has an `aliases` entry, so old `/adventures/…` URLs redirect.
+- All 16 posts from `content/en/adventures/` → `content/nl/stories/` (they are written in Dutch), **text untouched**. Kept: title, date, draft, description, series (`adventures` → `trips`). Converted: `trails` → `trail` reference and `tags: ["section N"]` → `stages` references. Each post has an `aliases` entry, so old `/adventures/…` URLs redirect.
 - Dates used a `-02:00` offset. They now use the Dutch offset (`+02:00`/`+01:00`) with the same clock time.
 - `<date>`-style notes in the drafts are escaped so they stay visible.
 - DMT stories got structured extras taken from your own text: start/finish times, "the day in moments", where you slept and the gear list.
@@ -65,8 +77,12 @@ Everything under `static/gpx/samples/` is **made-up GPX** so the maps have somet
 ## Project structure
 
 ```
-.pages.yml                 Pages CMS: collections, fields, media
-hugo.toml                  site config (menu, map tiles, permalinks, mounts)
+.pages.yml                 Pages CMS config (generated, see scripts/)
+scripts/pages.base.yml     Pages CMS fields, written once for both languages
+scripts/pages-config.py    expands the base into .pages.yml (nl + en)
+hugo.toml                  site config (languages, menus, map tiles, permalinks, mounts)
+i18n/en.yaml, i18n/nl.yaml interface text
+content/en, content/nl     content per language
 assets/css/main.css        all styling (colours and fonts are custom properties at the top)
 assets/css/fonts.css       self-hosted fonts (Barlow Condensed, Inter, IBM Plex Mono — OFL)
 assets/js/main.js          mobile menu, filter chips, click-to-load YouTube
@@ -76,6 +92,7 @@ layouts/                   templates (Hugo ≥0.146 layout structure)
   _partials/data/*.html      lookups: stats, trail stages/stories/stays, progress, gear totals, map data
   _partials/elevation.html   elevation profile as inline SVG
   _partials/trace.html       small route drawing used when a card has no photo
+  _partials/lang/            language switch, "only available in …" note, fallback detection
 static/images/             photos (Pages CMS uploads here, Hugo resizes to WebP)
 static/gpx/                GPX files
 static/brand/              logo SVGs

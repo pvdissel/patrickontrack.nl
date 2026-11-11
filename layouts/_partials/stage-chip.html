@@ -2,7 +2,7 @@
 {{- $nums := slice }}{{ range . }}{{ $nums = $nums | append (int .Params.number) }}{{ end -}}
 {{- $nums = sort $nums -}}
 {{- $label := "" -}}
-{{- if eq (len $nums) 1 }}{{ $label = printf "Stage %d" (index $nums 0) -}}
-{{- else }}{{ $label = printf "Stages %d–%d" (index $nums 0) (index $nums (sub (len $nums) 1)) }}{{ end -}}
+{{- if eq (len $nums) 1 }}{{ $label = T "stage_n" (index $nums 0) -}}
+{{- else }}{{ $label = T "stages_range" (dict "From" (index $nums 0) "To" (index $nums (sub (len $nums) 1))) }}{{ end -}}
 <a class="chip chip--stage" href="{{ (index . 0).RelPermalink }}">{{ $label }}</a>
 {{- /**/ -}}

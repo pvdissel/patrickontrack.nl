@@ -1,3 +1,3 @@
 {{- $nums := slice }}{{ range . }}{{ $nums = $nums | append (int .Params.number) }}{{ end -}}
 {{- $nums = sort $nums -}}
-{{- if eq (len $nums) 1 }}stage {{ index $nums 0 }}{{ else }}stages {{ index $nums 0 }}–{{ index $nums (sub (len $nums) 1) }}{{ end -}}
+{{- if eq (len $nums) 1 }}{{ T "stage_lower_n" (index $nums 0) }}{{ else }}{{ T "stages_lower_range" (dict "From" (index $nums 0) "To" (index $nums (sub (len $nums) 1))) }}{{ end -}}

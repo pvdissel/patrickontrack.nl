@@ -5,17 +5,17 @@
 {{- $featured := partial "ref.html" (dict "ref" .Params.featured_trail "section" "trails") -}}
 <section class="wrap hero">
   <div class="hero__text stack" style="--gap: 24px">
-    <p class="eyebrow">Hiking journal · since {{ site.Params.since }}</p>
+    <p class="eyebrow">{{ T "journal_since" site.Params.since }}</p>
     <h1 class="title-xl">{{ .Params.heading | default site.Params.tagline }}</h1>
     {{- with .Params.intro }}<p class="lead">{{ . }}</p>{{ end }}
     <div class="row">
-      {{- with index $stories 0 }}<a class="btn" href="{{ .RelPermalink }}">Read the latest story {{ partial "icon.html" (dict "name" "arrow" "size" 17) }}</a>{{ end }}
-      <a class="btn btn--ghost" href="{{ "trails/" | relURL }}">Browse trails</a>
+      {{- with index $stories 0 }}<a class="btn" href="{{ .RelPermalink }}">{{ T "read_latest" }} {{ partial "icon.html" (dict "name" "arrow" "size" 17) }}</a>{{ end }}
+      <a class="btn btn--ghost" href="{{ (site.GetPage "/trails").RelPermalink }}">{{ T "browse_trails" }}</a>
     </div>
     <div class="stats hero__stats">
-      {{ partial "stat.html" (dict "label" "Trails" "value" (len $trails) "icon" "flag") }}
-      {{ partial "stat.html" (dict "label" "Stories" "value" (len $stories) "icon" "calendar") }}
-      {{ partial "stat.html" (dict "label" "On the trail since" "value" site.Params.since "icon" "route") }}
+      {{ partial "stat.html" (dict "label" (T "trails") "value" (len $trails) "icon" "flag") }}
+      {{ partial "stat.html" (dict "label" (T "stories") "value" (len $stories) "icon" "calendar") }}
+      {{ partial "stat.html" (dict "label" (T "on_trail_since") "value" site.Params.since "icon" "route") }}
     </div>
   </div>
   <div class="hero__media">
@@ -28,13 +28,13 @@
 
 <section class="wrap section" aria-labelledby="latest">
   <div class="section-head">
-    <div class="stack" style="--gap: 10px"><p class="eyebrow">Latest</p><h2 id="latest" class="title-m">Stories from the trail</h2></div>
-    <a class="link-arrow" href="{{ "stories/" | relURL }}">All stories {{ partial "icon.html" (dict "name" "arrow" "size" 16) }}</a>
+    <div class="stack" style="--gap: 10px"><p class="eyebrow">{{ T "latest" }}</p><h2 id="latest" class="title-m">{{ T "stories_from_trail" }}</h2></div>
+    <a class="link-arrow" href="{{ (site.GetPage "/stories").RelPermalink }}">{{ T "all_stories" }} {{ partial "icon.html" (dict "name" "arrow" "size" 16) }}</a>
   </div>
   {{- with first 3 $stories }}
   <div class="grid" style="--min: 320px">{{ range . }}{{ partial "cards/story.html" . }}{{ end }}</div>
   {{- else }}
-  <p class="empty">No stories published yet. They’re on their way.</p>
+  <p class="empty">{{ T "no_stories" }}</p>
   {{- end }}
 </section>
 
@@ -45,24 +45,24 @@
 <section class="section band" aria-labelledby="focus">
   <div class="wrap split">
     <div class="stack" style="--gap: 20px">
-      <p class="eyebrow">Trail in focus</p>
+      <p class="eyebrow">{{ T "trail_in_focus" }}</p>
       <h2 id="focus" class="title-l">{{ .Title }}</h2>
       {{- with .Description }}<p class="muted">{{ . }}</p>{{ end }}
       <div class="stats">
-        {{ partial "stat.html" (dict "label" "Distance" "value" (partial "num.html" (dict "v" $st.distance "unit" "km")) "unit" "km" "icon" "route") }}
-        {{ partial "stat.html" (dict "label" "Ascent" "value" (partial "num.html" (dict "v" $st.ascent "unit" "m")) "unit" "m" "icon" "up") }}
-        {{ partial "stat.html" (dict "label" "Stages" "value" $pr.total "icon" "flag") }}
+        {{ partial "stat.html" (dict "label" (T "distance") "value" (partial "num.html" (dict "v" $st.distance "unit" "km")) "unit" "km" "icon" "route") }}
+        {{ partial "stat.html" (dict "label" (T "ascent") "value" (partial "num.html" (dict "v" $st.ascent "unit" "m")) "unit" "m" "icon" "up") }}
+        {{ partial "stat.html" (dict "label" (T "stages") "value" $pr.total "icon" "flag") }}
       </div>
       {{- if gt $pr.total 0 }}
       <div class="progress">
-        <div class="progress__label"><span>Stages hiked</span><span>{{ $pr.hiked }} / {{ $pr.total }}</span></div>
+        <div class="progress__label"><span>{{ T "stages_hiked" }}</span><span>{{ $pr.hiked }} / {{ $pr.total }}</span></div>
         <div class="progress__bar"><span style="width: {{ div (mul $pr.hiked 100) $pr.total }}%"></span></div>
       </div>
       {{- end }}
-      <div><a class="btn" href="{{ .RelPermalink }}">Explore the trail {{ partial "icon.html" (dict "name" "arrow" "size" 17) }}</a></div>
+      <div><a class="btn" href="{{ .RelPermalink }}">{{ T "explore_trail" }} {{ partial "icon.html" (dict "name" "arrow" "size" 17) }}</a></div>
     </div>
     <div class="split__wide">
-      {{ partial "map.html" (dict "page" $ "id" "map-home" "layers" $md.layers "markers" $md.markers "label" (printf "Map of the %s" .Title)) }}
+      {{ partial "map.html" (dict "page" $ "id" "map-home" "layers" $md.layers "markers" $md.markers "label" (T "map_of" .Title)) }}
     </div>
   </div>
 </section>
@@ -71,8 +71,8 @@
 {{- with first 3 $stays }}
 <section class="wrap section" aria-labelledby="stays">
   <div class="section-head">
-    <div class="stack" style="--gap: 10px"><p class="eyebrow">Where I slept</p><h2 id="stays" class="title-m">Stays along the way</h2></div>
-    <a class="link-arrow" href="{{ "stays/" | relURL }}">All stays {{ partial "icon.html" (dict "name" "arrow" "size" 16) }}</a>
+    <div class="stack" style="--gap: 10px"><p class="eyebrow">{{ T "where_i_slept" }}</p><h2 id="stays" class="title-m">{{ T "stays_along_way" }}</h2></div>
+    <a class="link-arrow" href="{{ (site.GetPage "/stays").RelPermalink }}">{{ T "all_stays" }} {{ partial "icon.html" (dict "name" "arrow" "size" 16) }}</a>
   </div>
   <div class="grid" style="--min: 300px">{{ range . }}{{ partial "cards/stay.html" . }}{{ end }}</div>
 </section>
@@ -82,8 +82,8 @@
 {{- with first 2 $videos }}
 <section class="wrap section" aria-labelledby="videos">
   <div class="section-head">
-    <div class="stack" style="--gap: 10px"><p class="eyebrow">On YouTube</p><h2 id="videos" class="title-m">Watch the walks</h2></div>
-    {{- with site.Params.youtube }}<a class="link-arrow" href="{{ . }}">Channel {{ partial "icon.html" (dict "name" "arrow" "size" 16) }}</a>{{ end }}
+    <div class="stack" style="--gap: 10px"><p class="eyebrow">{{ T "on_youtube" }}</p><h2 id="videos" class="title-m">{{ T "watch_walks" }}</h2></div>
+    {{- with site.Params.youtube }}<a class="link-arrow" href="{{ . }}">{{ T "channel" }} {{ partial "icon.html" (dict "name" "arrow" "size" 16) }}</a>{{ end }}
   </div>
   <div class="grid" style="--min: 420px">
     {{- range . }}

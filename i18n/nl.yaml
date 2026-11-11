@@ -1,0 +1,240 @@
+# Interfaceteksten. Inhoud (verhalen, trails, …) staat vertaald in content/nl en content/en.
+skip: Naar de inhoud
+menu: Menu
+main_nav: Hoofdmenu
+youtube_channel: YouTube-kanaal
+language: Taal
+read_in: "Lees in het {{ .Name }}"
+only_in: "Deze pagina is alleen in het {{ .Name }} beschikbaar."
+only_in_short: "In het {{ .Name }}"
+breadcrumb: Kruimelpad
+explore: Ontdek
+elsewhere: Elders
+rss: RSS-feed
+about_me: Over mij
+footer_tagline: "Verhalen, trails en de plekken waar ik onderweg sliep."
+built_with: "Gemaakt met Hugo · Kaarten © OpenStreetMap-bijdragers"
+draft: Concept
+
+# home
+journal_since: "Wandeldagboek · sinds {{ . }}"
+read_latest: Lees het nieuwste verhaal
+browse_trails: Bekijk de trails
+trails: Trails
+stories: Verhalen
+stays: Overnachtingen
+gear: Uitrusting
+on_trail_since: Onderweg sinds
+latest: Nieuw
+stories_from_trail: Verhalen van onderweg
+all_stories: Alle verhalen
+no_stories: "Nog geen verhalen gepubliceerd. Ze komen eraan."
+trail_in_focus: Trail in beeld
+stages_hiked: Etappes gelopen
+explore_trail: Bekijk de trail
+where_i_slept: Waar ik sliep
+stays_along_way: Overnachtingen onderweg
+all_stays: Alle overnachtingen
+on_youtube: Op YouTube
+watch_walks: Kijk mee
+channel: Kanaal
+map_of: "Kaart van de {{ . }}"
+
+# stats
+distance: Afstand
+ascent: Stijging
+descent: Daling
+stages: Etappes
+hiked: Gelopen
+start: Start
+finish: Finish
+time_on_trail: Tijd onderweg
+walking_time: Looptijd
+pack: Rugzak
+total: Totaal
+items: Items
+nights: Nachten
+food_water: Eten & water
+night:
+  one: nacht
+  other: nachten
+story_count:
+  one: verhaal
+  other: verhalen
+stage_count: "{{ .Count }} etappes"
+single_route: Eén route
+stage_n: "Etappe {{ . }}"
+stage_n_of: "Etappe {{ .N }} van {{ .Of }}"
+stages_range: "Etappes {{ .From }}–{{ .To }}"
+stage_lower_n: "etappe {{ . }}"
+stages_lower_range: "etappes {{ .From }}–{{ .To }}"
+
+# stories
+filter_trail: Filter op trail
+all: Alles
+what_i_hiked: Wat ik liep
+official_plus_track: "Officiële {{ . }} + mijn opgenomen route"
+official_route: Officiële route
+rest_of_trail: Rest van de trail
+my_track: Mijn route
+my_tracks: Mijn routes
+compared_to_plan: Vergeleken met het plan
+my_track_gpx: Mijn route (.gpx)
+sample_story: "Voorbeeld-GPX — de lijn op deze kaart is een tijdelijke invulling tot de echte route is geüpload."
+map_story: Kaart met de officiële etappes en de route die ik liep
+elevation_mine: Hoogteprofiel van mijn route
+day_in_moments: De dag in momenten
+about_this_day: Over deze dag
+gear_on_hike: Uitrusting op deze tocht
+lesson_learned: "Lesje geleerd: {{ . }}"
+full_gear_list: Volledige paklijst
+previous: Vorige
+next: Volgende
+more_stories: Meer verhalen
+every_walk: Elke wandeling, opgeschreven.
+
+# trails
+trails_heading: De routes achter de verhalen.
+filter_trails: Trails filteren
+status_completed: Uitgelopen
+status_in-progress: Onderweg
+status_planned: Gepland
+status_walked: Gelopen
+netherlands: Nederland
+abroad: Buitenland
+download_gpx: Download GPX
+route_stages: Route & etappes
+show_my_tracks: Toon mijn routes
+showing_my_tracks: Mijn routes zichtbaar
+official_stages: Officiële etappes
+stage_start: Begin etappe
+places_stayed: Waar ik sliep
+sample_trail: "Sommige etappes gebruiken een voorbeeld-GPX. Vervang ze door de officiële bestanden voor exacte kaarten en getallen."
+table_stage: Etappe
+table_km: km
+table_ascent: Stijging m
+table_descent: Daling m
+table_stays: Overnachting
+table_hiked: Gelopen
+not_yet: Nog niet
+table_caption: "Afstand en stijging komen uit het GPX-bestand van elke etappe, tenzij met de hand ingevuld."
+about_trail: Over de trail
+good_to_know: Goed om te weten
+on_this_trail: Op deze trail
+my_stories: Mijn verhalen
+stays_along_trail: Overnachtingen langs deze trail
+route_of: "Route van {{ . }}"
+route_drawing: Routetekening
+map_trail: "Kaart van de {{ . }} met de etappes"
+route_Linear: Lijnroute
+route_Circular: Rondwandeling
+route_Summit: Top
+route_Network: Netwerk
+
+# stages
+previous_stage: "Vorige etappe: {{ . }}"
+next_stage: "Volgende etappe: {{ . }}"
+official_stage: Officiële etappe
+stay_near_end: Overnachting bij de finish
+stage_gpx: GPX van de etappe
+sample_stage: "Voorbeeld-GPX — vervang dit door het officiële bestand voor exacte getallen."
+the_stage: De etappe
+no_description: Nog geen beschrijving.
+start_at: "Start: {{ . }}"
+finish_at: "Finish: {{ . }}"
+water_at: "Water: {{ . }}"
+i_walked_stage: Ik liep deze etappe
+all_stages: Alle etappes
+stages_intro: Elke etappe hoort bij een trail. Kies een trail om de etappes op de kaart te zien.
+map_stage: "Kaart van etappe {{ . }}"
+map_start: "Start · {{ . }}"
+map_finish: "Finish · {{ . }}"
+map_stage_label: "Etappe {{ .N }} · {{ .Title }}"
+map_my_track: "Mijn route · {{ . }}"
+map_needs_js: De kaart heeft JavaScript nodig. De GPX-bestanden werken in elke kaart-app.
+
+# stays
+where_i_slept_heading: Waar ik sliep.
+filter_type: Filter op soort
+map_stays: Kaart van de plekken waar ik sliep
+stay: Overnachting
+my_night_here:
+  one: Mijn nacht hier
+  other: Mijn nachten hier
+paid: Betaald
+to_trail: Naar de trail
+booking: Reserveren
+facilities: Voorzieningen
+would_stay_again: Zou er weer slapen
+answer_yes: "Ja"
+answer_no: "Nee"
+stories_from_here: Verhalen vanaf hier
+location_of: "Ligging van {{ . }}"
+trail: Trail
+type_campsite: Camping
+type_farm-campsite: Boerderijcamping
+type_nivon-house: Nivonhuis
+type_hut: Hut
+type_wild-camp: Wildkamperen
+type_paalkamperen: Paalkamperen
+type_hostel: Hostel
+type_b-b: B&B
+type_hotel: Hotel
+
+# gear
+what_i_carried: Wat ik meesleepte.
+gear_lists: Paklijsten
+gear_list: Paklijst
+used_in: "Gebruikt in {{ .Count }} {{ .Label }}"
+total_on_back: Totaal op mijn rug
+total_listed: Totaal op de lijst
+base_weight: Basisgewicht
+food_water_fuel: "Eten, water & brandstof"
+worn: Gedragen
+not_itemised: Niet uitgesplitst
+weight_split: "Gewichtsverdeling: {{ . }}"
+item: Item
+notes: Notities
+type: Soort
+weight: Gewicht
+next_time: Volgende keer
+kind_worn: gedragen
+kind_consumable: verbruik
+cat_pack: Rugzak
+cat_shelter: Onderdak
+cat_sleep: Slapen
+cat_kitchen: Keuken
+cat_water: Water
+cat_clothing: Kleding
+cat_electronics: Elektronica
+cat_navigation-safety: "Navigatie & veiligheid"
+cat_hygiene: Hygiëne
+cat_other: Overig
+cat_food: Eten
+
+# about
+about: Over mij
+get_in_touch: Neem contact op
+how_site_works: Hoe deze site werkt
+four_kinds: Vier soorten pagina's
+how_stories: "Eén verhaal per wandeldag. Elk verhaal linkt naar de trail, de etappes die ik liep, mijn GPX-route en waar ik sliep."
+how_trails: "De officiële route met etappes en GPX-bestanden, en hoeveel ik er al van gelopen heb."
+how_stays: "Elke camping, hut en elk Nivonhuis waar ik sliep: wat er was, wat het kostte en of ik er terug zou gaan."
+how_gear: "Een paklijst per tocht, met gewichten en de lessen die ik op de harde manier leerde."
+
+# trips / 404
+trips_series: "Tochten & series"
+not_found_eyebrow: "404 · Van de route af"
+not_found_title: "Dit pad loopt dood."
+not_found_text: De pagina die je zocht is verplaatst of heeft nooit bestaan.
+back_to_start: Terug naar het begin
+read_stories: Lees de verhalen
+
+# youtube
+play_video: "Video afspelen: {{ . }}"
+watch_on_youtube: Bekijk op YouTube
+elevation_label: "Hoogteprofiel van {{ .Lo }} tot {{ .Hi }} meter over {{ .Km }} km"
+
+# taalnamen
+lang_en: Engels
+lang_nl: Nederlands

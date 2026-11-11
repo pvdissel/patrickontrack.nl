@@ -1,7 +1,7 @@
 {{ define "main" }}
 <section class="wrap page-head stack" style="--gap: 18px">
-  <p class="eyebrow">Gear</p>
-  <h1 class="title-l">{{ .Params.heading | default "What I carried." }}</h1>
+  <p class="eyebrow">{{ T "gear" }}</p>
+  <h1 class="title-l">{{ .Params.heading | default (T "what_i_carried") }}</h1>
   {{- with .Params.intro }}<p class="lead">{{ . }}</p>{{ end }}
 </section>
 <section class="wrap" style="margin-top: 40px">

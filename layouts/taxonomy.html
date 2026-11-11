@@ -1,7 +1,7 @@
 {{ define "main" }}
 <section class="wrap page-head stack" style="--gap: 18px">
   <p class="eyebrow">{{ .Title }}</p>
-  <h1 class="title-l">{{ if eq .Data.Plural "trips" }}Trips &amp; series{{ else }}{{ .Title }}{{ end }}</h1>
+  <h1 class="title-l">{{ if eq .Data.Plural "trips" }}{{ T "trips_series" }}{{ else }}{{ .Title }}{{ end }}</h1>
 </section>
 <section class="wrap" style="margin-top: 32px">
   <ul class="facilities" style="font-size: 17px; gap: 14px">

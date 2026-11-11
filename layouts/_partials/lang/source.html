@@ -1,0 +1,4 @@
+{{- /* Language of the content file behind a page ("" when it has no file). */ -}}
+{{- $l := "" -}}
+{{- with .File }}{{ with findRESubmatch `/content/([a-z]{2})/` .Filename 1 }}{{ $l = index (index . 0) 1 }}{{ end }}{{ end -}}
+{{- return $l -}}

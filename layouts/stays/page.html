@@ -7,8 +7,8 @@
   {{- $md = partial "data/mapdata.html" (dict "trail" $trail "stays" (slice .) "highlight" (cond (not $stage) dict (dict $stage.Path true))) -}}
 {{- end -}}
 <section class="wrap page-head stack" style="--gap: 18px; padding-top: 32px">
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ "stays/" | relURL }}">Stays</a> / {{ .Title }}</nav>
-  <p class="card__kind" style="font-size: 12.5px">{{ partial "icon.html" (dict "name" (partial "stay-icon.html" .Params.stay_type) "size" 18) }}{{ .Params.stay_type | default "Stay" }}</p>
+  <nav class="crumbs" aria-label="{{ T "breadcrumb" }}"><a href="{{ (site.GetPage "/stays").RelPermalink }}">{{ T "stays" }}</a> / {{ .Title }}</nav>
+  <p class="card__kind" style="font-size: 12.5px">{{ partial "icon.html" (dict "name" (partial "stay-icon.html" .Params.stay_type) "size" 18) }}{{ partial "label.html" (dict "prefix" "type" "value" (.Params.stay_type | default (T "stay"))) }}</p>
   <h1 class="title-l">{{ .Title }}</h1>
   <div class="metas">
     {{- with .Params.place }}<span class="meta">{{ partial "icon.html" (dict "name" "pin" "size" 15) }}{{ . }}</span>{{ end }}
@@ -25,34 +25,35 @@
 
 <section class="wrap section layout" style="margin-top: 48px">
   <div class="layout__main stack" style="--gap: 20px">
-    <h2 class="title-m" style="font-size: 32px">My night{{ if gt (len $nights) 1 }}s{{ end }} here</h2>
+    <h2 class="title-m" style="font-size: 32px">{{ T "my_night_here" (len $nights) }}</h2>
+    {{ partial "lang/notice.html" . }}
     {{- with .Content }}<div class="prose" style="font-size: 17px">{{ . }}</div>{{ end }}
     {{- if $md.markers }}
-    {{ partial "map.html" (dict "page" . "id" "map-stay" "size" "short" "layers" $md.layers "markers" $md.markers "label" (printf "Location of %s" .Title)) }}
-    {{ partial "legend.html" (slice (slice "official" (cond (not $trail) "Trail" $trail.Title)) (slice "stay" .Title)) }}
+    {{ partial "map.html" (dict "page" . "id" "map-stay" "size" "short" "layers" $md.layers "markers" $md.markers "label" (T "location_of" .Title)) }}
+    {{ partial "legend.html" (slice (slice "official" (cond (not $trail) (T "trail") $trail.Title)) (slice "stay" .Title)) }}
     {{- end }}
   </div>
   <aside class="layout__aside">
     <div class="card card--quiet" style="gap: 18px">
       <div class="stats--grid">
-        {{ partial "stat.html" (dict "label" "Paid" "value" .Params.price "icon" "euro") }}
-        {{ partial "stat.html" (dict "label" "Nights" "value" (len $nights) "icon" "moon") }}
-        {{- with .Params.to_trail_km }}{{ partial "stat.html" (dict "label" "To the trail" "value" . "unit" "km" "icon" "route") }}{{ end }}
-        {{- with .Params.booking }}{{ partial "stat.html" (dict "label" "Booking" "value" . "icon" "calendar") }}{{ end }}
+        {{ partial "stat.html" (dict "label" (T "paid") "value" .Params.price "icon" "euro") }}
+        {{ partial "stat.html" (dict "label" (T "nights") "value" (len $nights) "icon" "moon") }}
+        {{- with .Params.to_trail_km }}{{ partial "stat.html" (dict "label" (T "to_trail") "value" . "unit" "km" "icon" "route") }}{{ end }}
+        {{- with .Params.booking }}{{ partial "stat.html" (dict "label" (T "booking") "value" . "icon" "calendar") }}{{ end }}
       </div>
       {{- with .Params.facilities }}
       <div style="border-top: 1px solid var(--line); padding-top: 16px">
-        <p class="subtle-label" style="margin-bottom: 12px">Facilities</p>
+        <p class="subtle-label" style="margin-bottom: 12px">{{ T "facilities" }}</p>
         <ul class="facilities">{{ range . }}<li>{{ partial "icon.html" (dict "name" "check" "size" 17) }}{{ . }}</li>{{ end }}</ul>
       </div>
       {{- end }}
       {{- if isset .Params "would_return" }}
-      <div class="verdict" style="border-top: 1px solid var(--line); padding-top: 16px"><span>Would stay again</span><span class="chip {{ if .Params.would_return }}chip--ember{{ end }}">{{ cond .Params.would_return "Yes" "No" }}</span></div>
+      <div class="verdict" style="border-top: 1px solid var(--line); padding-top: 16px"><span>{{ T "would_stay_again" }}</span><span class="chip {{ if .Params.would_return }}chip--ember{{ end }}">{{ cond .Params.would_return (T "answer_yes") (T "answer_no") }}</span></div>
       {{- end }}
     </div>
     {{- with $nights }}
     <div class="card card--quiet">
-      <p class="subtle-label">Stories from here</p>
+      <p class="subtle-label">{{ T "stories_from_here" }}</p>
       {{- range . }}
       <a href="{{ .RelPermalink }}" style="display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: 8px; box-shadow: inset 0 0 0 1px var(--line); text-decoration: none; color: var(--ink)">
         <span class="meta" style="color: var(--ember-text)">{{ .Date | time.Format "2 Jan 2006" }}</span>

@@ -13,7 +13,8 @@
       {{- with $stages }}{{ partial "stage-chip.html" . }}{{ end }}
       {{- with $st.distance }}<span class="meta">{{ partial "icon.html" (dict "name" "route" "size" 15) }}{{ partial "num.html" (dict "v" . "unit" "km") }} km</span>{{ end }}
       {{- range $stays }}<span class="meta">{{ partial "icon.html" (dict "name" "moon" "size" 15) }}{{ .Title }}</span>{{ end }}
-      {{- if .Draft }}<span class="draft-badge">Draft</span>{{ end }}
+      {{- if partial "lang/is-fallback.html" . }}<span class="lang-badge" title="{{ T "only_in" (dict "Name" (T (printf "lang_%s" (partial "lang/source.html" .)))) }}">{{ upper (partial "lang/source.html" .) }}</span>{{ end }}
+      {{- if .Draft }}<span class="draft-badge">{{ T "draft" }}</span>{{ end }}
     </div>
   </div>
   <div class="story-row__thumb">

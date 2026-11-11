@@ -5,7 +5,19 @@
 <title>{{ $title }}</title>
 {{- $desc := or .Description .Summary site.Params.description | plainify | strings.Truncate 160 }}
 <meta name="description" content="{{ $desc }}">
+{{- $fallback := partial "lang/is-fallback.html" . -}}
+{{- if $fallback -}}
+  {{- /* untranslated copy: point search engines at the original */ -}}
+  {{- $src := partial "lang/source.html" . -}}
+  {{- $orig := . }}{{ range .Translations }}{{ if eq .Language.Lang $src }}{{ $orig = . }}{{ end }}{{ end }}
+<link rel="canonical" href="{{ $orig.Permalink }}">
+{{- else }}
 <link rel="canonical" href="{{ .Permalink }}">
+<link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}">
+{{- range .Translations }}{{ if not (partial "lang/is-fallback.html" .) }}
+<link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}">
+{{- end }}{{ end }}
+{{- end }}
 <meta name="theme-color" content="#1E3D2F">
 {{- if .Draft }}<meta name="robots" content="noindex">{{ end }}
 <meta property="og:type" content="{{ cond .IsPage "article" "website" }}">
@@ -13,6 +25,7 @@
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:url" content="{{ .Permalink }}">
 <meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:locale" content="{{ replace (site.Language.Locale | default site.Language.Lang) "-" "_" }}">
 {{- $cover := .Params.cover | default site.Home.Params.cover -}}
 {{- with $cover }}{{ with resources.Get (strings.TrimPrefix "/" .) }}{{ $og := .Fill "1200x630 jpg Smart" }}
 <meta property="og:image" content="{{ $og.Permalink }}">
@@ -21,7 +34,7 @@
 <link rel="icon" href="{{ "favicon.ico" | relURL }}" sizes="32x32">
 <link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{{ "apple-touch-icon.png" | relURL }}">
-<link rel="manifest" href="{{ "site.webmanifest" | relURL }}">
+<link rel="manifest" href="{{ "site.webmanifest" | absURL }}">
 {{- with .OutputFormats.Get "rss" }}
 <link rel="alternate" type="application/rss+xml" href="{{ .RelPermalink }}" title="{{ site.Title }}">
 {{- end }}

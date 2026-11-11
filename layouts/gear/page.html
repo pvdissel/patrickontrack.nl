@@ -9,14 +9,14 @@
 {{- $stories := slice }}{{ range $s := where site.RegularPages "Section" "stories" }}{{ with partial "ref.html" (dict "ref" $s.Params.gear "section" "gear") }}{{ if eq .Path $.Path }}{{ $stories = $stories | append $s }}{{ end }}{{ end }}{{ end -}}
 
 <section class="wrap page-head stack" style="--gap: 18px">
-  <p class="eyebrow">Gear</p>
-  <h1 class="title-l">What I carried.</h1>
+  <p class="eyebrow">{{ T "gear" }}</p>
+  <h1 class="title-l">{{ with site.GetPage "/gear" }}{{ .Params.heading | default (T "what_i_carried") }}{{ end }}</h1>
 </section>
 
 <section class="wrap layout" style="margin-top: 36px; gap: 40px">
-  <nav class="layout__aside panel gear-nav" aria-label="Gear lists" style="flex: 1 1 240px">
+  <nav class="layout__aside panel gear-nav" aria-label="{{ T "gear_lists" }}" style="flex: 1 1 240px">
     {{- range (where site.RegularPages "Section" "gear").ByDate.Reverse }}
-    <a href="{{ .RelPermalink }}"{{ if eq .Path $.Path }} aria-current="page"{{ end }}><strong>{{ .Title }}</strong><span class="meta">{{ .Date | time.Format "Jan 2006" }}{{ with .Params.nights }} · {{ . }} {{ cond (eq (int .) 1) "night" "nights" }}{{ end }}</span></a>
+    <a href="{{ .RelPermalink }}"{{ if eq .Path $.Path }} aria-current="page"{{ end }}><strong>{{ .Title }}</strong><span class="meta">{{ .Date | time.Format "January 2006" }}{{ with .Params.nights }} · {{ . }} {{ T "night" (int .) }}{{ end }}</span></a>
     {{- end }}
   </nav>
 
@@ -24,40 +24,40 @@
     <div class="stack" style="--gap: 18px">
       <div class="row" style="justify-content: space-between; align-items: baseline">
         <h2 class="title-m">{{ .Title }}</h2>
-        {{- with $stories }}<a class="link-arrow" href="{{ (index . 0).RelPermalink }}">Used in {{ len . }} {{ cond (eq (len .) 1) "story" "stories" }}</a>{{ end }}
+        {{- with $stories }}<a class="link-arrow" href="{{ (index . 0).RelPermalink }}">{{ T "used_in" (dict "Count" (len .) "Label" (T "story_count" (len .))) }}</a>{{ end }}
       </div>
       {{- with .Description }}<p class="muted">{{ . }}</p>{{ end }}
       <div class="stats">
-        {{ partial "stat.html" (dict "label" (cond $t.weighed "Total on my back" "Total listed") "value" (partial "num.html" (dict "v" $t.total "unit" "kg")) "unit" "kg" "icon" "pack") }}
-        {{ partial "stat.html" (dict "label" "Base weight" "value" (partial "num.html" (dict "v" $t.base "unit" "kg")) "unit" "kg" "icon" "weight") }}
-        {{- if gt $t.consumable 0.0 }}{{ partial "stat.html" (dict "label" "Food, water & fuel" "value" (partial "num.html" (dict "v" $t.consumable "unit" "kg")) "unit" "kg" "icon" "food") }}{{ end }}
-        {{- if gt $t.worn 0.0 }}{{ partial "stat.html" (dict "label" "Worn" "value" (partial "num.html" (dict "v" $t.worn "unit" "kg")) "unit" "kg" "icon" "shirt") }}{{ end }}
+        {{ partial "stat.html" (dict "label" (cond $t.weighed (T "total_on_back") (T "total_listed")) "value" (partial "num.html" (dict "v" $t.total "unit" "kg")) "unit" "kg" "icon" "pack") }}
+        {{ partial "stat.html" (dict "label" (T "base_weight") "value" (partial "num.html" (dict "v" $t.base "unit" "kg")) "unit" "kg" "icon" "weight") }}
+        {{- if gt $t.consumable 0.0 }}{{ partial "stat.html" (dict "label" (T "food_water_fuel") "value" (partial "num.html" (dict "v" $t.consumable "unit" "kg")) "unit" "kg" "icon" "food") }}{{ end }}
+        {{- if gt $t.worn 0.0 }}{{ partial "stat.html" (dict "label" (T "worn") "value" (partial "num.html" (dict "v" $t.worn "unit" "kg")) "unit" "kg" "icon" "shirt") }}{{ end }}
       </div>
       {{- if gt $t.total 0.0 }}
       {{- $parts := slice }}
-      {{- range $cats }}{{ $w := index $t.categories . | default 0.0 }}{{ if gt $w 0.0 }}{{ $parts = $parts | append (dict "name" . "kg" (div $w 1000.0) "color" (index $colors . | default "#CFD6C6")) }}{{ end }}{{ end }}
-      {{- if gt $t.unlisted 0.05 }}{{ $parts = $parts | append (dict "name" "Not itemised" "kg" $t.unlisted "color" "#E3E6DD") }}{{ end }}
-      {{- $desc := slice }}{{ range $parts }}{{ $desc = $desc | append (printf "%s %.1f kg" .name .kg) }}{{ end }}
-      <div class="weightbar" role="img" aria-label="Weight split: {{ delimit $desc ", " }}">
+      {{- range $cats }}{{ $w := index $t.categories . | default 0.0 }}{{ if gt $w 0.0 }}{{ $parts = $parts | append (dict "name" (partial "label.html" (dict "prefix" "cat" "value" .)) "kg" (div $w 1000.0) "color" (index $colors . | default "#CFD6C6")) }}{{ end }}{{ end }}
+      {{- if gt $t.unlisted 0.05 }}{{ $parts = $parts | append (dict "name" (T "not_itemised") "kg" $t.unlisted "color" "#E3E6DD") }}{{ end }}
+      {{- $desc := slice }}{{ range $parts }}{{ $desc = $desc | append (printf "%s %s kg" .name (lang.FormatNumber 1 .kg)) }}{{ end }}
+      <div class="weightbar" role="img" aria-label="{{ T "weight_split" (delimit $desc ", ") }}">
         {{- range $parts }}<span style="flex: {{ printf "%.3f" .kg }} 1 0; background: {{ .color | safeCSS }}" title="{{ .name }}"></span>{{ end }}
       </div>
-      <div class="weightlegend">{{ range $parts }}<span><i style="background: {{ .color | safeCSS }}"></i>{{ .name }} <span class="meta">{{ printf "%.1f" .kg }} kg</span></span>{{ end }}</div>
+      <div class="weightlegend">{{ range $parts }}<span><i style="background: {{ .color | safeCSS }}"></i>{{ .name }} <span class="meta">{{ lang.FormatNumber 1 .kg }} kg</span></span>{{ end }}</div>
       {{- end }}
     </div>
 
     {{- range $cats }}
     {{- $c := . }}
     <div class="stack" style="--gap: 10px">
-      <h3 class="gear-cat">{{ partial "icon.html" (dict "name" (index $icons $c | default "route") "size" 20) }}{{ $c }}</h3>
+      <h3 class="gear-cat">{{ partial "icon.html" (dict "name" (index $icons $c | default "route") "size" 20) }}{{ partial "label.html" (dict "prefix" "cat" "value" $c) }}</h3>
       <div class="table-box">
         <table class="table table--gear">
-          <thead><tr><th scope="col">Item</th><th scope="col">Notes</th><th scope="col"><span class="visually-hidden">Type</span></th><th scope="col" class="num">Weight</th></tr></thead>
+          <thead><tr><th scope="col">{{ T "item" }}</th><th scope="col">{{ T "notes" }}</th><th scope="col"><span class="visually-hidden">{{ T "type" }}</span></th><th scope="col" class="num">{{ T "weight" }}</th></tr></thead>
           <tbody>
             {{- range $items }}{{ if eq (.category | default "Other") $c }}
             <tr>
               <td>{{ .name }}</td>
               <td class="notes">{{ .notes }}</td>
-              <td>{{ with .kind }}{{ if ne . "base" }}<span class="chip chip--stage">{{ . }}</span>{{ end }}{{ end }}</td>
+              <td>{{ with .kind }}{{ if ne . "base" }}<span class="chip chip--stage">{{ T (printf "kind_%s" .) | default . }}</span>{{ end }}{{ end }}</td>
               <td class="num">{{ with .weight_g }}{{ lang.FormatNumber 0 (float .) }} g{{ else }}—{{ end }}</td>
             </tr>
             {{- end }}{{ end }}
@@ -71,7 +71,7 @@
 
     {{- with .Params.lessons }}
     <div class="panel panel--dark lessons">
-      <div class="moments__head" style="margin: 0">{{ partial "icon.html" (dict "name" "bulb" "size" 20) }}Next time</div>
+      <div class="moments__head" style="margin: 0">{{ partial "icon.html" (dict "name" "bulb" "size" 20) }}{{ T "next_time" }}</div>
       <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
     </div>
     {{- end }}

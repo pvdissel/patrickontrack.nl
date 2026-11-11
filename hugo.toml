@@ -1,13 +1,12 @@
 baseURL = "https://patrickontrack.nl/"
-locale = "en"
 title = "Patrick on Track"
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false   # English at /, Dutch at /nl/
 enableRobotsTXT = true
 timeZone = "Europe/Amsterdam"
 
 [params]
   author = "Patrick van Dissel"
-  tagline = "Taking it one step at a time."
-  description = "Stories from long-distance trails, the routes and stages behind them, the places I slept and what I carried."
   since = "2021"
   youtube = "https://www.youtube.com/"   # TODO: your channel URL
   email = ""                              # optional contact address shown on About
@@ -27,27 +26,75 @@ timeZone = "Europe/Amsterdam"
     stories = "/stories/:year/:slug/"
     stages = "/trails/stages/:contentbasename/"
 
-[menus]
-  [[menus.main]]
-    name = "Stories"
-    pageRef = "/stories"
-    weight = 10
-  [[menus.main]]
-    name = "Trails"
-    pageRef = "/trails"
-    weight = 20
-  [[menus.main]]
-    name = "Stays"
-    pageRef = "/stays"
-    weight = 30
-  [[menus.main]]
-    name = "Gear"
-    pageRef = "/gear"
-    weight = 40
-  [[menus.main]]
-    name = "About"
-    pageRef = "/about"
-    weight = 50
+# ---------------------------------------------------------------- languages
+# Content lives in content/en and content/nl. A page that exists in only one
+# language is shown in the other one too (see the mounts below), with a note.
+[languages]
+  [languages.en]
+    weight = 1
+    locale = "en"
+    label = "English"
+    [languages.en.params]
+      tagline = "Taking it one step at a time."
+      description = "Stories from long-distance trails, the routes and stages behind them, the places I slept and what I carried."
+    [[languages.en.menus.main]]
+      identifier = "stories"
+      name = "Stories"
+      pageRef = "/stories"
+      weight = 10
+    [[languages.en.menus.main]]
+      identifier = "trails"
+      name = "Trails"
+      pageRef = "/trails"
+      weight = 20
+    [[languages.en.menus.main]]
+      identifier = "stays"
+      name = "Stays"
+      pageRef = "/stays"
+      weight = 30
+    [[languages.en.menus.main]]
+      identifier = "gear"
+      name = "Gear"
+      pageRef = "/gear"
+      weight = 40
+    [[languages.en.menus.main]]
+      identifier = "about"
+      name = "About"
+      pageRef = "/about"
+      weight = 50
+
+  [languages.nl]
+    weight = 2
+    locale = "nl"
+    label = "Nederlands"
+    [languages.nl.params]
+      tagline = "Stap voor stap."
+      description = "Verhalen van lange-afstandswandelingen, de routes en etappes erachter, de plekken waar ik sliep en wat ik meedroeg."
+    [[languages.nl.menus.main]]
+      identifier = "stories"
+      name = "Verhalen"
+      pageRef = "/stories"
+      weight = 10
+    [[languages.nl.menus.main]]
+      identifier = "trails"
+      name = "Trails"
+      pageRef = "/trails"
+      weight = 20
+    [[languages.nl.menus.main]]
+      identifier = "stays"
+      name = "Overnachtingen"
+      pageRef = "/stays"
+      weight = 30
+    [[languages.nl.menus.main]]
+      identifier = "gear"
+      name = "Uitrusting"
+      pageRef = "/gear"
+      weight = 40
+    [[languages.nl.menus.main]]
+      identifier = "about"
+      name = "Over mij"
+      pageRef = "/about"
+      weight = 50
 
 [outputs]
   home = ["html", "rss"]
@@ -88,9 +135,28 @@ timeZone = "Europe/Amsterdam"
     target = "static"
     # originals are only used as sources for resized WebP copies (no EXIF/GPS leaks, smaller deploy)
     files = ['! images/**']
+  # Each language first gets its own folder, then the other one to fill gaps
+  # (the first mount wins when a file exists in both).
   [[module.mounts]]
-    source = "content"
+    source = "content/en"
     target = "content"
+    [module.mounts.sites.matrix]
+      languages = ["en"]
+  [[module.mounts]]
+    source = "content/nl"
+    target = "content"
+    [module.mounts.sites.matrix]
+      languages = ["en"]
+  [[module.mounts]]
+    source = "content/nl"
+    target = "content"
+    [module.mounts.sites.matrix]
+      languages = ["nl"]
+  [[module.mounts]]
+    source = "content/en"
+    target = "content"
+    [module.mounts.sites.matrix]
+      languages = ["nl"]
   [[module.mounts]]
     source = "layouts"
     target = "layouts"
@@ -100,3 +166,6 @@ timeZone = "Europe/Amsterdam"
   [[module.mounts]]
     source = "archetypes"
     target = "archetypes"
+  [[module.mounts]]
+    source = "i18n"
+    target = "i18n"

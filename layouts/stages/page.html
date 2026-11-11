@@ -9,59 +9,59 @@
 {{- $md := partial "data/mapdata.html" (dict "stages" (slice .) "highlight" (dict .Path true) "tracks" $walks "stays" $endStays) -}}
 
 <section class="wrap page-head stack" style="--gap: 18px; padding-top: 32px">
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ "trails/" | relURL }}">Trails</a>{{ with $trail }} / <a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }} / Stage {{ .Params.number }}</nav>
+  <nav class="crumbs" aria-label="{{ T "breadcrumb" }}"><a href="{{ (site.GetPage "/trails").RelPermalink }}">{{ T "trails" }}</a>{{ with $trail }} / <a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }} / {{ T "stage_n" .Params.number }}</nav>
   <div class="row" style="justify-content: space-between; align-items: flex-end; --gap: 20px">
     <div class="stack" style="--gap: 12px">
-      <p class="eyebrow">Stage {{ .Params.number }}{{ with $all }} of {{ len . }}{{ end }}</p>
+      <p class="eyebrow">{{ with $all }}{{ T "stage_n_of" (dict "N" $.Params.number "Of" (len .)) }}{{ else }}{{ T "stage_n" .Params.number }}{{ end }}</p>
       <h1 class="title-l">{{ .Title }}</h1>
     </div>
     <div class="row" style="--gap: 10px">
-      {{- with $prev }}<a class="btn btn--ghost" style="padding: 0; width: 46px; justify-content: center; border-radius: 50%" href="{{ .RelPermalink }}" aria-label="Previous stage: {{ .Title }}">{{ partial "icon.html" (dict "name" "arrowl" "size" 18) }}</a>{{ end }}
-      {{- with $next }}<a class="btn" style="padding: 0; width: 46px; justify-content: center; border-radius: 50%" href="{{ .RelPermalink }}" aria-label="Next stage: {{ .Title }}">{{ partial "icon.html" (dict "name" "arrow" "size" 18) }}</a>{{ end }}
+      {{- with $prev }}<a class="btn btn--ghost" style="padding: 0; width: 46px; justify-content: center; border-radius: 50%" href="{{ .RelPermalink }}" aria-label="{{ T "previous_stage" .Title }}">{{ partial "icon.html" (dict "name" "arrowl" "size" 18) }}</a>{{ end }}
+      {{- with $next }}<a class="btn" style="padding: 0; width: 46px; justify-content: center; border-radius: 50%" href="{{ .RelPermalink }}" aria-label="{{ T "next_stage" .Title }}">{{ partial "icon.html" (dict "name" "arrow" "size" 18) }}</a>{{ end }}
     </div>
   </div>
   <div class="stats" style="padding-block: 24px; border-block: 1px solid var(--line)">
-    {{ partial "stat.html" (dict "label" "Distance" "value" (partial "num.html" (dict "v" $st.distance "unit" "km")) "unit" "km" "icon" "route") }}
-    {{ partial "stat.html" (dict "label" "Ascent" "value" (partial "num.html" (dict "v" $st.ascent "unit" "m")) "unit" "m" "icon" "up") }}
-    {{ partial "stat.html" (dict "label" "Descent" "value" (partial "num.html" (dict "v" $st.descent "unit" "m")) "unit" "m" "icon" "down") }}
-    {{- with .Params.walking_time }}{{ partial "stat.html" (dict "label" "Walking time" "value" . "unit" "h" "icon" "clock") }}{{ end }}
+    {{ partial "stat.html" (dict "label" (T "distance") "value" (partial "num.html" (dict "v" $st.distance "unit" "km")) "unit" "km" "icon" "route") }}
+    {{ partial "stat.html" (dict "label" (T "ascent") "value" (partial "num.html" (dict "v" $st.ascent "unit" "m")) "unit" "m" "icon" "up") }}
+    {{ partial "stat.html" (dict "label" (T "descent") "value" (partial "num.html" (dict "v" $st.descent "unit" "m")) "unit" "m" "icon" "down") }}
+    {{- with .Params.walking_time }}{{ partial "stat.html" (dict "label" (T "walking_time") "value" . "unit" "h" "icon" "clock") }}{{ end }}
   </div>
 </section>
 
 {{- if or $md.layers $md.markers }}
 <section class="wrap stack" style="margin-top: 28px; --gap: 14px">
-  {{ partial "map.html" (dict "page" . "id" "map-stage" "layers" $md.layers "markers" $md.markers "label" (printf "Map of stage %v" .Params.number)) }}
+  {{ partial "map.html" (dict "page" . "id" "map-stage" "layers" $md.layers "markers" $md.markers "label" (T "map_stage" .Params.number)) }}
   <div class="row" style="justify-content: space-between; --gap: 14px">
-    {{ partial "legend.html" (slice (slice "official" "Official stage") (slice "mine" "My track") (slice "stay" "Stay near the end")) }}
-    {{- with .Params.gpx }}<a class="btn btn--ghost btn--small" href="{{ . | relURL }}" download>{{ partial "icon.html" (dict "name" "download" "size" 16) }}Stage GPX</a>{{ end }}
+    {{ partial "legend.html" (slice (slice "official" (T "official_stage")) (slice "mine" (T "my_track")) (slice "stay" (T "stay_near_end"))) }}
+    {{- with .Params.gpx }}<a class="btn btn--ghost btn--small" href="{{ . | relURL }}" download>{{ partial "icon.html" (dict "name" "download" "size" 16) }}{{ T "stage_gpx" }}</a>{{ end }}
   </div>
-  {{- with $st.gpx }}{{ if .sample }}<p class="sample-note">{{ partial "icon.html" (dict "name" "info" "size" 16) }}<span>Sample GPX — replace it with the official stage file for exact numbers.</span></p>{{ end }}{{ end }}
+  {{- with $st.gpx }}{{ if .sample }}<p class="sample-note">{{ partial "icon.html" (dict "name" "info" "size" 16) }}<span>{{ T "sample_stage" }}</span></p>{{ end }}{{ end }}
   {{- with $st.gpx }}{{ if gt (len .profile) 1 }}<div class="panel" style="padding: 18px 20px 10px">{{ partial "elevation.html" (dict "profile" .profile) }}</div>{{ end }}{{ end }}
 </section>
 {{- end }}
 
 <section class="wrap section layout" style="margin-top: 56px">
   <div class="layout__main stack">
-    <h2 class="title-m" style="font-size: 32px">The stage</h2>
-    {{- with .Content }}<div class="prose" style="font-size: 17px">{{ . }}</div>{{ else }}<p class="muted">No description yet.</p>{{ end }}
+    <h2 class="title-m" style="font-size: 32px">{{ T "the_stage" }}</h2>
+    {{- with .Content }}<div class="prose" style="font-size: 17px">{{ . }}</div>{{ else }}<p class="muted">{{ T "no_description" }}</p>{{ end }}
     {{- if or .Params.from .Params.to .Params.water }}
     <ul class="facilities" style="gap: 12px; font-size: 15px">
-      {{- with .Params.from }}<li>{{ partial "icon.html" (dict "name" "train" "size" 20) }}Start: {{ . }}{{ with $.Params.start_transport }} · {{ . }}{{ end }}</li>{{ end }}
-      {{- with .Params.to }}<li>{{ partial "icon.html" (dict "name" "flag" "size" 20) }}Finish: {{ . }}{{ with $.Params.finish_transport }} · {{ . }}{{ end }}</li>{{ end }}
-      {{- with .Params.water }}<li>{{ partial "icon.html" (dict "name" "water" "size" 20) }}Water: {{ . }}</li>{{ end }}
+      {{- with .Params.from }}<li>{{ partial "icon.html" (dict "name" "train" "size" 20) }}{{ T "start_at" . }}{{ with $.Params.start_transport }} · {{ . }}{{ end }}</li>{{ end }}
+      {{- with .Params.to }}<li>{{ partial "icon.html" (dict "name" "flag" "size" 20) }}{{ T "finish_at" . }}{{ with $.Params.finish_transport }} · {{ . }}{{ end }}</li>{{ end }}
+      {{- with .Params.water }}<li>{{ partial "icon.html" (dict "name" "water" "size" 20) }}{{ T "water_at" . }}</li>{{ end }}
     </ul>
     {{- end }}
   </div>
   <aside class="layout__aside">
     <div class="card card--quiet">
-      <p class="subtle-label">I walked this stage</p>
+      <p class="subtle-label">{{ T "i_walked_stage" }}</p>
       {{- range $walks }}
       <a class="pager__mini" href="{{ .RelPermalink }}" style="display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: 8px; box-shadow: inset 0 0 0 1px var(--line); text-decoration: none; color: var(--ink)">
         <span class="meta" style="color: var(--ember-text)">{{ .Date | time.Format "2 Jan 2006" }}</span>
         <span style="font: 600 20px/1.15 var(--f-head)">{{ .Title }}</span>
       </a>
       {{- else }}
-      <p class="muted" style="font-size: 14.5px">Not yet.</p>
+      <p class="muted" style="font-size: 14.5px">{{ T "not_yet" }}</p>
       {{- end }}
     </div>
     {{- range $endStays }}{{ partial "cards/stay.html" . }}{{ end }}

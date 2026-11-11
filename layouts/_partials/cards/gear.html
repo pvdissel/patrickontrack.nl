@@ -1,12 +1,12 @@
 {{- $t := partialCached "data/gear-totals.html" . .Path -}}
 <article class="card">
   <div class="card__body">
-    <p class="card__kind">{{ partial "icon.html" (dict "name" "pack" "size" 16) }}Gear list{{ with .Params.nights }} · {{ . }} {{ cond (eq (int .) 1) "night" "nights" }}{{ end }}</p>
+    <p class="card__kind">{{ partial "icon.html" (dict "name" "pack" "size" 16) }}{{ T "gear_list" }}{{ with .Params.nights }} · {{ . }} {{ T "night" (int .) }}{{ end }}</p>
     <h3 class="card__title" style="font-size: 26px"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
     {{- with .Description }}<p class="card__text">{{ . }}</p>{{ end }}
     <div class="stats" style="--gap: 28px">
-      {{- if gt $t.total 0.0 }}<div class="stat"><span class="stat__label">Total</span><span class="stat__value">{{ partial "num.html" (dict "v" $t.total "unit" "kg") }}<span class="stat__unit">kg</span></span></div>{{ end }}
-      <div class="stat"><span class="stat__label">Items</span><span class="stat__value">{{ $t.count }}</span></div>
+      {{- if gt $t.total 0.0 }}<div class="stat"><span class="stat__label">{{ T "total" }}</span><span class="stat__value">{{ partial "num.html" (dict "v" $t.total "unit" "kg") }}<span class="stat__unit">kg</span></span></div>{{ end }}
+      <div class="stat"><span class="stat__label">{{ T "items" }}</span><span class="stat__value">{{ $t.count }}</span></div>
     </div>
   </div>
 </article>

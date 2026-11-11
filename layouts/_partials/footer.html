@@ -7,24 +7,24 @@
   <div class="site-footer__body">
     <div class="wrap site-footer__inner">
       <div class="site-footer__about">
-        <a class="brand brand--light" href="{{ "/" | relURL }}">{{ partial "logo.html" (dict "size" 36 "variant" "light") }}<span class="wordmark">Patrick <span>on</span> Track</span></a>
-        <p>{{ site.Params.tagline }} Stories, trails and the places I slept along the way.</p>
+        <a class="brand brand--light" href="{{ site.Home.RelPermalink }}">{{ partial "logo.html" (dict "size" 36 "variant" "light") }}<span class="wordmark">Patrick <span>on</span> Track</span></a>
+        <p>{{ site.Params.tagline }} {{ T "footer_tagline" }}</p>
       </div>
       <div class="site-footer__cols">
         <div>
-          <h2 class="eyebrow">Explore</h2>
-          <ul>{{ range site.Menus.main }}{{ if ne .Name "About" }}<li><a href="{{ .URL }}">{{ .Name }}</a></li>{{ end }}{{ end }}</ul>
+          <h2 class="eyebrow">{{ T "explore" }}</h2>
+          <ul>{{ range site.Menus.main }}{{ if ne .Identifier "about" }}<li><a href="{{ .URL }}">{{ .Name }}</a></li>{{ end }}{{ end }}</ul>
         </div>
         <div>
-          <h2 class="eyebrow">Elsewhere</h2>
+          <h2 class="eyebrow">{{ T "elsewhere" }}</h2>
           <ul>
             {{- with site.Params.youtube }}<li><a href="{{ . }}" rel="me">YouTube</a></li>{{ end }}
-            <li><a href="{{ "stories/index.xml" | relURL }}">RSS feed</a></li>
-            <li><a href="{{ "about/" | relURL }}">About me</a></li>
+            <li><a href="{{ with site.GetPage "/stories" }}{{ with .OutputFormats.Get "rss" }}{{ .RelPermalink }}{{ end }}{{ end }}">{{ T "rss" }}</a></li>
+            <li><a href="{{ with site.GetPage "/about" }}{{ .RelPermalink }}{{ end }}">{{ T "about_me" }}</a></li>
           </ul>
         </div>
       </div>
     </div>
-    <div class="wrap site-footer__legal">© {{ now.Year }} {{ site.Params.author }} · Built with Hugo · Maps © OpenStreetMap contributors</div>
+    <div class="wrap site-footer__legal">© {{ now.Year }} {{ site.Params.author }} · {{ T "built_with" }}</div>
   </div>
 </footer>

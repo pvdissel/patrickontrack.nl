@@ -1,0 +1,4 @@
+{{- /* Translate a stored English value. dict "prefix" "type" "value" "Farm campsite" → T "type_farm-campsite" */ -}}
+{{- $v := string .value -}}
+{{- $slug := strings.Trim (replaceRE `[^a-z0-9]+` "-" (lower $v)) "-" -}}
+{{- return (T (printf "%s_%s" .prefix $slug) | default $v) -}}

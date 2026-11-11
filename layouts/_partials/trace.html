@@ -15,7 +15,7 @@
 {{- $dy := math.Max 0.0001 (sub $maxLat $minLat) -}}
 {{- $s := math.Min (div (sub $W (mul 2 $pad)) $dx) (div (sub $H (mul 2 $pad)) $dy) -}}
 {{- $ox := div (sub $W (mul $dx $s)) 2 }}{{ $oy := div (sub $H (mul $dy $s)) 2 -}}
-<svg class="trace" viewBox="0 0 {{ $W }} {{ $H }}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="{{ .label | default "Route drawing" }}">
+<svg class="trace" viewBox="0 0 {{ $W }} {{ $H }}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="{{ .label | default (T "route_drawing") }}">
   <g opacity=".5" fill="none" stroke="#CBD2C1" stroke-width="1">
     <ellipse cx="{{ mul $W 0.3 }}" cy="{{ mul $H 0.4 }}" rx="{{ mul $W 0.18 }}" ry="{{ mul $H 0.22 }}"/>
     <ellipse cx="{{ mul $W 0.3 }}" cy="{{ mul $H 0.4 }}" rx="{{ mul $W 0.28 }}" ry="{{ mul $H 0.36 }}"/>

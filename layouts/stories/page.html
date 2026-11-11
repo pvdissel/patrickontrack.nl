@@ -10,17 +10,17 @@
 
 <article>
 <header class="wrap page-head stack" style="--gap: 20px; padding-top: 28px">
-  <nav class="crumbs" aria-label="Breadcrumb">
-    <a href="{{ "stories/" | relURL }}">Stories</a>
+  <nav class="crumbs" aria-label="{{ T "breadcrumb" }}">
+    <a href="{{ (site.GetPage "/stories").RelPermalink }}">{{ T "stories" }}</a>
     {{- with $series }} / <a href="{{ (site.GetPage (printf "/trips/%s" (urlize .))).RelPermalink }}">{{ . }}</a>{{ end }}
   </nav>
   <h1 class="title-l" style="max-width: 980px">{{ .Title }}</h1>
   <div class="metas">
-    <span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format "Mon 2 Jan 2006" }}</time></span>
+    <span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format "Monday 2 January 2006" }}</time></span>
     {{- with $trail }}<a class="chip chip--trail" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
-    {{- range $stages }}<a class="chip chip--stage" href="{{ .RelPermalink }}">Stage {{ .Params.number }}</a>{{ end }}
+    {{- range $stages }}<a class="chip chip--stage" href="{{ .RelPermalink }}">{{ T "stage_n" .Params.number }}</a>{{ end }}
     {{- range $stays }}<a class="meta" href="{{ .RelPermalink }}">{{ partial "icon.html" (dict "name" "moon" "size" 15) }}{{ .Title }}</a>{{ end }}
-    {{- if .Draft }}<span class="draft-badge">Draft</span>{{ end }}
+    {{- if .Draft }}<span class="draft-badge">{{ T "draft" }}</span>{{ end }}
   </div>
 </header>
 
@@ -38,37 +38,37 @@
   <div class="panel panel--pad hiked">
     <div class="hiked__map">
       <div class="hiked__head">
-        <h2 id="hiked" class="title-s" style="font-size: 30px">What I hiked</h2>
-        {{- with $stages }}<span class="subtle-label">Official {{ partial "stage-label.html" . }} + my recorded track</span>{{ end }}
+        <h2 id="hiked" class="title-s" style="font-size: 30px">{{ T "what_i_hiked" }}</h2>
+        {{- with $stages }}<span class="subtle-label">{{ T "official_plus_track" (partial "stage-label.html" .) }}</span>{{ end }}
       </div>
-      {{ partial "map.html" (dict "page" $ "id" "map-story" "layers" $md.layers "markers" $md.markers "label" "Map of the official stages and the track I walked") }}
-      {{ partial "legend.html" (slice (slice "official" (printf "Official route%s" (cond (gt (len $stages) 0) (printf ", %s" (partial "stage-label.html" $stages | lower)) ""))) (slice "faded" "Rest of the trail") (slice "mine" "My track") (slice "stay" "Where I slept")) }}
+      {{ partial "map.html" (dict "page" $ "id" "map-story" "layers" $md.layers "markers" $md.markers "label" (T "map_story")) }}
+      {{ partial "legend.html" (slice (slice "official" (printf "%s%s" (T "official_route") (cond (gt (len $stages) 0) (printf ", %s" (partial "stage-label.html" $stages)) ""))) (slice "faded" (T "rest_of_trail")) (slice "mine" (T "my_track")) (slice "stay" (T "where_i_slept"))) }}
     </div>
     <div class="hiked__side">
       <div class="stats--grid">
-        {{ partial "stat.html" (dict "label" "Distance" "value" (partial "num.html" (dict "v" $st.distance "unit" "km")) "unit" "km" "icon" "route") }}
-        {{ partial "stat.html" (dict "label" "Ascent" "value" (partial "num.html" (dict "v" $st.ascent "unit" "m")) "unit" "m" "icon" "up") }}
-        {{ partial "stat.html" (dict "label" "Start" "value" $st.start "icon" "clock") }}
-        {{ partial "stat.html" (dict "label" "Finish" "value" $st.end "icon" "flag") }}
-        {{ partial "stat.html" (dict "label" "Time on trail" "value" $st.duration "unit" "h" "icon" "clock") }}
-        {{- with $gear }}{{ $gt := partialCached "data/gear-totals.html" . .Path }}{{ partial "stat.html" (dict "label" "Pack" "value" (partial "num.html" (dict "v" $gt.total "unit" "kg")) "unit" "kg" "icon" "pack") }}{{ end }}
+        {{ partial "stat.html" (dict "label" (T "distance") "value" (partial "num.html" (dict "v" $st.distance "unit" "km")) "unit" "km" "icon" "route") }}
+        {{ partial "stat.html" (dict "label" (T "ascent") "value" (partial "num.html" (dict "v" $st.ascent "unit" "m")) "unit" "m" "icon" "up") }}
+        {{ partial "stat.html" (dict "label" (T "start") "value" $st.start "icon" "clock") }}
+        {{ partial "stat.html" (dict "label" (T "finish") "value" $st.end "icon" "flag") }}
+        {{ partial "stat.html" (dict "label" (T "time_on_trail") "value" $st.duration "unit" "h" "icon" "clock") }}
+        {{- with $gear }}{{ $gt := partialCached "data/gear-totals.html" . .Path }}{{ partial "stat.html" (dict "label" (T "pack") "value" (partial "num.html" (dict "v" $gt.total "unit" "kg")) "unit" "kg" "icon" "pack") }}{{ end }}
       </div>
       {{- with .Params.route_note }}
       <div class="stack" style="--gap: 8px; border-top: 1px solid var(--line); padding-top: 20px">
-        <p class="subtle-label">Compared to the plan</p>
+        <p class="subtle-label">{{ T "compared_to_plan" }}</p>
         <p style="font-size: 14.5px">{{ . }}</p>
       </div>
       {{- end }}
       <div class="row" style="--gap: 10px">
-        {{- with .Params.track }}<a class="btn btn--small" href="{{ . | relURL }}" download>{{ partial "icon.html" (dict "name" "download" "size" 16) }}My track (.gpx)</a>{{ end }}
-        {{- range $s := $stages }}{{ with $s.Params.gpx }}<a class="btn btn--ghost btn--small" href="{{ . | relURL }}" download>{{ partial "icon.html" (dict "name" "download" "size" 16) }}Stage {{ $s.Params.number }}</a>{{ end }}{{ end }}
+        {{- with .Params.track }}<a class="btn btn--small" href="{{ . | relURL }}" download>{{ partial "icon.html" (dict "name" "download" "size" 16) }}{{ T "my_track_gpx" }}</a>{{ end }}
+        {{- range $s := $stages }}{{ with $s.Params.gpx }}<a class="btn btn--ghost btn--small" href="{{ . | relURL }}" download>{{ partial "icon.html" (dict "name" "download" "size" 16) }}{{ T "stage_n" $s.Params.number }}</a>{{ end }}{{ end }}
       </div>
       {{- if $sample }}
-      <p class="sample-note">{{ partial "icon.html" (dict "name" "info" "size" 16) }}<span>Sample GPX — the line on this map is a placeholder until the real track is uploaded.</span></p>
+      <p class="sample-note">{{ partial "icon.html" (dict "name" "info" "size" 16) }}<span>{{ T "sample_story" }}</span></p>
       {{- end }}
     </div>
     {{- with $st.gpx }}{{ if gt (len .profile) 1 }}
-    <div class="hiked__profile elevation--mine">{{ partial "elevation.html" (dict "profile" .profile "label" "Elevation profile of my track") }}</div>
+    <div class="hiked__profile elevation--mine">{{ partial "elevation.html" (dict "profile" .profile "label" (T "elevation_mine")) }}</div>
     {{- end }}{{ end }}
   </div>
 </section>
@@ -79,7 +79,7 @@
   <div class="layout__main">
     {{- with .Params.moments }}
     <div class="panel panel--dark moments">
-      <div class="moments__head">{{ partial "icon.html" (dict "name" "clock" "size" 18) }}The day in moments</div>
+      <div class="moments__head">{{ partial "icon.html" (dict "name" "clock" "size" 18) }}{{ T "day_in_moments" }}</div>
       <ol class="timeline">
         {{- range . }}
         <li><span class="timeline__time">{{ .time }}</span><span class="timeline__dot" aria-hidden="true"></span>
@@ -89,12 +89,13 @@
     </div>
     {{- end }}
 
-    <div class="prose">{{ .Content }}</div>
+    {{ partial "lang/notice.html" . }}
+    <div class="prose"{{ if partial "lang/is-fallback.html" . }} lang="{{ partial "lang/source.html" . }}"{{ end }}>{{ .Content }}</div>
 
     {{- with .Params.youtube }}{{ partial "youtube.html" (dict "id" . "title" $.Title) }}{{ end }}
   </div>
 
-  <aside class="layout__aside" aria-label="About this day">
+  <aside class="layout__aside" aria-label="{{ T "about_this_day" }}">
     {{- if gt (len $seriesPages) 1 }}
     <div class="panel" style="padding: 18px">
       <p class="subtle-label" style="margin: 4px 12px 10px">{{ $series }}</p>
@@ -110,7 +111,7 @@
     <div class="card">
       {{- with .Params.cover }}<div class="card__media">{{ partial "img.html" (dict "src" . "w" 600 "h" 300 "alt" "") }}</div>{{ end }}
       <div class="card__body">
-        <p class="card__kind">{{ partial "icon.html" (dict "name" (partial "stay-icon.html" .Params.stay_type) "size" 16) }}Where I slept</p>
+        <p class="card__kind">{{ partial "icon.html" (dict "name" (partial "stay-icon.html" .Params.stay_type) "size" 16) }}{{ T "where_i_slept" }}</p>
         <h3 class="card__title" style="font-size: 22px"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
         <div class="metas">{{ with .Params.place }}<span class="meta">{{ partial "icon.html" (dict "name" "pin" "size" 15) }}{{ . }}</span>{{ end }}{{ with .Params.price }}<span class="meta">{{ partial "icon.html" (dict "name" "euro" "size" 15) }}{{ . }}</span>{{ end }}</div>
         {{- with .Params.facilities }}
@@ -124,13 +125,13 @@
     {{- $gt := partialCached "data/gear-totals.html" . .Path }}
     <div class="card">
       <div class="card__body">
-        <p class="card__kind">{{ partial "icon.html" (dict "name" "pack" "size" 16) }}Gear on this hike</p>
+        <p class="card__kind">{{ partial "icon.html" (dict "name" "pack" "size" 16) }}{{ T "gear_on_hike" }}</p>
         <div class="stats" style="--gap: 28px">
-          {{- if gt $gt.total 0.0 }}{{ partial "stat.html" (dict "label" "Total" "value" (partial "num.html" (dict "v" $gt.total "unit" "kg")) "unit" "kg") }}{{ end }}
-          {{- if gt $gt.consumable 0.0 }}{{ partial "stat.html" (dict "label" "Food & water" "value" (partial "num.html" (dict "v" $gt.consumable "unit" "kg")) "unit" "kg") }}{{ end }}
+          {{- if gt $gt.total 0.0 }}{{ partial "stat.html" (dict "label" (T "total") "value" (partial "num.html" (dict "v" $gt.total "unit" "kg")) "unit" "kg") }}{{ end }}
+          {{- if gt $gt.consumable 0.0 }}{{ partial "stat.html" (dict "label" (T "food_water") "value" (partial "num.html" (dict "v" $gt.consumable "unit" "kg")) "unit" "kg") }}{{ end }}
         </div>
-        {{- with index (.Params.lessons | default slice) 0 }}<p class="card__text">Lesson learned: {{ . }}</p>{{ end }}
-        <h3 class="card__title" style="font-size: 18px; font-family: var(--f-body)"><a href="{{ .RelPermalink }}">Full gear list</a></h3>
+        {{- with index (.Params.lessons | default slice) 0 }}<p class="card__text">{{ T "lesson_learned" . }}</p>{{ end }}
+        <h3 class="card__title" style="font-size: 18px; font-family: var(--f-body)"><a href="{{ .RelPermalink }}">{{ T "full_gear_list" }}</a></h3>
       </div>
     </div>
     {{- end }}
@@ -142,9 +143,9 @@
 {{- $prev := false }}{{ $next := false }}{{ $found := false -}}
 {{- range $list }}{{ if $found }}{{ if not $next }}{{ $next = . }}{{ end }}{{ else if eq .Path $.Path }}{{ $found = true }}{{ else }}{{ $prev = . }}{{ end }}{{ end -}}
 {{- if or $prev $next }}
-<nav class="wrap section pager" style="margin-top: 64px" aria-label="More stories">
-  {{- with $prev }}<a href="{{ .RelPermalink }}"><span class="meta">{{ partial "icon.html" (dict "name" "arrowl" "size" 14) }}Previous</span><span class="pager__title">{{ .Title }}</span></a>{{ end }}
-  {{- with $next }}<a class="pager__next" href="{{ .RelPermalink }}"><span class="meta">Next{{ partial "icon.html" (dict "name" "arrow" "size" 14) }}</span><span class="pager__title">{{ .Title }}</span></a>{{ end }}
+<nav class="wrap section pager" style="margin-top: 64px" aria-label="{{ T "more_stories" }}">
+  {{- with $prev }}<a href="{{ .RelPermalink }}"><span class="meta">{{ partial "icon.html" (dict "name" "arrowl" "size" 14) }}{{ T "previous" }}</span><span class="pager__title">{{ .Title }}</span></a>{{ end }}
+  {{- with $next }}<a class="pager__next" href="{{ .RelPermalink }}"><span class="meta">{{ T "next" }}{{ partial "icon.html" (dict "name" "arrow" "size" 14) }}</span><span class="pager__title">{{ .Title }}</span></a>{{ end }}
 </nav>
 {{- end }}
 </article>

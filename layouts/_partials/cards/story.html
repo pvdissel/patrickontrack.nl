@@ -10,7 +10,7 @@
       {{- $lines := slice -}}
       {{- with $st.gpx }}{{ $lines = $lines | append (dict "points" .points "kind" "mine") }}{{ end -}}
       {{- if not $lines }}{{ range $stages }}{{ with (partialCached "data/stats.html" . .Path).gpx }}{{ $lines = $lines | append (dict "points" .points "kind" "official") }}{{ end }}{{ end }}{{ end -}}
-      {{ partial "trace.html" (dict "lines" $lines "label" (printf "Route of %s" .Title)) }}
+      {{ partial "trace.html" (dict "lines" $lines "label" (T "route_of" .Title)) }}
     {{- end }}
   </div>
   <div class="card__body">
@@ -23,10 +23,10 @@
     <h3 class="card__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
     {{- with .Description }}<p class="card__text">{{ . }}</p>{{ end }}
     <div class="metas">
-      <span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format "2 Jan 2006" }}</time></span>
+      <span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}{{ if partial "lang/is-fallback.html" . }}<span class="lang-badge">{{ upper (partial "lang/source.html" .) }}</span>{{ end }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format "2 Jan 2006" }}</time></span>
       {{- with $st.distance }}<span class="meta">{{ partial "icon.html" (dict "name" "route" "size" 15) }}{{ partial "num.html" (dict "v" . "unit" "km") }} km</span>{{ end }}
-      {{- if $nights }}<span class="meta">{{ partial "icon.html" (dict "name" "moon" "size" 15) }}{{ $nights }} {{ cond (eq $nights 1) "night" "nights" }}</span>{{ end }}
-      {{- if .Draft }}<span class="draft-badge">Draft</span>{{ end }}
+      {{- if $nights }}<span class="meta">{{ partial "icon.html" (dict "name" "moon" "size" 15) }}{{ $nights }} {{ T "night" $nights }}</span>{{ end }}
+      {{- if .Draft }}<span class="draft-badge">{{ T "draft" }}</span>{{ end }}
     </div>
   </div>
 </article>

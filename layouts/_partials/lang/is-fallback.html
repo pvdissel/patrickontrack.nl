@@ -1,0 +1,3 @@
+{{- /* True when this page is shown in a language it has not been translated into yet. */ -}}
+{{- $src := partial "lang/source.html" . -}}
+{{- return (and $src (ne $src .Language.Lang)) -}}

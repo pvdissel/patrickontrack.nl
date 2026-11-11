@@ -1,6 +1,7 @@
 {{- /*
   Resolve a Pages CMS reference to a Hugo page.
-  Accepts "content/trails/dutch-mountain-trail.md", "/trails/dutch-mountain-trail",
+  Accepts "content/en/trails/dutch-mountain-trail.md" (any language folder: the page is looked up
+  in the language being built), "content/trails/dutch-mountain-trail.md", "/trails/dutch-mountain-trail",
   "trails/dutch-mountain-trail" or just "dutch-mountain-trail" (needs "section").
   Usage: partial "ref.html" (dict "ref" .Params.trail "section" "trails")
 */ -}}
@@ -9,6 +10,7 @@
 {{- if $r -}}
   {{- $r = strings.TrimPrefix "/" $r -}}
   {{- $r = strings.TrimPrefix "content/" $r -}}
+  {{- range hugo.Sites }}{{ $r = strings.TrimPrefix (printf "%s/" .Language.Lang) $r }}{{ end -}}
   {{- $r = strings.TrimSuffix ".md" $r -}}
   {{- $r = strings.TrimSuffix "/_index" $r -}}
   {{- $r = strings.TrimSuffix "/index" $r -}}

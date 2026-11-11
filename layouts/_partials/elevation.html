@@ -25,7 +25,7 @@
 {{- $kmStep := 1.0 -}}
 {{- range slice 2.0 5.0 10.0 20.0 50.0 }}{{ if gt (div $km $kmStep) 10.0 }}{{ $kmStep = . }}{{ end }}{{ end -}}
 <figure class="elevation">
-<svg viewBox="0 0 1100 170" role="img" aria-label="{{ .label | default (printf "Elevation profile from %.0f to %.0f metres over %.1f km" $lo $hi $km) }}">
+<svg viewBox="0 0 1100 170" role="img" aria-label="{{ .label | default (T "elevation_label" (dict "Lo" (printf "%.0f" $lo) "Hi" (printf "%.0f" $hi) "Km" (lang.FormatNumber 1 $km))) }}">
   {{- $g := $y0 -}}
   {{- range seq 0 20 -}}
     {{- if le $g $y1 -}}

@@ -1,8 +1,8 @@
 {{ define "main" }}
 <section class="wrap page-head stack" style="--gap: 18px">
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ "stories/" | relURL }}">Stories</a> / {{ .Parent.Title }}</nav>
+  <nav class="crumbs" aria-label="{{ T "breadcrumb" }}"><a href="{{ (site.GetPage "/stories").RelPermalink }}">{{ T "stories" }}</a> / {{ .Parent.Title }}</nav>
   <h1 class="title-l">{{ .Title }}</h1>
-  <p class="lead">{{ len .Pages }} {{ cond (eq (len .Pages) 1) "story" "stories" }}</p>
+  <p class="lead">{{ len .Pages }} {{ T "story_count" (len .Pages) }}</p>
 </section>
 <section class="wrap" style="margin-top: 24px">{{ range .Pages.ByDate }}{{ partial "story-row.html" . }}{{ end }}</section>
 {{ end }}

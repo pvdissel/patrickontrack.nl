@@ -15,13 +15,13 @@
       {{ partial "trace.html" (dict "lines" $lines "w" 1180 "h" 460) }}
     {{- end }}
     <div class="trail-hero__panel">
-      <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ "trails/" | relURL }}">Trails</a> / {{ .Title }}</nav>
+      <nav class="crumbs" aria-label="{{ T "breadcrumb" }}"><a href="{{ (site.GetPage "/trails").RelPermalink }}">{{ T "trails" }}</a> / {{ .Title }}</nav>
       <h1 class="title-l">{{ .Title }}</h1>
       <div class="chips">
         {{- with .Params.region }}<span class="chip">{{ with $.Params.country }}{{ . }} · {{ end }}{{ . }}</span>{{ end }}
-        {{- with .Params.route_type }}<span class="chip">{{ . }}</span>{{ end }}
+        {{- with .Params.route_type }}<span class="chip">{{ T (printf "route_%s" .) | default . }}</span>{{ end }}
         {{- if and .Params.start .Params.finish }}<span class="chip">{{ .Params.start }} → {{ .Params.finish }}</span>{{ end }}
-        <span class="chip {{ if eq $pr.status "Completed" }}chip--ember{{ else }}chip--stage{{ end }}">{{ $pr.status }}</span>
+        <span class="chip {{ if eq $pr.status "Completed" }}chip--ember{{ else }}chip--stage{{ end }}">{{ T (printf "status_%s" (urlize $pr.status)) }}</span>
       </div>
     </div>
   </div>
@@ -29,15 +29,15 @@
 
 <section class="wrap row" style="margin-top: 36px; justify-content: space-between; --gap: 28px 48px">
   <div class="stats" style="gap: 24px 44px">
-    {{ partial "stat.html" (dict "label" "Distance" "value" (partial "num.html" (dict "v" $st.distance "unit" "km")) "unit" "km" "icon" "route") }}
-    {{ partial "stat.html" (dict "label" "Ascent" "value" (partial "num.html" (dict "v" $st.ascent "unit" "m")) "unit" "m" "icon" "up") }}
+    {{ partial "stat.html" (dict "label" (T "distance") "value" (partial "num.html" (dict "v" $st.distance "unit" "km")) "unit" "km" "icon" "route") }}
+    {{ partial "stat.html" (dict "label" (T "ascent") "value" (partial "num.html" (dict "v" $st.ascent "unit" "m")) "unit" "m" "icon" "up") }}
     {{- if gt $pr.total 0 }}
-    {{ partial "stat.html" (dict "label" "Stages" "value" $pr.total "icon" "flag") }}
-    {{ partial "stat.html" (dict "label" "Hiked" "value" (printf "%d/%d" $pr.hiked $pr.total) "icon" "check") }}
+    {{ partial "stat.html" (dict "label" (T "stages") "value" $pr.total "icon" "flag") }}
+    {{ partial "stat.html" (dict "label" (T "hiked") "value" (printf "%d/%d" $pr.hiked $pr.total) "icon" "check") }}
     {{- end }}
   </div>
   <div class="row" style="--gap: 10px">
-    {{- with .Params.gpx }}<a class="btn" href="{{ . | relURL }}" download>{{ partial "icon.html" (dict "name" "download" "size" 17) }}Download GPX</a>{{ end }}
+    {{- with .Params.gpx }}<a class="btn" href="{{ . | relURL }}" download>{{ partial "icon.html" (dict "name" "download" "size" 17) }}{{ T "download_gpx" }}</a>{{ end }}
     {{- with .Params.website }}<a class="btn btn--ghost" href="{{ . }}" rel="noopener">{{ partial "icon.html" (dict "name" "ext" "size" 17) }}{{ replaceRE `^https?://(www\.)?` "" . | strings.TrimSuffix "/" }}</a>{{ end }}
   </div>
 </section>
@@ -45,12 +45,12 @@
 {{- if or $md.layers $md.markers }}
 <section class="wrap section stack" style="margin-top: 40px; --gap: 14px" aria-labelledby="route">
   <div class="row" style="justify-content: space-between">
-    <h2 id="route" class="title-m" style="font-size: 32px">Route &amp; stages</h2>
-    <button class="toggle" type="button" data-map-toggle="map-trail" aria-pressed="false">{{ partial "icon.html" (dict "name" "layers" "size" 17) }}<span data-label>Show my tracks</span></button>
+    <h2 id="route" class="title-m" style="font-size: 32px">{{ T "route_stages" }}</h2>
+    <button class="toggle" type="button" data-map-toggle="map-trail" aria-pressed="false">{{ partial "icon.html" (dict "name" "layers" "size" 17) }}<span data-label>{{ T "show_my_tracks" }}</span></button>
   </div>
-  {{ partial "map.html" (dict "page" . "id" "map-trail" "mineHidden" true "size" "tall" "layers" $md.layers "markers" $md.markers "label" (printf "Map of the %s with its stages" .Title)) }}
-  {{ partial "legend.html" (slice (slice "stages" "Official stages") (slice "stage" "Stage start") (slice "mine" "My tracks") (slice "stay" "Places I stayed")) }}
-  {{- if $sample }}<p class="sample-note">{{ partial "icon.html" (dict "name" "info" "size" 16) }}<span>Some stages use a sample GPX. Replace them with the official route files to get exact maps and numbers.</span></p>{{ end }}
+  {{ partial "map.html" (dict "page" . "id" "map-trail" "mineHidden" true "size" "tall" "layers" $md.layers "markers" $md.markers "label" (T "map_trail" .Title)) }}
+  {{ partial "legend.html" (slice (slice "stages" (T "official_stages")) (slice "stage" (T "stage_start")) (slice "mine" (T "my_tracks")) (slice "stay" (T "places_stayed"))) }}
+  {{- if $sample }}<p class="sample-note">{{ partial "icon.html" (dict "name" "info" "size" 16) }}<span>{{ T "sample_trail" }}</span></p>{{ end }}
   {{- /* combined elevation profile */ -}}
   {{- $profile := slice }}{{ $offset := 0.0 }}{{ $dividers := slice -}}
   {{- range $i, $s := $stages -}}
@@ -68,10 +68,10 @@
 
 {{- with $stages }}
 <section class="wrap section" style="margin-top: 56px" aria-labelledby="stages">
-  <h2 id="stages" class="title-m" style="font-size: 32px; margin-bottom: 18px">Stages</h2>
+  <h2 id="stages" class="title-m" style="font-size: 32px; margin-bottom: 18px">{{ T "stages" }}</h2>
   <div class="table-box">
     <table class="table table--stages">
-      <thead><tr><th scope="col">#</th><th scope="col">Stage</th><th scope="col" class="num">km</th><th scope="col" class="num">Ascent m</th><th scope="col" class="num">Descent m</th><th scope="col">Stays</th><th scope="col">I hiked it</th></tr></thead>
+      <thead><tr><th scope="col">#</th><th scope="col">{{ T "table_stage" }}</th><th scope="col" class="num">{{ T "table_km" }}</th><th scope="col" class="num">{{ T "table_ascent" }}</th><th scope="col" class="num">{{ T "table_descent" }}</th><th scope="col">{{ T "table_stays" }}</th><th scope="col">{{ T "table_hiked" }}</th></tr></thead>
       <tbody>
         {{- range . }}
         {{- $s := partialCached "data/stats.html" . .Path -}}
@@ -84,11 +84,11 @@
           <td class="num">{{ with $s.ascent }}{{ partial "num.html" (dict "v" . "unit" "m") }}{{ else }}—{{ end }}</td>
           <td class="num">{{ with $s.descent }}{{ partial "num.html" (dict "v" . "unit" "m") }}{{ else }}—{{ end }}</td>
           <td>{{ range $endStays }}<a class="meta" href="{{ .RelPermalink }}">{{ partial "icon.html" (dict "name" (partial "stay-icon.html" .Params.stay_type) "size" 15) }}{{ .Title }}</a> {{ else }}<span class="meta">—</span>{{ end }}</td>
-          <td>{{ range first 1 $walks }}<a class="hiked-yes" href="{{ .RelPermalink }}">{{ partial "icon.html" (dict "name" "check" "size" 15) }}{{ .Date | time.Format "2 Jan 2006" }}</a>{{ else }}<span class="meta">Not yet</span>{{ end }}</td>
+          <td>{{ range first 1 $walks }}<a class="hiked-yes" href="{{ .RelPermalink }}">{{ partial "icon.html" (dict "name" "check" "size" 15) }}{{ .Date | time.Format "2 Jan 2006" }}</a>{{ else }}<span class="meta">{{ T "not_yet" }}</span>{{ end }}</td>
         </tr>
         {{- end }}
       </tbody>
-      {{- if $sample }}<caption>Distances and ascent come from each stage’s GPX file unless set by hand.</caption>{{ end }}
+      {{- if $sample }}<caption>{{ T "table_caption" }}</caption>{{ end }}
     </table>
   </div>
 </section>
@@ -96,12 +96,13 @@
 
 <section class="wrap section split" style="margin-top: 64px; align-items: flex-start">
   <div class="stack" style="--gap: 16px">
-    <h2 class="title-m" style="font-size: 32px">About the trail</h2>
+    <h2 class="title-m" style="font-size: 32px">{{ T "about_trail" }}</h2>
+    {{ partial "lang/notice.html" . }}
     <div class="prose" style="font-size: 16.5px">{{ .Content }}</div>
   </div>
   {{- with .Params.good_to_know }}
   <div class="stack" style="--gap: 16px">
-    <h2 class="title-m" style="font-size: 32px">Good to know</h2>
+    <h2 class="title-m" style="font-size: 32px">{{ T "good_to_know" }}</h2>
     <ul class="facilities" style="gap: 14px; font-size: 15px">
       {{- range . }}<li style="align-items: flex-start">{{ partial "icon.html" (dict "name" (.icon | default "info") "size" 20) }}<span>{{ .text }}</span></li>{{ end }}
     </ul>
@@ -112,7 +113,7 @@
 {{- with $stories }}
 <section class="wrap section" aria-labelledby="mine">
   <div class="section-head">
-    <div class="stack" style="--gap: 10px"><p class="eyebrow">On this trail</p><h2 id="mine" class="title-m">My stories</h2></div>
+    <div class="stack" style="--gap: 10px"><p class="eyebrow">{{ T "on_this_trail" }}</p><h2 id="mine" class="title-m">{{ T "my_stories" }}</h2></div>
   </div>
   <div class="grid" style="--min: 250px; --gap: 22px">{{ range . }}{{ partial "cards/story.html" . }}{{ end }}</div>
 </section>
@@ -121,7 +122,7 @@
 {{- with $stays }}
 <section class="wrap section" aria-labelledby="stays">
   <div class="section-head">
-    <div class="stack" style="--gap: 10px"><p class="eyebrow">Where I slept</p><h2 id="stays" class="title-m">Stays along this trail</h2></div>
+    <div class="stack" style="--gap: 10px"><p class="eyebrow">{{ T "where_i_slept" }}</p><h2 id="stays" class="title-m">{{ T "stays_along_trail" }}</h2></div>
   </div>
   <div class="grid" style="--min: 280px; --gap: 22px">{{ range . }}{{ partial "cards/stay.html" . }}{{ end }}</div>
 </section>

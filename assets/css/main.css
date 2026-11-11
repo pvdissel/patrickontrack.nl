@@ -368,3 +368,13 @@ a.chip--stage:hover { background: #C9D6BC; color: var(--forest); box-shadow: non
   .elevation { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .elevation svg { min-width: 680px; }
 }
+
+/* ---- languages ------------------------------------------------------ */
+.lang-switch { display: inline-flex !important; align-items: center; justify-content: center; min-width: 44px; height: 32px; padding: 0 10px !important; border: 1.5px solid var(--line) !important; border-radius: 999px; font: 500 12.5px/1 var(--f-mono) !important; letter-spacing: .06em; }
+.lang-switch:hover { border-color: var(--ink) !important; }
+.lang-notice { display: flex; gap: 10px; align-items: flex-start; max-width: 680px; padding: 12px 14px; border-radius: 10px; background: var(--moss); color: var(--forest); font-size: 14px; line-height: 1.5; }
+.lang-notice .icon { flex: none; margin-top: 2px; }
+.lang-badge { display: inline-flex; align-items: center; padding: 3px 7px; border-radius: 4px; background: var(--moss); color: var(--forest); font: 500 11px/1 var(--f-mono); letter-spacing: .06em; }
+@media (max-width: 760px) {
+  .js .site-nav .lang-switch { align-self: flex-start; margin-top: 12px; height: 40px; border-bottom: 1.5px solid var(--line) !important; }
+}

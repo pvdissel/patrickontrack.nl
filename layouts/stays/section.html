@@ -3,18 +3,18 @@
 {{- $types := slice }}{{ range $stays }}{{ with .Params.stay_type }}{{ $types = $types | append . }}{{ end }}{{ end }}{{ $types = $types | uniq | sort -}}
 {{- $md := partial "data/mapdata.html" (dict "stays" $stays) -}}
 <section class="wrap page-head stack" style="--gap: 18px">
-  <p class="eyebrow">Stays</p>
-  <h1 class="title-l">{{ .Params.heading | default "Where I slept." }}</h1>
+  <p class="eyebrow">{{ .Title }}</p>
+  <h1 class="title-l">{{ .Params.heading | default (T "where_i_slept_heading") }}</h1>
   {{- with .Params.intro }}<p class="lead">{{ . }}</p>{{ end }}
   {{- if gt (len $types) 1 }}
-  <div class="filters" role="group" aria-label="Filter by type" data-filter-group="stays" style="margin-top: 12px">
-    <button class="filter" type="button" data-filter="all" aria-pressed="true">All</button>
-    {{- range $types }}<button class="filter" type="button" data-filter="{{ . | urlize }}" aria-pressed="false">{{ . }}</button>{{ end }}
+  <div class="filters" role="group" aria-label="{{ T "filter_type" }}" data-filter-group="stays" style="margin-top: 12px">
+    <button class="filter" type="button" data-filter="all" aria-pressed="true">{{ T "all" }}</button>
+    {{- range $types }}<button class="filter" type="button" data-filter="{{ . | urlize }}" aria-pressed="false">{{ partial "label.html" (dict "prefix" "type" "value" .) }}</button>{{ end }}
   </div>
   {{- end }}
 </section>
 {{- with $md.markers }}
-<section class="wrap" style="margin-top: 32px">{{ partial "map.html" (dict "page" $ "id" "map-stays" "markers" . "label" "Map of the places I stayed") }}</section>
+<section class="wrap" style="margin-top: 32px">{{ partial "map.html" (dict "page" $ "id" "map-stays" "markers" . "label" (T "map_stays")) }}</section>
 {{- end }}
 <section class="wrap" style="margin-top: 40px">
   <div class="grid" style="--min: 320px">{{ range $stays }}{{ partial "cards/stay.html" . }}{{ end }}</div>

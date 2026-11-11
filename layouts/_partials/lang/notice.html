@@ -1,0 +1,4 @@
+{{- if partial "lang/is-fallback.html" . -}}
+{{- $src := partial "lang/source.html" . -}}
+<p class="lang-notice">{{ partial "icon.html" (dict "name" "info" "size" 16) }}<span>{{ T "only_in" (dict "Name" (T (printf "lang_%s" $src))) }}</span></p>
+{{- end -}}

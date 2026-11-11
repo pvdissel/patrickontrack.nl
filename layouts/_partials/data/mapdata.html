@@ -17,26 +17,26 @@
   {{- with $st.gpx -}}
     {{- $kind := cond (eq (mod $i 2) 0) "stage-a" "stage-b" -}}
     {{- if $hl }}{{ $kind = cond (isset $hl $s.Path) "official" "faded" }}{{ end -}}
-    {{- $layers = $layers | append (dict "kind" $kind "points" .points "name" (printf "Stage %v · %s" $s.Params.number $s.Title) "url" $s.RelPermalink) -}}
+    {{- $layers = $layers | append (dict "kind" $kind "points" .points "name" (T "map_stage_label" (dict "N" $s.Params.number "Title" $s.Title)) "url" $s.RelPermalink) -}}
     {{- if eq $i 0 -}}
-      {{- $markers = $markers | append (dict "lat" .first.lat "lon" .first.lng "kind" "end" "label" (printf "Start · %s" ($s.Params.from | default $s.Title))) -}}
+      {{- $markers = $markers | append (dict "lat" .first.lat "lon" .first.lng "kind" "end" "label" (T "map_start" ($s.Params.from | default $s.Title))) -}}
     {{- else -}}
-      {{- $markers = $markers | append (dict "lat" .first.lat "lon" .first.lng "kind" "stage" "label" (string $s.Params.number) "popup" (printf "Stage %v · %s" $s.Params.number $s.Title) "url" $s.RelPermalink) -}}
+      {{- $markers = $markers | append (dict "lat" .first.lat "lon" .first.lng "kind" "stage" "label" (string $s.Params.number) "popup" (T "map_stage_label" (dict "N" $s.Params.number "Title" $s.Title)) "url" $s.RelPermalink) -}}
     {{- end -}}
     {{- if eq $i (sub $n 1) -}}
-      {{- $markers = $markers | append (dict "lat" .last.lat "lon" .last.lng "kind" "end" "label" (printf "Finish · %s" ($s.Params.to | default $s.Title))) -}}
+      {{- $markers = $markers | append (dict "lat" .last.lat "lon" .last.lng "kind" "end" "label" (T "map_finish" ($s.Params.to | default $s.Title))) -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
 {{- range $t := .tracks -}}
   {{- with $t.Params.track -}}
     {{- $g := partialCached "gpx/parse.html" . . -}}
-    {{- if $g.ok }}{{ $layers = $layers | append (dict "kind" "mine" "points" $g.points "name" (printf "My track · %s" $t.Title) "url" $t.RelPermalink) }}{{ end -}}
+    {{- if $g.ok }}{{ $layers = $layers | append (dict "kind" "mine" "points" $g.points "name" (T "map_my_track" $t.Title) "url" $t.RelPermalink) }}{{ end -}}
   {{- end -}}
 {{- end -}}
 {{- range .stays -}}
   {{- if and .Params.lat .Params.lon -}}
-    {{- $markers = $markers | append (dict "lat" (float .Params.lat) "lon" (float .Params.lon) "kind" "stay" "label" .Title "popup" (printf "%s · %s" .Title (.Params.stay_type | default "Stay")) "url" .RelPermalink) -}}
+    {{- $markers = $markers | append (dict "lat" (float .Params.lat) "lon" (float .Params.lon) "kind" "stay" "label" .Title "popup" (printf "%s · %s" .Title (partial "label.html" (dict "prefix" "type" "value" (.Params.stay_type | default "Stay")))) "url" .RelPermalink) -}}
   {{- end -}}
 {{- end -}}
 {{- return dict "layers" $layers "markers" $markers -}}

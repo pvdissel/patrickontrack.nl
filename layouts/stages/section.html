@@ -1,8 +1,8 @@
 {{ define "main" }}
 <section class="wrap page-head stack" style="--gap: 18px">
-  <p class="eyebrow">Stages</p>
-  <h1 class="title-l">All stages</h1>
-  <p class="lead">Every stage belongs to a trail. Pick a trail to see its stages on the map.</p>
+  <p class="eyebrow">{{ T "stages" }}</p>
+  <h1 class="title-l">{{ T "all_stages" }}</h1>
+  <p class="lead">{{ T "stages_intro" }}</p>
 </section>
 <section class="wrap" style="margin-top: 32px">
   {{- range (where site.RegularPages "Section" "trails").ByTitle }}

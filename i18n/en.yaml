@@ -1,0 +1,240 @@
+# Interface text. Content (stories, trails, …) is translated in content/en and content/nl.
+skip: Skip to content
+menu: Menu
+main_nav: Main
+youtube_channel: YouTube channel
+language: Language
+read_in: "Read in {{ .Name }}"
+only_in: "This page is only available in {{ .Name }}."
+only_in_short: "In {{ .Name }}"
+breadcrumb: Breadcrumb
+explore: Explore
+elsewhere: Elsewhere
+rss: RSS feed
+about_me: About me
+footer_tagline: "Stories, trails and the places I slept along the way."
+built_with: "Built with Hugo · Maps © OpenStreetMap contributors"
+draft: Draft
+
+# home
+journal_since: "Hiking journal · since {{ . }}"
+read_latest: Read the latest story
+browse_trails: Browse trails
+trails: Trails
+stories: Stories
+stays: Stays
+gear: Gear
+on_trail_since: On the trail since
+latest: Latest
+stories_from_trail: Stories from the trail
+all_stories: All stories
+no_stories: "No stories published yet. They’re on their way."
+trail_in_focus: Trail in focus
+stages_hiked: Stages hiked
+explore_trail: Explore the trail
+where_i_slept: Where I slept
+stays_along_way: Stays along the way
+all_stays: All stays
+on_youtube: On YouTube
+watch_walks: Watch the walks
+channel: Channel
+map_of: "Map of the {{ . }}"
+
+# stats
+distance: Distance
+ascent: Ascent
+descent: Descent
+stages: Stages
+hiked: Hiked
+start: Start
+finish: Finish
+time_on_trail: Time on trail
+walking_time: Walking time
+pack: Pack
+total: Total
+items: Items
+nights: Nights
+food_water: Food & water
+night:
+  one: night
+  other: nights
+story_count:
+  one: story
+  other: stories
+stage_count: "{{ .Count }} stages"
+single_route: Single route
+stage_n: "Stage {{ . }}"
+stage_n_of: "Stage {{ .N }} of {{ .Of }}"
+stages_range: "Stages {{ .From }}–{{ .To }}"
+stage_lower_n: "stage {{ . }}"
+stages_lower_range: "stages {{ .From }}–{{ .To }}"
+
+# stories
+filter_trail: Filter by trail
+all: All
+what_i_hiked: What I hiked
+official_plus_track: "Official {{ . }} + my recorded track"
+official_route: Official route
+rest_of_trail: Rest of the trail
+my_track: My track
+my_tracks: My tracks
+compared_to_plan: Compared to the plan
+my_track_gpx: My track (.gpx)
+sample_story: "Sample GPX — the line on this map is a placeholder until the real track is uploaded."
+map_story: Map of the official stages and the track I walked
+elevation_mine: Elevation profile of my track
+day_in_moments: The day in moments
+about_this_day: About this day
+gear_on_hike: Gear on this hike
+lesson_learned: "Lesson learned: {{ . }}"
+full_gear_list: Full gear list
+previous: Previous
+next: Next
+more_stories: More stories
+every_walk: Every walk, written down.
+
+# trails
+trails_heading: The routes behind the stories.
+filter_trails: Filter trails
+status_completed: Completed
+status_in-progress: In progress
+status_planned: Planned
+status_walked: Walked
+netherlands: Netherlands
+abroad: Abroad
+download_gpx: Download GPX
+route_stages: Route & stages
+show_my_tracks: Show my tracks
+showing_my_tracks: Showing my tracks
+official_stages: Official stages
+stage_start: Stage start
+places_stayed: Places I stayed
+sample_trail: "Some stages use a sample GPX. Replace them with the official route files to get exact maps and numbers."
+table_stage: Stage
+table_km: km
+table_ascent: Ascent m
+table_descent: Descent m
+table_stays: Stays
+table_hiked: I hiked it
+not_yet: Not yet
+table_caption: "Distances and ascent come from each stage’s GPX file unless set by hand."
+about_trail: About the trail
+good_to_know: Good to know
+on_this_trail: On this trail
+my_stories: My stories
+stays_along_trail: Stays along this trail
+route_of: "Route of {{ . }}"
+route_drawing: Route drawing
+map_trail: "Map of the {{ . }} with its stages"
+route_Linear: Linear
+route_Circular: Circular
+route_Summit: Summit
+route_Network: Network
+
+# stages
+previous_stage: "Previous stage: {{ . }}"
+next_stage: "Next stage: {{ . }}"
+official_stage: Official stage
+stay_near_end: Stay near the end
+stage_gpx: Stage GPX
+sample_stage: "Sample GPX — replace it with the official stage file for exact numbers."
+the_stage: The stage
+no_description: No description yet.
+start_at: "Start: {{ . }}"
+finish_at: "Finish: {{ . }}"
+water_at: "Water: {{ . }}"
+i_walked_stage: I walked this stage
+all_stages: All stages
+stages_intro: Every stage belongs to a trail. Pick a trail to see its stages on the map.
+map_stage: "Map of stage {{ . }}"
+map_start: "Start · {{ . }}"
+map_finish: "Finish · {{ . }}"
+map_stage_label: "Stage {{ .N }} · {{ .Title }}"
+map_my_track: "My track · {{ . }}"
+map_needs_js: The map needs JavaScript. The GPX files work in any map app.
+
+# stays
+where_i_slept_heading: Where I slept.
+filter_type: Filter by type
+map_stays: Map of the places I stayed
+stay: Stay
+my_night_here:
+  one: My night here
+  other: My nights here
+paid: Paid
+to_trail: To the trail
+booking: Booking
+facilities: Facilities
+would_stay_again: Would stay again
+answer_yes: "Yes"
+answer_no: "No"
+stories_from_here: Stories from here
+location_of: "Location of {{ . }}"
+trail: Trail
+type_campsite: Campsite
+type_farm-campsite: Farm campsite
+type_nivon-house: Nivon house
+type_hut: Hut
+type_wild-camp: Wild camp
+type_paalkamperen: Paalkamperen
+type_hostel: Hostel
+type_b-b: B&B
+type_hotel: Hotel
+
+# gear
+what_i_carried: What I carried.
+gear_lists: Gear lists
+gear_list: Gear list
+used_in: "Used in {{ .Count }} {{ .Label }}"
+total_on_back: Total on my back
+total_listed: Total listed
+base_weight: Base weight
+food_water_fuel: "Food, water & fuel"
+worn: Worn
+not_itemised: Not itemised
+weight_split: "Weight split: {{ . }}"
+item: Item
+notes: Notes
+type: Type
+weight: Weight
+next_time: Next time
+kind_worn: worn
+kind_consumable: consumable
+cat_pack: Pack
+cat_shelter: Shelter
+cat_sleep: Sleep
+cat_kitchen: Kitchen
+cat_water: Water
+cat_clothing: Clothing
+cat_electronics: Electronics
+cat_navigation-safety: "Navigation & safety"
+cat_hygiene: Hygiene
+cat_other: Other
+cat_food: Food
+
+# about
+about: About
+get_in_touch: Get in touch
+how_site_works: How this site works
+four_kinds: Four kinds of pages
+how_stories: "One post per day on the trail. Each links to the trail, the stages I walked, my GPX track and where I slept."
+how_trails: "The official route with its stages and GPX files, plus how much of it I have walked so far."
+how_stays: "Every campsite, hut and Nivon house I slept in: what it had, what it cost, and whether I’d go back."
+how_gear: "A gear list per hike, with weights and the lessons I learned the hard way."
+
+# trips / 404
+trips_series: "Trips & series"
+not_found_eyebrow: "404 · Off trail"
+not_found_title: "This path doesn’t go anywhere."
+not_found_text: The page you were looking for has moved or never existed.
+back_to_start: Back to the start
+read_stories: Read the stories
+
+# youtube
+play_video: "Play video: {{ . }}"
+watch_on_youtube: Watch on YouTube
+elevation_label: "Elevation profile from {{ .Lo }} to {{ .Hi }} metres over {{ .Km }} km"
+
+# language names (in this language)
+lang_en: English
+lang_nl: Dutch

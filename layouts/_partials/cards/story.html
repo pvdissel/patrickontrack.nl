@@ -1,3 +1,7 @@
+{{- /* Pass the page, or dict "page" … "level" 2 when the list sits right below the page's h1. */ -}}
+{{- $level := 3 }}{{ $ctx := . -}}
+{{- if reflect.IsMap . }}{{ $level = .level | default 3 }}{{ $ctx = .page }}{{ end -}}
+{{- with $ctx -}}
 {{- $p := . -}}
 {{- $trail := partial "ref.html" (dict "ref" .Params.trail "section" "trails") -}}
 {{- $stages := partial "refs.html" (dict "refs" .Params.stages "section" "stages") -}}
@@ -20,7 +24,7 @@
       {{- with $stages }}{{ partial "stage-chip.html" . }}{{ end }}
     </div>
     {{- end }}
-    <h3 class="card__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    {{ partial "heading.html" (dict "level" $level "class" "card__title" "url" .RelPermalink "text" .Title) }}
     {{- with (.Params.description | default .Description) }}<p class="card__text">{{ . }}</p>{{ end }}
     <div class="metas">
       <span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}{{ if partial "lang/is-fallback.html" . }}<span class="lang-badge">{{ upper (partial "lang/source.html" .) }}</span>{{ end }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format "2 Jan 2006" }}</time></span>
@@ -30,3 +34,4 @@
     </div>
   </div>
 </article>
+{{- end -}}

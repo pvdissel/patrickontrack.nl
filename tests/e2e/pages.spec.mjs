@@ -54,6 +54,48 @@ test.describe('maps', () => {
     await page.goto(URLS.en.stage);
     await expect(page.locator('.mk--stay')).toHaveCount(1);
   });
+
+  // The test hut is where stage 1 ends and stage 2 starts: those markers must not cover each other.
+  for (const name of ['trail', 'stage']) {
+    test(`${name} page: markers on the same spot sit side by side at every zoom level`, async ({ page }) => {
+      await page.goto(URLS.en[name]);
+      const overlaps = () => page.$$eval('.leaflet-marker-icon', (els) => {
+        const boxes = els.map((e) => ({ t: e.title, r: e.getBoundingClientRect() }));
+        const out = [];
+        boxes.forEach((a, i) => boxes.slice(i + 1).forEach((b) => {
+          if (a.r.left < b.r.right && b.r.left < a.r.right && a.r.top < b.r.bottom && b.r.top < a.r.bottom) out.push(`${a.t} / ${b.t}`);
+        }));
+        return out;
+      });
+      for (const button of ['', '.leaflet-control-zoom-out', '.leaflet-control-zoom-out', '.leaflet-control-zoom-in']) {
+        if (button) {
+          await page.locator(button).click();
+          await page.waitForTimeout(400);   // zoom animation
+        }
+        expect(await overlaps()).toEqual([]);
+      }
+      const sizes = await page.$$eval('.leaflet-marker-icon', (els) => els.map((e) => Math.min(e.offsetWidth, e.offsetHeight)));
+      expect(Math.min(...sizes)).toBeGreaterThanOrEqual(24);
+    });
+  }
+});
+
+test.describe('wide content on small screens', () => {
+  test('the elevation chart scrolls sideways on a phone and can then be focused, not on a desktop', async ({ page }) => {
+    await page.goto(URLS.en.stage);
+    const chart = page.locator('figure.elevation').first();
+    await expect(chart).not.toHaveAttribute('tabindex');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(chart).toHaveAttribute('tabindex', '0');
+  });
+
+  test('gear tables that scroll have a name, from their category heading', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(URLS.en.gearList);
+    const box = page.locator('.table-box[role="region"]').first();
+    const heading = await page.locator(`#${await box.getAttribute('aria-labelledby')}`).textContent();
+    expect(heading.trim()).not.toBe('');
+  });
 });
 
 test.describe('translations', () => {

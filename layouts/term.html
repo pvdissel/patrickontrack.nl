@@ -4,5 +4,5 @@
   <h1 class="title-l">{{ .Title }}</h1>
   <p class="lead">{{ len .Pages }} {{ T "story_count" (len .Pages) }}</p>
 </section>
-<section class="wrap" style="margin-top: 24px">{{ range .Pages.ByDate }}{{ partial "story-row.html" . }}{{ end }}</section>
+<section class="wrap" style="margin-top: 24px">{{ range .Pages.ByDate }}{{ partial "story-row.html" (dict "page" . "level" 2) }}{{ end }}</section>
 {{ end }}

@@ -77,3 +77,17 @@ if (suggestions.length && !storage.get()) {
     if (banner) banner.hidden = false;
   }
 }
+
+// Areas that scroll sideways on small screens (elevation chart, tables) can be focused while
+// they scroll, so keyboard users can scroll them with the arrow keys too.
+const scrollers = document.querySelectorAll('[data-scroll]');
+function markScrollable() {
+  scrollers.forEach((el) => {
+    if (el.scrollWidth > el.clientWidth + 1) el.setAttribute('tabindex', '0');
+    else el.removeAttribute('tabindex');
+  });
+}
+if (scrollers.length) {
+  markScrollable();
+  window.addEventListener('resize', markScrollable);
+}

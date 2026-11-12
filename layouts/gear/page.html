@@ -53,8 +53,8 @@
     {{- range $cats }}
     {{- $c := . }}
     <div class="stack" style="--gap: 10px">
-      <h3 class="gear-cat">{{ partial "icon.html" (dict "name" (index $icons $c | default "route") "size" 20) }}{{ partial "label.html" (dict "prefix" "cat" "value" $c) }}</h3>
-      <div class="table-box">
+      <h3 class="gear-cat" id="cat-{{ $c | urlize }}">{{ partial "icon.html" (dict "name" (index $icons $c | default "route") "size" 20) }}{{ partial "label.html" (dict "prefix" "cat" "value" $c) }}</h3>
+      <div class="table-box" data-scroll role="region" aria-labelledby="cat-{{ $c | urlize }}">
         <table class="table table--gear">
           <thead><tr><th scope="col">{{ T "item" }}</th><th scope="col">{{ T "notes" }}</th><th scope="col"><span class="visually-hidden">{{ T "type" }}</span></th><th scope="col" class="num">{{ T "weight" }}</th></tr></thead>
           <tbody>

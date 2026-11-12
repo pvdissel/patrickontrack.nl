@@ -12,6 +12,6 @@
   </div>
 </section>
 <section class="wrap" style="margin-top: 40px">
-  <div class="grid" style="--min: 330px">{{ range .Pages.ByWeight }}{{ partial "cards/trail.html" . }}{{ end }}</div>
+  <div class="grid" style="--min: 330px">{{ range .Pages.ByWeight }}{{ partial "cards/trail.html" (dict "page" . "level" 2) }}{{ end }}</div>
 </section>
 {{ end }}

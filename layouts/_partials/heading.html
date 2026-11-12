@@ -1,0 +1,7 @@
+{{- /* A heading at a chosen level, so lists can follow the page outline without skipping a level.
+       dict "level" 2|3 (default 3) "class" "…" "style" "…" "url" "…" "text" "…" (url optional) */ -}}
+{{- $l := .level | default 3 -}}
+{{- $inner := .text -}}
+{{- with .url }}{{ $inner = printf "<a href=\"%s\">%s</a>" . (htmlEscape $inner) | safeHTML }}{{ end -}}
+{{- if eq $l 2 }}<h2 class="{{ .class }}"{{ with .style }} style="{{ . | safeCSS }}"{{ end }}>{{ $inner }}</h2>
+{{- else }}<h3 class="{{ .class }}"{{ with .style }} style="{{ . | safeCSS }}"{{ end }}>{{ $inner }}</h3>{{ end -}}

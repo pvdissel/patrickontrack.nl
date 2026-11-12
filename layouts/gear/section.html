@@ -5,6 +5,6 @@
   {{- with .Params.intro }}<p class="lead">{{ . }}</p>{{ end }}
 </section>
 <section class="wrap" style="margin-top: 40px">
-  <div class="grid" style="--min: 300px">{{ range .Pages.ByDate.Reverse }}{{ partial "cards/gear.html" . }}{{ end }}</div>
+  <div class="grid" style="--min: 300px">{{ range .Pages.ByDate.Reverse }}{{ partial "cards/gear.html" (dict "page" . "level" 2) }}{{ end }}</div>
 </section>
 {{ end }}

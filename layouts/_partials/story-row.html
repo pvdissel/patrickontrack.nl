@@ -1,6 +1,7 @@
-{{- /* A story in a list. Pass the page, or dict "page" "hideTrip" true (on a trip page). */ -}}
-{{- $p := . }}{{ $hideTrip := false -}}
-{{- if reflect.IsMap . }}{{ $p = .page }}{{ $hideTrip = .hideTrip }}{{ end -}}
+{{- /* A story in a list. Pass the page, or dict "page" … with "hideTrip" true (on a trip page)
+       and/or "level" 2 (when the list sits right below the page's h1). */ -}}
+{{- $p := . }}{{ $hideTrip := false }}{{ $level := 3 -}}
+{{- if reflect.IsMap . }}{{ $p = .page }}{{ $hideTrip = .hideTrip }}{{ $level = .level | default 3 }}{{ end -}}
 {{- $trail := partial "ref.html" (dict "ref" $p.Params.trail "section" "trails") -}}
 {{- $stages := partial "refs.html" (dict "refs" $p.Params.stages "section" "stages") -}}
 {{- $stays := partial "refs.html" (dict "refs" $p.Params.stays "section" "stays") -}}
@@ -10,7 +11,7 @@
   <div class="story-row__date"><time datetime="{{ $p.Date.Format "2006-01-02" }}">{{ $p.Date | time.Format "2 Jan" }}</time></div>
   <div class="story-row__body">
     {{- if and $trip (not $hideTrip) }}<p class="story-row__series"><a href="{{ $trip.RelPermalink }}" style="color: inherit; position: relative; z-index: 1">{{ $trip.Title }}</a></p>{{ end }}
-    <h3 class="story-row__title"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h3>
+    {{ partial "heading.html" (dict "level" $level "class" "story-row__title" "url" $p.RelPermalink "text" $p.Title) }}
     <div class="row" style="--gap: 6px 14px">
       {{- with $trail }}<a class="chip chip--trail" href="{{ .RelPermalink }}">{{ .Params.short | default .Title }}</a>{{ end }}
       {{- with $stages }}{{ partial "stage-chip.html" . }}{{ end }}

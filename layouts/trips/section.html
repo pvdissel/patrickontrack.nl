@@ -10,7 +10,7 @@
 </section>
 <section class="wrap" style="margin-top: 32px">
   {{- with $trips }}
-  <div class="grid" style="--min: 330px">{{ range sort . "first" "desc" }}{{ partial "cards/trip.html" .page }}{{ end }}</div>
+  <div class="grid" style="--min: 330px">{{ range sort . "first" "desc" }}{{ partial "cards/trip.html" (dict "page" .page "level" 2) }}{{ end }}</div>
   {{- else }}
   <p class="empty">{{ T "no_stories" }}</p>
   {{- end }}

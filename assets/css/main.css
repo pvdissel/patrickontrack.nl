@@ -12,7 +12,7 @@
   --pine-2: #4E8A68;
   --moss: #DCE4D2;
   --ember: #C8641E;      /* my track */
-  --ember-text: #A5501A; /* accent text, passes 4.5:1 */
+  --ember-text: #9E4C18; /* accent text, passes 4.5:1 on paper, fog, moss and ember-soft */
   --ember-soft: #F6E2D2;
   --on-dark: #E9EEE6;
   --on-dark-muted: #AFC0B3;
@@ -62,7 +62,7 @@ p { margin: 0; }
 .mono { font-family: var(--f-mono); }
 .crumbs { font: 400 12.5px/1.5 var(--f-mono); color: var(--muted); }
 .crumbs a { color: var(--muted); }
-.placeholder { font-family: var(--f-mono); color: #747D76; }
+.placeholder { font-family: var(--f-mono); color: var(--muted); }
 
 /* ---- header ---------------------------------------------------------- */
 .site-header__inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px; padding-block: 18px; }
@@ -268,6 +268,7 @@ a.chip--stage:hover { background: #C9D6BC; color: var(--forest); box-shadow: non
 .leaflet-popup-content-wrapper { border-radius: 10px; }
 .leaflet-popup-content { margin: 12px 14px; font-size: 14px; line-height: 1.45; }
 .leaflet-popup-content a { font-weight: 600; }
+.mk-hit { display: flex; align-items: center; justify-content: center; }
 .mk { display: flex; align-items: center; justify-content: center; border-radius: 50%; }
 .mk--stage { width: 24px; height: 24px; background: #fff; box-shadow: inset 0 0 0 2px var(--forest); color: var(--forest); font: 500 11px/1 var(--f-mono); }
 .mk--end { width: 16px; height: 16px; background: var(--forest); box-shadow: 0 0 0 3px #fff; }

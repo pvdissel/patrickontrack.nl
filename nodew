@@ -1,0 +1,140 @@
+#!/usr/bin/env sh
+# -----------------------------------------------------------------------------
+# nodew — Node.js wrapper for this repo (only needed for the test tools)
+#
+# Runs the Node version pinned in .node-version (the GitHub workflow reads the
+# same file). The first run downloads that exact release from nodejs.org into
+# .node/<version>/, checks its SHA-256 against Node's published checksums, and
+# reuses it from then on. npm and npx come with it.
+#
+#   ./nodew npm install            npm, npx or node with the pinned Node
+#   ./nodew npx playwright test
+#   ./nodew node --version
+#   ./nodew --nodew-version        prints the pinned version
+#   ./nodew --nodew-update [X.Y.Z] pins a new version (default: latest LTS)
+#   ./nodew --nodew-clean          removes downloaded Node versions
+#
+# Works on Linux (x64/arm64), macOS (Intel/Apple silicon) and Windows via
+# Git Bash or WSL. Needs curl or wget, and sha256sum or shasum.
+# -----------------------------------------------------------------------------
+set -eu
+
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+VERSION_FILE="$ROOT/.node-version"
+CACHE="$ROOT/.node"
+DIST="https://nodejs.org/dist"
+
+die() { echo "nodew: $*" >&2; exit 1; }
+say() { echo "nodew: $*" >&2; }
+
+pinned_version() {
+  [ -f "$VERSION_FILE" ] || die "missing $VERSION_FILE (it should contain a version like 26.13.1)"
+  v=$(tr -d ' \t\r\n' < "$VERSION_FILE")
+  v=${v#v}
+  echo "$v" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || die "invalid version '$v' in .node-version"
+  echo "$v"
+}
+
+fetch() { # url dest
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL --retry 3 -o "$2" "$1"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -q -O "$2" "$1"
+  else
+    die "need curl or wget to download Node"
+  fi
+}
+
+sha256() {
+  if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | cut -d' ' -f1
+  elif command -v shasum >/dev/null 2>&1; then shasum -a 256 "$1" | cut -d' ' -f1
+  else die "need sha256sum or shasum to verify the download"
+  fi
+}
+
+latest_lts() { # newest release whose "lts" field is a name, not false
+  tmp=$(mktemp); fetch "$DIST/index.json" "$tmp"
+  grep -v '"lts":false' "$tmp" | sed -n 's/^{"version":"v\([0-9]*\.[0-9]*\.[0-9]*\)".*/\1/p' | head -n 1
+  rm -f "$tmp"
+}
+
+platform() { # prints "<platform> <archive-ext> <bin-subdir>"
+  os=$(uname -s); arch=$(uname -m)
+  case "$arch" in
+    x86_64|amd64) arch=x64 ;;
+    aarch64|arm64) arch=arm64 ;;
+    *) die "unsupported CPU architecture: $arch" ;;
+  esac
+  case "$os" in
+    Linux) echo "linux-$arch tar.gz bin" ;;
+    Darwin) echo "darwin-$arch tar.gz bin" ;;
+    MINGW*|MSYS*|CYGWIN*) echo "win-$arch zip ." ;;
+    *) die "unsupported operating system: $os" ;;
+  esac
+}
+
+install() { # version
+  version=$1
+  set -- $(platform)
+  plat=$1; ext=$2
+  name="node-v${version}-${plat}"
+  asset="$name.$ext"
+  base="$DIST/v${version}"
+
+  tmp=$(mktemp -d "${TMPDIR:-/tmp}/nodew.XXXXXX")
+  trap 'rm -rf "$tmp"' EXIT INT TERM
+
+  say "downloading Node $version ($plat)…"
+  fetch "$base/SHASUMS256.txt" "$tmp/SHASUMS256.txt" || die "Node $version not found on nodejs.org"
+  fetch "$base/$asset" "$tmp/$asset" || die "could not download $asset"
+
+  expected=$(grep "  ${asset}\$" "$tmp/SHASUMS256.txt" | cut -d' ' -f1)
+  [ -n "$expected" ] || die "no checksum published for $asset"
+  actual=$(sha256 "$tmp/$asset")
+  [ "$expected" = "$actual" ] || die "checksum mismatch for $asset (expected $expected, got $actual)"
+
+  case "$ext" in
+    tar.gz) tar -xzf "$tmp/$asset" -C "$tmp" ;;
+    zip) unzip -q "$tmp/$asset" -d "$tmp" ;;
+  esac
+  [ -d "$tmp/$name" ] || die "unexpected layout inside $asset"
+
+  mkdir -p "$CACHE"
+  rm -rf "$CACHE/$version"
+  mv "$tmp/$name" "$CACHE/$version"
+  rm -rf "$tmp"; trap - EXIT INT TERM
+  say "Node $version installed in .node/$version/"
+}
+
+case "${1:-}" in
+  --nodew-version)
+    pinned_version; exit 0 ;;
+  --nodew-clean)
+    rm -rf "$CACHE"; say "removed .node/"; exit 0 ;;
+  --nodew-update)
+    new=${2:-}
+    [ -n "$new" ] || new=$(latest_lts)
+    new=${new#v}
+    echo "$new" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || die "could not determine a version (got '$new')"
+    old=$(pinned_version 2>/dev/null || echo none)
+    echo "$new" > "$VERSION_FILE"
+    say "pinned Node $new (was $old) in .node-version"
+    install "$new"
+    exit 0 ;;
+esac
+
+VERSION=$(pinned_version)
+[ $# -gt 0 ] || set -- node
+case "$1" in
+  node|npm|npx) ;;
+  *) die "usage: ./nodew <node|npm|npx> [args…]  (or --nodew-version, --nodew-update, --nodew-clean)" ;;
+esac
+sub=$(platform | cut -d' ' -f3)
+BIN_DIR="$CACHE/$VERSION/$sub"
+node=node
+case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) node=node.exe ;; esac
+[ -x "$BIN_DIR/$node" ] || install "$VERSION"
+# first on PATH, so npm scripts and npx tools also use this Node
+PATH="$BIN_DIR:$PATH"; export PATH
+cmd=$1; shift
+exec "$cmd" "$@"

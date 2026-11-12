@@ -63,23 +63,55 @@ function initMap(el) {
       if (layer.kind !== 'faded') line.addTo(focus);
     });
 
+  // Every marker is at least 24×24 px to click or tap (WCAG 2.5.8), also the small start/finish dot.
+  const markers = [];
   (data.markers || []).forEach((m) => {
     let html = '';
     let size = 24;
     if (m.kind === 'stay') { html = `<span class="mk mk--stay">${TENT}</span>`; size = 26; }
     else if (m.kind === 'stage') { html = `<span class="mk mk--stage">${esc(m.label)}</span>`; }
-    else { html = '<span class="mk mk--end"></span>'; size = 16; }
-    const icon = L.divIcon({ html, className: '', iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
+    else { html = '<span class="mk mk--end"></span>'; }
+    const icon = L.divIcon({ html, className: 'mk-hit', iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
     const marker = L.marker([m.lat, m.lon], { icon, keyboard: true, title: m.title || m.label || '' });
-    if (m.popup || m.url) marker.bindPopup(popup({ label: m.popup || m.label, url: m.url }));
+    marker.bindPopup(m.popup || m.url ? popup({ label: m.popup || m.label, url: m.url }) : esc(m.label));
+    marker.size = size;
     marker.addTo(all);
+    markers.push(marker);
   });
+
+  // Markers on (nearly) the same spot, like a stay where the next stage starts, would cover each
+  // other. After every zoom, put markers that overlap on screen side by side around their point.
+  const GAP = 6;
+  function spread() {
+    const pts = markers.map((mk) => map.latLngToLayerPoint(mk.getLatLng()));
+    const done = new Set();
+    markers.forEach((mk, i) => {
+      if (done.has(i)) return;
+      const group = [i];
+      for (let j = i + 1; j < markers.length; j++) {
+        if (!done.has(j) && group.some((k) => pts[k].distanceTo(pts[j]) < (markers[k].size + markers[j].size) / 2 + GAP)) group.push(j);
+      }
+      const width = group.reduce((w, k) => w + markers[k].size, 0) + GAP * (group.length - 1);
+      let x = -width / 2;
+      group.forEach((k) => {
+        const m = markers[k];
+        done.add(k);
+        const el = m.getElement();
+        if (el) el.style.marginLeft = `${group.length > 1 ? x : -m.size / 2}px`;
+        x += m.size + GAP;
+      });
+    });
+  }
 
   if (!('mineHidden' in el.dataset)) mine.addTo(map);
   const bounds = focus.getLayers().length ? focus.getBounds() : all.getBounds();
   if (mine.getLayers().length && map.hasLayer(mine)) bounds.extend(mine.getBounds());
-  if (bounds.isValid()) map.fitBounds(bounds, { padding: [28, 28] });
+  // keep markers clear of the map credits, which wrap to more lines on a phone
+  const credits = map.attributionControl ? map.attributionControl.getContainer().offsetHeight : 0;
+  if (bounds.isValid()) map.fitBounds(bounds, { paddingTopLeft: [28, 28], paddingBottomRight: [28, 28 + credits] });
   else map.setView([52.1, 5.3], 7);
+  spread();
+  map.on('zoomend', spread);
 
   // Optional toggle button for "my tracks"
   document.querySelectorAll(`[data-map-toggle="${el.id}"]`).forEach((btn) => {

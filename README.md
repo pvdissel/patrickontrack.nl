@@ -54,7 +54,17 @@ The site is in **English** (`/en/`) and **Dutch** (`/nl/`).
 ./scripts/test         # everything: quick + browser tests + accessibility scan (~30 s)
 ```
 
-Browser tests need Node 20+. Set them up once with `npm install && npx playwright install chromium`. If a test fails, `npx playwright show-report` shows what happened, with a screenshot and a step-by-step trace.
+You don't need to install Node yourself. `./nodew` works like `./hugow`: it runs the Node version pinned in **`.node-version`**. On first use it downloads that release from nodejs.org into `.node/` (git-ignored), after checking its SHA-256 against Node's published checksums. npm and npx come with it. The first browser test run also installs the test tools (`npm ci` and Playwright's Chromium) by itself. If a test fails, `./nodew npx playwright show-report` shows what happened, with a screenshot and a step-by-step trace.
+
+| Command | What it does |
+|---|---|
+| `./nodew npm …`, `./nodew npx …`, `./nodew node …` | runs npm, npx or node with the pinned Node |
+| `./nodew --nodew-version` | shows the pinned version |
+| `./nodew --nodew-update` | pins the latest LTS release and downloads it |
+| `./nodew --nodew-update 26.14.0` | pins a specific version |
+| `./nodew --nodew-clean` | deletes the downloaded Node versions |
+
+GitHub uses `./nodew` too, so after `--nodew-update`, commit `.node-version`.
 
 | Layer | What it catches | Where |
 |---|---|---|
@@ -62,13 +72,13 @@ Browser tests need Node 20+. Set them up once with `npm install && npx playwrigh
 | **Content checks** | a link to a trail, stage, stay, gear list or trip that doesn’t exist (or is still a draft), a missing or empty GPX file, two stages with the same number, an English translation of a page that doesn’t exist, an English list with more items than the Dutch one | `layouts/_partials/checks/content.html`, `content/en/_content.gotmpl`. They also run in `./hugow server`, where they show up as warnings |
 | **Link check** | broken internal links, images, GPX downloads and redirects; i18n files with different keys | `tests/links.mjs` |
 | **Browser tests** | language choice at `/`, saved choice, banner, old links, 404 in both languages; filters; maps, “Show my tracks”, the mobile menu; translated vs untranslated pages; number and date formats; trip totals; drafts not published; no JavaScript errors; no sideways scrolling on a phone; every image has alt text and every link/button a name | `tests/e2e/*.spec.mjs` |
-| **Accessibility scan** | contrast, labels, landmarks, keyboard (axe, serious and critical issues only) | `tests/e2e/a11y.spec.mjs` |
+| **Accessibility scan** | WCAG 2.0, 2.1 and 2.2 (A and AA) plus axe's best practices, on a desktop and a phone screen: contrast, names and labels, heading order, landmarks, keyboard access to scrolling areas, touch target size (also of map markers). Any problem fails it, whatever its impact | `tests/e2e/a11y.spec.mjs` |
 
 **Test content.** The browser tests run on a small fixed site in `tests/fixtures/`, not on your real content, so they don’t break when you add stories. `scripts/test` builds it with the real templates, styles and config. If you add a feature, add an example of it there and a test in `tests/e2e/`.
 
-**On GitHub** (`.github/workflows/hugo.yml`), every push and pull request runs the tests. A push to `main` is only built and deployed when they pass, so a broken commit (also one from Pages CMS) never reaches the live site. The test report is attached to every run, under *Artifacts*. The accessibility scan reports problems but doesn't block yet. Once it passes, remove `continue-on-error: true` from that step to make it blocking.
+**On GitHub** (`.github/workflows/hugo.yml`), every push and pull request runs the tests. A push to `main` is only built and deployed when they pass, so a broken commit (also one from Pages CMS) never reaches the live site. The test report is attached to every run, under *Artifacts*.
 
-`package.json` is only there for the test tools. Commit the `package-lock.json` that `npm install` creates, so GitHub uses exactly the same versions.
+`package.json` is only there for the test tools. Commit the `package-lock.json` that `./nodew npm install` creates, so GitHub uses exactly the same versions.
 
 ## Content model
 
@@ -128,6 +138,8 @@ Everything under `static/gpx/samples/` is **made-up GPX** so the maps have somet
 ```
 hugow                      Hugo wrapper (runs the version in .hugo-version)
 .hugo-version              the one place the Hugo version is pinned
+nodew                      Node wrapper for the test tools (runs the version in .node-version)
+.node-version              the one place the Node version is pinned
 .pages.yml                 Pages CMS config (generated, see scripts/)
 scripts/pages.base.yml     Pages CMS fields, written once for both languages
 scripts/pages-config.py    expands the base into .pages.yml (nl + en)

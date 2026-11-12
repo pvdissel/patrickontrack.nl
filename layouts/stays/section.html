@@ -17,6 +17,6 @@
 <section class="wrap" style="margin-top: 32px">{{ partial "map.html" (dict "page" $ "id" "map-stays" "markers" . "label" (T "map_stays")) }}</section>
 {{- end }}
 <section class="wrap" style="margin-top: 40px">
-  <div class="grid" style="--min: 320px">{{ range $stays }}{{ partial "cards/stay.html" . }}{{ end }}</div>
+  <div class="grid" style="--min: 320px">{{ range $stays }}{{ partial "cards/stay.html" (dict "page" . "level" 2) }}{{ end }}</div>
 </section>
 {{ end }}

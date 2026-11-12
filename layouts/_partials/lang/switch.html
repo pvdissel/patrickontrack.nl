@@ -1,10 +1,11 @@
 {{- /* Link to the same page in the other language(s). */ -}}
+{{- /* The visible code comes first in the accessible name ("EN – English"), so voice control users can say what they see (WCAG 2.5.3). */ -}}
 {{- $page := . -}}
 {{- range site.Home.AllTranslations -}}
   {{- if ne .Language.Lang $page.Language.Lang -}}
     {{- $lang := .Language -}}
     {{- $target := . -}}
     {{- range $page.Translations }}{{ if eq .Language.Lang $lang.Lang }}{{ $target = . }}{{ end }}{{ end -}}
-    <a class="lang-switch" href="{{ $target.RelPermalink }}" data-set-lang="{{ $lang.Lang }}" hreflang="{{ $lang.Lang }}" lang="{{ $lang.Lang }}" title="{{ $lang.Label }}" aria-label="{{ $lang.Label }}">{{ upper $lang.Lang }}</a>
+    <a class="lang-switch" href="{{ $target.RelPermalink }}" data-set-lang="{{ $lang.Lang }}" hreflang="{{ $lang.Lang }}" lang="{{ $lang.Lang }}" title="{{ $lang.Label }}">{{ upper $lang.Lang }}<span class="visually-hidden"> – {{ $lang.Label }}</span></a>
   {{- end -}}
 {{- end -}}

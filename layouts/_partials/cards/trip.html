@@ -1,3 +1,7 @@
+{{- /* Pass the page, or dict "page" … "level" 2 when the list sits right below the page's h1. */ -}}
+{{- $level := 3 }}{{ $ctx := . -}}
+{{- if reflect.IsMap . }}{{ $level = .level | default 3 }}{{ $ctx = .page }}{{ end -}}
+{{- with $ctx -}}
 {{- $t := partialCached "data/trip-totals.html" . .Path -}}
 <article class="card">
   <div class="card__media">
@@ -10,7 +14,7 @@
   </div>
   <div class="card__body">
     <p class="subtle-label">{{ partial "trip-dates.html" $t }}</p>
-    <h3 class="card__title" style="font-size: 26px"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    {{ partial "heading.html" (dict "level" $level "class" "card__title" "style" "font-size: 26px" "url" .RelPermalink "text" .Title) }}
     {{- with (.Params.description | default .Description) }}<p class="card__text">{{ . }}</p>{{ end }}
     <div class="metas">
       <span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}{{ $t.days }} {{ T "day_count" $t.days }}</span>
@@ -21,3 +25,4 @@
     {{- with $t.trails }}<div class="chips">{{ range . }}<a class="chip chip--trail" href="{{ .RelPermalink }}">{{ .Params.short | default .Title }}</a>{{ end }}</div>{{ end }}
   </div>
 </article>
+{{- end -}}

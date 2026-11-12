@@ -17,7 +17,7 @@
 <section class="wrap">
   {{- range $stories.GroupByDate "2006" }}
   <div data-filter-block>
-    <div class="year" data-filter-heading="stories"><h2>{{ .Key }}</h2><span class="meta">{{ len .Pages }} {{ T "story_count" (len .Pages) }}</span></div>
+    <div class="year" data-filter-heading="stories"><h2>{{ .Key }}</h2><span class="meta" data-filter-count>{{ len .Pages }} {{ T "story_count" (len .Pages) }}</span></div>
     {{- range .Pages }}{{ partial "story-row.html" . }}{{ end }}
   </div>
   {{- else }}

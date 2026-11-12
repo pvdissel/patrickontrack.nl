@@ -24,6 +24,8 @@ document.querySelectorAll('[data-filter-group]').forEach((group) => {
         const tags = (item.dataset.tags || '').split(' ');
         item.hidden = !(value === 'all' || tags.includes(value));
       });
+      // totals only make sense for the unfiltered list
+      document.querySelectorAll('[data-filter-count]').forEach((c) => { c.hidden = value !== 'all'; });
       // hide year headings without visible rows
       document.querySelectorAll(`[data-filter-heading="${name}"]`).forEach((h) => {
         const section = h.closest('[data-filter-block]');

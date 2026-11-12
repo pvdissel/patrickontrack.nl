@@ -223,7 +223,7 @@ how_stays: "Elke camping, hut en elk Nivonhuis waar ik sliep: wat er was, wat he
 how_gear: "Een paklijst per tocht, met gewichten en de lessen die ik op de harde manier leerde."
 
 # trips / 404
-trips_series: "Tochten & series"
+trips_series: "Tochten"
 not_found_eyebrow: "404 · Van de route af"
 not_found_title: "Dit pad loopt dood."
 not_found_text: De pagina die je zocht is verplaatst of heeft nooit bestaan.
@@ -238,3 +238,20 @@ elevation_label: "Hoogteprofiel van {{ .Lo }} tot {{ .Hi }} meter over {{ .Km }}
 # taalnamen
 lang_en: Engels
 lang_nl: Nederlands
+
+# tochten
+view: Weergave
+by_trip: Per tocht
+trips: Tochten
+day_count:
+  one: dag
+  other: dagen
+days: Dagen
+the_whole_trip: De hele tocht
+day_tracks: Mijn route per dag
+day_by_day: Dag voor dag
+preparation: Voorbereiding
+the_run_up: De aanloop
+part_of_trip: Onderdeel van de tocht
+trip_overview: Overzicht van de tocht
+map_trip: "Kaart van {{ . }}: de route van elke dag"

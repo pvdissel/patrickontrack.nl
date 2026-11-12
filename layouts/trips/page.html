@@ -1,0 +1,96 @@
+{{ define "main" }}
+{{- $t := partialCached "data/trip-totals.html" . .Path -}}
+{{- $gear := partial "ref.html" (dict "ref" .Params.gear "section" "gear") -}}
+{{- $runUp := partial "refs.html" (dict "refs" .Params.run_up "section" "trips") -}}
+{{- $trail := index $t.trails 0 -}}
+{{- /* stages walked on this trip: official, the rest of the trail faded */ -}}
+{{- $hl := dict }}{{ range $t.stories }}{{ range partial "refs.html" (dict "refs" .Params.stages "section" "stages") }}{{ $hl = merge $hl (dict .Path true) }}{{ end }}{{ end -}}
+{{- $md := partial "data/mapdata.html" (dict "trail" $trail "highlight" (cond (gt (len $hl) 0) $hl dict) "tracks" $t.stories "dayShades" true "stays" $t.stays) -}}
+
+<header class="wrap page-head stack" style="--gap: 20px; padding-top: 28px">
+  <nav class="crumbs" aria-label="{{ T "breadcrumb" }}">
+    <a href="{{ (site.GetPage "/stories").RelPermalink }}">{{ T "stories" }}</a> / <a href="{{ (site.GetPage "/trips").RelPermalink }}">{{ T "by_trip" }}</a>
+  </nav>
+  <h1 class="title-l" style="max-width: 980px">{{ .Title }}</h1>
+  <div class="metas">
+    {{- with partial "trip-dates.html" $t }}<span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}{{ . }}</span>{{ end }}
+    {{- range $t.trails }}<a class="chip chip--trail" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+    {{- if .Draft }}<span class="draft-badge">{{ T "draft" }}</span>{{ end }}
+  </div>
+</header>
+
+{{- with .Params.cover }}
+<div class="wrap cover">{{ partial "img.html" (dict "src" . "w" 1180 "h" 520 "alt" ($.Params.cover_alt | default "") "eager" true) }}</div>
+{{- end }}
+
+<section class="wrap stats" style="margin-top: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--line)">
+  {{ partial "stat.html" (dict "label" (T "days") "value" $t.days "icon" "calendar") }}
+  {{ partial "stat.html" (dict "label" (T "nights") "value" $t.nights "icon" "moon") }}
+  {{ partial "stat.html" (dict "label" (T "distance") "value" (partial "num.html" (dict "v" $t.distance "unit" "km")) "unit" "km" "icon" "route") }}
+  {{ partial "stat.html" (dict "label" (T "ascent") "value" (partial "num.html" (dict "v" $t.ascent "unit" "m")) "unit" "m" "icon" "up") }}
+  {{- with $gear }}{{ $gt := partialCached "data/gear-totals.html" . .Path }}{{ partial "stat.html" (dict "label" (T "pack") "value" (partial "num.html" (dict "v" $gt.total "unit" "kg")) "unit" "kg" "icon" "pack") }}{{ end }}
+</section>
+
+{{- if $md.layers }}
+<section class="wrap section stack" style="margin-top: 40px; --gap: 14px" aria-labelledby="whole">
+  <h2 id="whole" class="title-m" style="font-size: 32px">{{ T "the_whole_trip" }}</h2>
+  {{ partial "map.html" (dict "page" . "id" "map-trip" "size" "tall" "layers" $md.layers "markers" $md.markers "label" (T "map_trip" .Title)) }}
+  {{ partial "legend.html" (slice (slice "mine-days" (T "day_tracks")) (slice "official" (T "official_route")) (slice "faded" (T "rest_of_trail")) (slice "stay" (T "where_i_slept"))) }}
+  {{- if $t.sample }}<p class="sample-note">{{ partial "icon.html" (dict "name" "info" "size" 16) }}<span>{{ T "sample_story" }}</span></p>{{ end }}
+  {{- /* one elevation profile for the whole trip, with a divider per day */ -}}
+  {{- $profile := slice }}{{ $offset := 0.0 }}{{ $dividers := slice }}{{ $n := 0 -}}
+  {{- range $t.stories -}}
+    {{- $s := . -}}
+    {{- with (partialCached "data/stats.html" $s $s.Path).gpx -}}
+      {{- if gt $n 0 }}{{ $dividers = $dividers | append (dict "km" $offset "label" ($s.Date | time.Format "2 Jan")) }}{{ end -}}
+      {{- range .profile }}{{ $profile = $profile | append (dict "km" (add $offset .km) "ele" .ele) }}{{ end -}}
+      {{- $offset = add $offset .distance }}{{ $n = add $n 1 -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if gt (len $profile) 1 }}
+  <div class="panel elevation--mine" style="padding: 18px 20px 10px; margin-top: 10px">{{ partial "elevation.html" (dict "profile" $profile "dividers" $dividers) }}</div>
+  {{- end }}
+</section>
+{{- end }}
+
+<section class="wrap section layout" style="margin-top: 56px">
+  <div class="layout__main">
+    {{- with .Content }}{{ partial "lang/notice.html" $ }}<div class="prose">{{ . }}</div>{{ end }}
+    <div>
+      <h2 class="title-m" style="font-size: 32px">{{ T "day_by_day" }}</h2>
+      {{- range $t.stories }}{{ partial "story-row.html" (dict "page" . "hideTrip" true) }}{{ else }}<p class="muted" style="margin-top: 16px">{{ T "no_stories" }}</p>{{ end }}
+    </div>
+    {{- range $s := $t.stories }}{{ with $s.Params.youtube }}{{ partial "youtube.html" (dict "id" . "title" $s.Title) }}{{ end }}{{ end }}
+    {{- with .Params.youtube }}{{ partial "youtube.html" (dict "id" . "title" $.Title) }}{{ end }}
+  </div>
+  <aside class="layout__aside">
+    {{- with $gear }}
+    {{- $gt := partialCached "data/gear-totals.html" . .Path }}
+    <div class="card">
+      <div class="card__body">
+        <p class="card__kind">{{ partial "icon.html" (dict "name" "pack" "size" 16) }}{{ T "gear_on_hike" }}</p>
+        <div class="stats" style="--gap: 28px">
+          {{- if gt $gt.total 0.0 }}{{ partial "stat.html" (dict "label" (T "total") "value" (partial "num.html" (dict "v" $gt.total "unit" "kg")) "unit" "kg") }}{{ end }}
+          {{- if gt $gt.consumable 0.0 }}{{ partial "stat.html" (dict "label" (T "food_water") "value" (partial "num.html" (dict "v" $gt.consumable "unit" "kg")) "unit" "kg") }}{{ end }}
+        </div>
+        <h3 class="card__title" style="font-size: 18px; font-family: var(--f-body)"><a href="{{ .RelPermalink }}">{{ T "full_gear_list" }}</a></h3>
+      </div>
+    </div>
+    {{- with .Params.lessons }}
+    <div class="panel panel--dark lessons">
+      <div class="moments__head" style="margin: 0; font-size: 22px">{{ partial "icon.html" (dict "name" "bulb" "size" 20) }}{{ T "next_time" }}</div>
+      <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+    </div>
+    {{- end }}
+    {{- end }}
+    {{- range $t.stays }}{{ partial "cards/stay.html" . }}{{ end }}
+  </aside>
+</section>
+
+{{- with $runUp }}
+<section class="wrap section" aria-labelledby="runup">
+  <div class="section-head"><div class="stack" style="--gap: 10px"><p class="eyebrow">{{ T "preparation" }}</p><h2 id="runup" class="title-m">{{ T "the_run_up" }}</h2></div></div>
+  <div class="grid" style="--min: 300px">{{ range . }}{{ partial "cards/trip.html" . }}{{ end }}</div>
+</section>
+{{- end }}
+{{ end }}

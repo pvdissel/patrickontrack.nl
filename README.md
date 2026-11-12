@@ -51,7 +51,8 @@ The site is in **English** (`/en/`) and **Dutch** (`/nl/`).
 |---|---|---|---|
 | **Trail** | `content/<lang>/trails/` | The official route: region, start/finish, website, cover | — |
 | **Stage** (etappe) | `content/<lang>/stages/` | One stage of a trail, with its own official GPX | trail |
-| **Story** | `content/<lang>/stories/` | One day on the trail (the blog post) | trail, stages walked, my GPX track, stays, gear list, YouTube |
+| **Trip** | `content/<lang>/trips/` | One outing of one or more days, e.g. “Dutch Mountain Trail in 3 days”: intro, cover, gear list, the run-up | main trail, gear list, earlier trips (run-up) |
+| **Story** | `content/<lang>/stories/` | One day on the trail (the blog post) | trip, trail, stages walked, my GPX track, stays, YouTube (and a gear list if it differs from the trip’s) |
 | **Stay** | `content/<lang>/stays/` | Campsite, hut, Nivon house…: type, price, facilities, coordinates | trail, stage |
 | **Gear list** | `content/<lang>/gear/` | Items with category, weight and base/worn/consumable | trail |
 
@@ -60,7 +61,10 @@ Links are stored as paths (`content/nl/trails/dutch-mountain-trail.md`), which i
 - a trail page lists its stages, the stories on it, the stays along it, and **how many stages I've hiked** (stages linked from published stories);
 - a stage page shows who walked it (my stories) and stays near its end;
 - a stay page shows the stories that spent the night there;
-- a gear list shows which stories used it.
+- a gear list shows which stories used it (directly or through their trip);
+- a trip page adds up its stories: dates, days, nights, distance and ascent. It shows every day’s track on one map, in alternating shades, plus one elevation profile, a day-by-day list, the stays, the gear list with “next time”, and earlier trips under “The run-up”.
+
+The Stories page has an **All stories / By trip** switch; `/trips/` lists every trip with at least one published story. Trips replace the old `trips` taxonomy.
 
 ### GPX files → maps, numbers and elevation profiles
 

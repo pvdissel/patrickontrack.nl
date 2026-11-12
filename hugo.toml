@@ -18,8 +18,7 @@ timeZone = "Europe/Amsterdam"
     maxZoom = 17
 
 [taxonomies]
-  trip = "trips"   # groups stories into a series, e.g. "Dutch Mountain Trail in 3 days"
-  tag = "tags"
+  tag = "tags"   # trips are their own pages now (content/<lang>/trips)
 
 [permalinks]
   [permalinks.page]

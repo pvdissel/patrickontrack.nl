@@ -1,0 +1,5 @@
+{{- /* "All stories | By trip" switch on the Stories and Trips pages. dict "current" "stories|trips" */ -}}
+<nav class="views" aria-label="{{ T "view" }}">
+  {{- with site.GetPage "/stories" }}<a href="{{ .RelPermalink }}"{{ if eq $.current "stories" }} aria-current="page"{{ end }}>{{ T "all_stories" }}</a>{{ end }}
+  {{- with site.GetPage "/trips" }}<a href="{{ .RelPermalink }}"{{ if eq $.current "trips" }} aria-current="page"{{ end }}>{{ T "by_trip" }}</a>{{ end }}
+</nav>

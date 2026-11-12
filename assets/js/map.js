@@ -7,6 +7,7 @@ const STYLE = {
   'stage-a': { color: '#1E3D2F', weight: 5, casing: 8 },
   'stage-b': { color: '#4E8A68', weight: 5, casing: 8 },
   mine: { color: '#C8641E', weight: 4.5, casing: 8 },
+  'mine-b': { color: '#7A3510', weight: 4.5, casing: 8 },
 };
 
 const TENT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M3 20L12 4l9 16H3z"/><path d="M9 20l3-5 3 5"/></svg>';
@@ -45,13 +46,13 @@ function initMap(el) {
   const focus = L.featureGroup();
 
   // draw faded first, then official/stages, then my tracks on top
-  const order = { faded: 0, official: 1, 'stage-a': 1, 'stage-b': 1, mine: 2 };
+  const order = { faded: 0, official: 1, 'stage-a': 1, 'stage-b': 1, mine: 2, 'mine-b': 2 };
   (data.layers || [])
     .filter((l) => l.points && l.points.length > 1)
     .sort((a, b) => (order[a.kind] ?? 1) - (order[b.kind] ?? 1))
     .forEach((layer) => {
       const s = STYLE[layer.kind] || STYLE.official;
-      const group = layer.kind === 'mine' ? mine : all;
+      const group = layer.kind.startsWith('mine') ? mine : all;
       if (s.casing) {
         L.polyline(layer.points, { color: '#ffffff', weight: s.casing, opacity: 0.9, interactive: false }).addTo(group);
       }

@@ -1,0 +1,9 @@
+{{- /* "9–12 Sep 2022", "30 Jan – 2 Feb 2022" or "Nov 2021 – Jun 2022" for a trip-totals dict */ -}}
+{{- $f := .first }}{{ $l := .last -}}
+{{- if $f -}}
+  {{- if eq ($f.Format "2006-01-02") ($l.Format "2006-01-02") -}}{{ $f | time.Format "2 Jan 2006" -}}
+  {{- else if eq ($f.Format "2006-01") ($l.Format "2006-01") -}}{{ $f.Day }}–{{ $l | time.Format "2 Jan 2006" -}}
+  {{- else if gt (sub $l.Unix $f.Unix) 2592000 -}}{{ $f | time.Format "Jan 2006" }} – {{ $l | time.Format "Jan 2006" -}}
+  {{- else -}}{{ $f | time.Format "2 Jan" }} – {{ $l | time.Format "2 Jan 2006" -}}
+  {{- end -}}
+{{- end -}}

@@ -1,0 +1,17 @@
+{{- /* Totals for a trip, added up from its stories. */ -}}
+{{- $stories := partialCached "data/trip-stories.html" . .Path -}}
+{{- $d := 0.0 }}{{ $a := 0.0 }}{{ $nights := 0 }}{{ $sample := false }}{{ $trails := slice }}{{ $stays := slice -}}
+{{- range $stories -}}
+  {{- $s := partialCached "data/stats.html" . .Path -}}
+  {{- with $s.distance }}{{ $d = add $d (float .) }}{{ end -}}
+  {{- with $s.ascent }}{{ $a = add $a (float .) }}{{ end -}}
+  {{- if $s.sample }}{{ $sample = true }}{{ end -}}
+  {{- with $s.gpx }}{{ if .sample }}{{ $sample = true }}{{ end }}{{ end -}}
+  {{- $st := partial "refs.html" (dict "refs" .Params.stays "section" "stays") -}}
+  {{- $nights = add $nights (len $st) }}{{ $stays = $stays | append $st -}}
+  {{- with partial "ref.html" (dict "ref" .Params.trail "section" "trails") }}{{ $trails = $trails | append . }}{{ end -}}
+{{- end -}}
+{{- with partial "ref.html" (dict "ref" .Params.trail "section" "trails") }}{{ $trails = slice . | append $trails }}{{ end -}}
+{{- $first := false }}{{ $last := false -}}
+{{- with $stories }}{{ $first = (index . 0).Date }}{{ $last = (index . (sub (len .) 1)).Date }}{{ end -}}
+{{- return dict "stories" $stories "days" (len $stories) "nights" $nights "distance" $d "ascent" $a "sample" $sample "trails" ($trails | uniq) "stays" ($stays | uniq) "first" $first "last" $last -}}

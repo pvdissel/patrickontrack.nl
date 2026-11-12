@@ -15,6 +15,7 @@
         {{- with .Page }}{{ if and (not $active) (eq $current.Section .Section) (ne $current.Kind "home") }}{{ $active = true }}{{ end }}{{ end -}}
         {{- /* stage pages belong to Trails */ -}}
         {{- if and (eq $current.Section "stages") (eq .Identifier "trails") }}{{ $active = true }}{{ end }}
+        {{- if and (eq $current.Section "trips") (eq .Identifier "stories") }}{{ $active = true }}{{ end }}
       <a href="{{ .URL }}"{{ if $active }} aria-current="page"{{ end }}>{{ .Name }}</a>
       {{- end }}
       {{- with site.Params.youtube }}

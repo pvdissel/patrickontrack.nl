@@ -1,0 +1,18 @@
+{{ define "main" }}
+{{- $stories := site.GetPage "/stories" -}}
+{{- $trips := slice -}}
+{{- range .Pages }}{{ $t := partialCached "data/trip-totals.html" . .Path }}{{ if $t.days }}{{ $trips = $trips | append (dict "page" . "first" $t.first) }}{{ end }}{{ end -}}
+<section class="wrap page-head stack" style="--gap: 18px">
+  <p class="eyebrow">{{ $stories.Title }}</p>
+  <h1 class="title-l">{{ with $stories }}{{ .Params.heading | default (T "every_walk") }}{{ end }}</h1>
+  {{- with $stories.Params.intro }}<p class="lead">{{ . }}</p>{{ end }}
+  {{ partial "stories-views.html" (dict "current" "trips") }}
+</section>
+<section class="wrap" style="margin-top: 32px">
+  {{- with $trips }}
+  <div class="grid" style="--min: 330px">{{ range sort . "first" "desc" }}{{ partial "cards/trip.html" .page }}{{ end }}</div>
+  {{- else }}
+  <p class="empty">{{ T "no_stories" }}</p>
+  {{- end }}
+</section>
+{{ end }}

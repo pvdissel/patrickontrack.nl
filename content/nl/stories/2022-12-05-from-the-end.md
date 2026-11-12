@@ -1,8 +1,7 @@
 ---
 title: Arnhem to Leersum
 date: '2022-12-05T07:00:00+01:00'
-trips:
-- Utrechtse Mountain Trail
+trip: content/nl/trips/utrechtse-mountain-trail-2022.md
 trail: content/nl/trails/utrechtse-mountain-trail.md
 stages:
 - content/nl/stages/utrechtse-mountain-trail-6.md

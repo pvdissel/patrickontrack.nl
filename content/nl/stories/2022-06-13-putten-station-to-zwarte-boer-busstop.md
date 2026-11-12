@@ -1,8 +1,7 @@
 ---
 title: Putten station to Zwarte Boer busstop
 date: '2022-06-13T07:00:00+02:00'
-trips:
-- SP16 Veluwe Zwerfpad
+trip: content/nl/trips/veluwe-zwerfpad.md
 trail: content/nl/trails/veluwe-zwerfpad.md
 stages:
 - content/nl/stages/veluwe-zwerfpad-8.md

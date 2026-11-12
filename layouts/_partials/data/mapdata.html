@@ -5,6 +5,7 @@
     "stages"    optional slice of stage pages to draw (default: all stages of trail)
     "highlight" optional dict {stagePath: true}; others drawn faded. Without it stages alternate colours.
     "tracks"    slice of story pages whose GPX track is drawn as "mine"
+    "dayShades" true: alternate two shades per track (trip pages), tooltips show the date
     "stays"     slice of stay pages (with lat/lon) drawn as markers
 */ -}}
 {{- $layers := slice -}}{{- $markers := slice -}}
@@ -28,10 +29,17 @@
     {{- end -}}
   {{- end -}}
 {{- end -}}
+{{- $shades := .dayShades -}}
+{{- $n := 0 -}}
 {{- range $t := .tracks -}}
   {{- with $t.Params.track -}}
     {{- $g := partialCached "gpx/parse.html" . . -}}
-    {{- if $g.ok }}{{ $layers = $layers | append (dict "kind" "mine" "points" $g.points "name" (T "map_my_track" $t.Title) "url" $t.RelPermalink) }}{{ end -}}
+    {{- if $g.ok -}}
+      {{- $kind := "mine" }}{{ if and $shades (eq (mod $n 2) 1) }}{{ $kind = "mine-b" }}{{ end -}}
+      {{- $name := cond $shades (printf "%s · %s" ($t.Date | time.Format "2 Jan") $t.Title) (T "map_my_track" $t.Title) -}}
+      {{- $layers = $layers | append (dict "kind" $kind "points" $g.points "name" $name "url" $t.RelPermalink) -}}
+      {{- $n = add $n 1 -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 {{- range .stays -}}

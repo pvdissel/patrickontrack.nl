@@ -35,7 +35,7 @@ content:
     view:
       fields: [title, date, trail, draft]
       primary: title
-      search: [title, description, trips]
+      search: [title, description]
       sort: [date, title]
       default:
         sort: date
@@ -69,11 +69,13 @@ content:
       - name: cover_alt
         label: Cover photo description (alt text)
         type: string
-      - name: trips
-        label: Trip / series
-        description: Groups days into a series, e.g. "Dutch Mountain Trail in 3 days"
-        type: string
-        list: true
+      - name: trip
+        label: Trip
+        description: The trip this day belongs to, e.g. "Dutch Mountain Trail in 3 days"
+        type: reference
+        options:
+          collection: trips
+          search: title
       - name: trail
         label: Trail
         type: reference
@@ -105,6 +107,7 @@ content:
           search: title
       - name: gear
         label: Gear list
+        description: Only if this day differs from the trip's gear list
         type: reference
         options:
           collection: gear
@@ -149,6 +152,72 @@ content:
         type: number
       - name: body
         label: Story
+        type: rich-text
+        options:
+          format: markdown
+          media: images
+
+  # ------------------------------------------------------------------ Trips
+  - name: trips
+    label: Trips
+    type: collection
+    path: content/trips
+    exclude: [_index.md]
+    filename:
+      template: "{primary}.md"
+      field: create
+    view:
+      fields: [title, trail, draft]
+      primary: title
+      search: [title, description]
+    fields:
+      - name: title
+        label: Name
+        description: e.g. "Dutch Mountain Trail in 3 days"
+        type: string
+        required: true
+      - name: draft
+        label: Draft
+        type: boolean
+        default: true
+      - name: description
+        label: Short summary
+        type: text
+      - name: cover
+        label: Cover photo
+        type: image
+        options:
+          media: images
+      - name: cover_alt
+        label: Cover photo description (alt text)
+        type: string
+      - name: trail
+        label: Main trail
+        description: Its stages are drawn on the trip map (stages walked on this trip stand out)
+        type: reference
+        options:
+          collection: trails
+          search: title
+      - name: gear
+        label: Gear list
+        description: Used by every day of the trip, unless a story picks its own
+        type: reference
+        options:
+          collection: gear
+          search: title
+      - name: run_up
+        label: The run-up
+        description: Earlier trips that were preparation for this one
+        type: reference
+        options:
+          collection: trips
+          multiple: true
+          search: title
+      - name: youtube
+        label: YouTube video (whole trip)
+        type: string
+      - name: body
+        label: Intro
         type: rich-text
         options:
           format: markdown

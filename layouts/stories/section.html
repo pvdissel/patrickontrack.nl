@@ -7,6 +7,7 @@
   <p class="eyebrow">{{ .Title }}</p>
   <h1 class="title-l">{{ .Params.heading | default (T "every_walk") }}</h1>
   {{- with .Params.intro }}<p class="lead">{{ . }}</p>{{ end }}
+  {{ partial "stories-views.html" (dict "current" "stories") }}
   {{- if gt (len $trails) 1 }}
   <div class="filters" role="group" aria-label="{{ T "filter_trail" }}" data-filter-group="stories" style="margin-top: 16px">
     <button class="filter" type="button" data-filter="all" aria-pressed="true">{{ T "all" }}</button>

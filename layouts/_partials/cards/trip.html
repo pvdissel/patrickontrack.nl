@@ -1,0 +1,23 @@
+{{- $t := partialCached "data/trip-totals.html" . .Path -}}
+<article class="card">
+  <div class="card__media">
+    {{- with .Params.cover }}{{ partial "img.html" (dict "src" . "w" 640 "h" 360 "alt" "") }}
+    {{- else -}}
+      {{- $lines := slice -}}
+      {{- range $i, $s := $t.stories }}{{ with (partialCached "data/stats.html" $s $s.Path).gpx }}{{ $lines = $lines | append (dict "points" .points "kind" "mine") }}{{ end }}{{ end -}}
+      {{ partial "trace.html" (dict "lines" $lines "label" (T "route_of" .Title)) }}
+    {{- end }}
+  </div>
+  <div class="card__body">
+    <p class="subtle-label">{{ partial "trip-dates.html" $t }}</p>
+    <h3 class="card__title" style="font-size: 26px"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    {{- with .Description }}<p class="card__text">{{ . }}</p>{{ end }}
+    <div class="metas">
+      <span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}{{ $t.days }} {{ T "day_count" $t.days }}</span>
+      {{- if $t.nights }}<span class="meta">{{ partial "icon.html" (dict "name" "moon" "size" 15) }}{{ $t.nights }} {{ T "night" $t.nights }}</span>{{ end }}
+      {{- if gt $t.distance 0.0 }}<span class="meta">{{ partial "icon.html" (dict "name" "route" "size" 15) }}{{ partial "num.html" (dict "v" $t.distance "unit" "km") }} km</span>{{ end }}
+      {{- if .Draft }}<span class="draft-badge">{{ T "draft" }}</span>{{ end }}
+    </div>
+    {{- with $t.trails }}<div class="chips">{{ range . }}<a class="chip chip--trail" href="{{ .RelPermalink }}">{{ .Params.short | default .Title }}</a>{{ end }}</div>{{ end }}
+  </div>
+</article>

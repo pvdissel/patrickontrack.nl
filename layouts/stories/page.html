@@ -2,17 +2,18 @@
 {{- $trail := partial "ref.html" (dict "ref" .Params.trail "section" "trails") -}}
 {{- $stages := sort (partial "refs.html" (dict "refs" .Params.stages "section" "stages")) "Params.number" -}}
 {{- $stays := partial "refs.html" (dict "refs" .Params.stays "section" "stays") -}}
+{{- $trip := partial "ref.html" (dict "ref" .Params.trip "section" "trips") -}}
 {{- $gear := partial "ref.html" (dict "ref" .Params.gear "section" "gear") -}}
+{{- if and (not $gear) $trip }}{{ $gear = partial "ref.html" (dict "ref" $trip.Params.gear "section" "gear") }}{{ end -}}
 {{- $st := partialCached "data/stats.html" . .Path -}}
-{{- $series := index (.Params.trips | default slice) 0 -}}
 {{- $seriesPages := slice -}}
-{{- with $series }}{{ with site.GetPage (printf "/trips/%s" (urlize .)) }}{{ $seriesPages = .Pages.ByDate }}{{ end }}{{ end -}}
+{{- with $trip }}{{ $seriesPages = partialCached "data/trip-stories.html" . .Path }}{{ end -}}
 
 <article>
 <header class="wrap page-head stack" style="--gap: 20px; padding-top: 28px">
   <nav class="crumbs" aria-label="{{ T "breadcrumb" }}">
     <a href="{{ (site.GetPage "/stories").RelPermalink }}">{{ T "stories" }}</a>
-    {{- with $series }} / <a href="{{ (site.GetPage (printf "/trips/%s" (urlize .))).RelPermalink }}">{{ . }}</a>{{ end }}
+    {{- with $trip }} / <a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
   </nav>
   <h1 class="title-l" style="max-width: 980px">{{ .Title }}</h1>
   <div class="metas">
@@ -96,14 +97,18 @@
   </div>
 
   <aside class="layout__aside" aria-label="{{ T "about_this_day" }}">
-    {{- if gt (len $seriesPages) 1 }}
+    {{- with $trip }}
     <div class="panel" style="padding: 18px">
-      <p class="subtle-label" style="margin: 4px 12px 10px">{{ $series }}</p>
-      <nav class="series" aria-label="{{ $series }}">
+      <p class="subtle-label" style="margin: 4px 12px 10px">{{ T "part_of_trip" }}</p>
+      <a href="{{ .RelPermalink }}" style="display: block; margin: 0 12px 10px; font: 600 22px/1.15 var(--f-head); color: var(--ink); text-decoration: none">{{ .Title }}</a>
+      {{- if gt (len $seriesPages) 1 }}
+      <nav class="series" aria-label="{{ .Title }}">
         {{- range $seriesPages }}
         <a href="{{ .RelPermalink }}"{{ if eq .Path $.Path }} aria-current="page"{{ end }}><span class="series__date">{{ .Date | time.Format "2 Jan" }}</span><span>{{ .Title }}</span></a>
         {{- end }}
       </nav>
+      {{- end }}
+      <a class="link-arrow" href="{{ .RelPermalink }}" style="margin: 4px 12px 0">{{ T "trip_overview" }} {{ partial "icon.html" (dict "name" "arrow" "size" 16) }}</a>
     </div>
     {{- end }}
 

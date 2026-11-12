@@ -386,3 +386,10 @@ a.chip--stage:hover { background: #C9D6BC; color: var(--forest); box-shadow: non
 .lang-suggest .btn:hover { background: #fff; color: var(--forest); }
 .lang-suggest .btn--ghost { background: transparent; color: var(--on-dark); box-shadow: inset 0 0 0 1.5px var(--on-dark-muted); }
 .lang-suggest .btn--ghost:hover { background: rgba(255,255,255,.08); color: #fff; }
+
+/* ---- trips ---------------------------------------------------------- */
+.views { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); align-self: flex-start; margin-top: 6px; }
+.views a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 18px; border-radius: 999px; font: 500 14px/1 var(--f-body); color: var(--ink); text-decoration: none; }
+.views a:hover { background: var(--fog); color: var(--ink); }
+.views a[aria-current="page"] { background: var(--forest); color: var(--on-dark); }
+.legend__swatch--mine-days { background: linear-gradient(90deg, var(--ember) 50%, #7A3510 50%); height: 5px; }

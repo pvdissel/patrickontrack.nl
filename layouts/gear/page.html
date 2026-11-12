@@ -6,7 +6,12 @@
 {{- $items := .Params.items | default slice -}}
 {{- $cats := slice }}{{ range $order }}{{ if where $items "category" . }}{{ $cats = $cats | append . }}{{ end }}{{ end -}}
 {{- range $items }}{{ $c := .category | default "Other" }}{{ if not (in $cats $c) }}{{ $cats = $cats | append $c }}{{ end }}{{ end -}}
-{{- $stories := slice }}{{ range $s := where site.RegularPages "Section" "stories" }}{{ with partial "ref.html" (dict "ref" $s.Params.gear "section" "gear") }}{{ if eq .Path $.Path }}{{ $stories = $stories | append $s }}{{ end }}{{ end }}{{ end -}}
+{{- $stories := slice -}}
+{{- range $s := (where site.RegularPages "Section" "stories").ByDate -}}
+  {{- $g := partial "ref.html" (dict "ref" $s.Params.gear "section" "gear") -}}
+  {{- if not $g }}{{ with partial "ref.html" (dict "ref" $s.Params.trip "section" "trips") }}{{ $g = partial "ref.html" (dict "ref" .Params.gear "section" "gear") }}{{ end }}{{ end -}}
+  {{- with $g }}{{ if eq .Path $.Path }}{{ $stories = $stories | append $s }}{{ end }}{{ end -}}
+{{- end -}}
 
 <section class="wrap page-head stack" style="--gap: 18px">
   <p class="eyebrow">{{ T "gear" }}</p>

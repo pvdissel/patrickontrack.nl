@@ -1,8 +1,7 @@
 ---
 title: Ben Nevis alone to the summit
 date: '2022-07-14T07:00:00+02:00'
-trips:
-- 3 weeks Scotland holiday with the family
+trip: content/nl/trips/scotland-2022.md
 trail: content/nl/trails/ben-nevis.md
 draft: true
 aliases:

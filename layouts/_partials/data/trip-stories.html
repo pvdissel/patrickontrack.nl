@@ -1,0 +1,7 @@
+{{- /* Published stories that belong to a trip, oldest first. */ -}}
+{{- $trip := . -}}
+{{- $out := slice -}}
+{{- range $p := (where site.RegularPages "Section" "stories").ByDate -}}
+  {{- with partial "ref.html" (dict "ref" $p.Params.trip "section" "trips") }}{{ if eq .Path $trip.Path }}{{ $out = $out | append $p }}{{ end }}{{ end -}}
+{{- end -}}
+{{- return $out -}}

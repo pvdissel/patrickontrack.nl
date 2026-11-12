@@ -223,7 +223,7 @@ how_stays: "Every campsite, hut and Nivon house I slept in: what it had, what it
 how_gear: "A gear list per hike, with weights and the lessons I learned the hard way."
 
 # trips / 404
-trips_series: "Trips & series"
+trips_series: "Trips"
 not_found_eyebrow: "404 · Off trail"
 not_found_title: "This path doesn’t go anywhere."
 not_found_text: The page you were looking for has moved or never existed.
@@ -238,3 +238,20 @@ elevation_label: "Elevation profile from {{ .Lo }} to {{ .Hi }} metres over {{ .
 # language names (in this language)
 lang_en: English
 lang_nl: Dutch
+
+# trips
+view: View
+by_trip: By trip
+trips: Trips
+day_count:
+  one: day
+  other: days
+days: Days
+the_whole_trip: The whole trip
+day_tracks: My track per day
+day_by_day: Day by day
+preparation: Preparation
+the_run_up: The run-up
+part_of_trip: Part of the trip
+trip_overview: Trip overview
+map_trip: "Map of {{ . }}: every day’s track"

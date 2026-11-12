@@ -8,7 +8,7 @@ timeZone = "Europe/Amsterdam"
 [params]
   author = "Patrick van Dissel"
   since = "2021"
-  youtube = "https://www.youtube.com/"   # TODO: your channel URL
+  youtube = "https://www.youtube.com/pvdissel"
   email = ""                              # optional contact address shown on About
 
   # Map tiles. OpenTopoMap shows contour lines; swap for OSM if you prefer.

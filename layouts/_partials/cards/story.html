@@ -21,7 +21,7 @@
     </div>
     {{- end }}
     <h3 class="card__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-    {{- with .Description }}<p class="card__text">{{ . }}</p>{{ end }}
+    {{- with (.Params.description | default .Description) }}<p class="card__text">{{ . }}</p>{{ end }}
     <div class="metas">
       <span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}{{ if partial "lang/is-fallback.html" . }}<span class="lang-badge">{{ upper (partial "lang/source.html" .) }}</span>{{ end }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format "2 Jan 2006" }}</time></span>
       {{- with $st.distance }}<span class="meta">{{ partial "icon.html" (dict "name" "route" "size" 15) }}{{ partial "num.html" (dict "v" . "unit" "km") }} km</span>{{ end }}

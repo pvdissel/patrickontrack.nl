@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 {{- $title := cond .IsHome (printf "%s · %s" site.Title site.Params.tagline) (printf "%s · %s" .Title site.Title) }}
 <title>{{ $title }}</title>
-{{- $desc := or .Description .Summary site.Params.description | plainify | strings.Truncate 160 }}
+{{- $desc := or (.Params.description | default .Description) .Summary site.Params.description | plainify | strings.Truncate 160 }}
 <meta name="description" content="{{ $desc }}">
 {{- $fallback := partial "lang/is-fallback.html" . -}}
 {{- if $fallback -}}

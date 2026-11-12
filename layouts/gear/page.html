@@ -31,7 +31,7 @@
         <h2 class="title-m">{{ .Title }}</h2>
         {{- with $stories }}<a class="link-arrow" href="{{ (index . 0).RelPermalink }}">{{ T "used_in" (dict "Count" (len .) "Label" (T "story_count" (len .))) }}</a>{{ end }}
       </div>
-      {{- with .Description }}<p class="muted">{{ . }}</p>{{ end }}
+      {{- with (.Params.description | default .Description) }}<p class="muted">{{ . }}</p>{{ end }}
       <div class="stats">
         {{ partial "stat.html" (dict "label" (cond $t.weighed (T "total_on_back") (T "total_listed")) "value" (partial "num.html" (dict "v" $t.total "unit" "kg")) "unit" "kg" "icon" "pack") }}
         {{ partial "stat.html" (dict "label" (T "base_weight") "value" (partial "num.html" (dict "v" $t.base "unit" "kg")) "unit" "kg" "icon" "weight") }}

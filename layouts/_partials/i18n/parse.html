@@ -1,0 +1,8 @@
+{{- /* Split a Markdown file into front matter (dict) and body. */ -}}
+{{- $fm := dict }}{{ $body := . -}}
+{{- with findRESubmatch `(?s)^---\r?\n(.*?)\r?\n---\r?\n?(.*)$` . 1 -}}
+  {{- $m := index . 0 -}}
+  {{- with index $m 1 }}{{ $fm = . | transform.Unmarshal }}{{ end -}}
+  {{- $body = index $m 2 -}}
+{{- end -}}
+{{- return dict "fm" $fm "body" $body -}}

@@ -11,7 +11,7 @@
   {{- if gt (len $trails) 1 }}
   <div class="filters" role="group" aria-label="{{ T "filter_trail" }}" data-filter-group="stories" style="margin-top: 16px">
     <button class="filter" type="button" data-filter="all" aria-pressed="true">{{ T "all" }}</button>
-    {{- range $trails }}<button class="filter" type="button" data-filter="{{ .File.ContentBaseName }}" aria-pressed="false">{{ .Params.short | default .Title }}</button>{{ end }}
+    {{- range $trails }}<button class="filter" type="button" data-filter="{{ path.Base .Path }}" aria-pressed="false">{{ .Params.short | default .Title }}</button>{{ end }}
   </div>
   {{- end }}
 </section>

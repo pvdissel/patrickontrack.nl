@@ -1,7 +1,9 @@
 {{ define "main" }}
+{{- if eq .Params.layout "about" }}{{ partial "about-page.html" . }}{{ else }}
 <article class="wrap page-head stack" style="--gap: 20px">
   <h1 class="title-l">{{ .Title }}</h1>
-  {{- with .Description }}<p class="lead">{{ . }}</p>{{ end }}
+  {{- with (.Params.description | default .Description) }}<p class="lead">{{ . }}</p>{{ end }}
   <div class="prose">{{ .Content }}</div>
 </article>
+{{- end }}
 {{ end }}

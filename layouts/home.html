@@ -47,7 +47,7 @@
     <div class="stack" style="--gap: 20px">
       <p class="eyebrow">{{ T "trail_in_focus" }}</p>
       <h2 id="focus" class="title-l">{{ .Title }}</h2>
-      {{- with .Description }}<p class="muted">{{ . }}</p>{{ end }}
+      {{- with (.Params.description | default .Description) }}<p class="muted">{{ . }}</p>{{ end }}
       <div class="stats">
         {{ partial "stat.html" (dict "label" (T "distance") "value" (partial "num.html" (dict "v" $st.distance "unit" "km")) "unit" "km" "icon" "route") }}
         {{ partial "stat.html" (dict "label" (T "ascent") "value" (partial "num.html" (dict "v" $st.ascent "unit" "m")) "unit" "m" "icon" "up") }}

@@ -1,0 +1,21 @@
+{{- /*
+  Put English text over the Dutch front matter.
+  Lists of objects (gear items, moments, good to know) are merged item by item,
+  so English names/notes land on the Dutch items with their weights, times and icons.
+*/ -}}
+{{- $out := .base -}}
+{{- range $k, $v := .tr -}}
+  {{- if ne $k "of" -}}
+    {{- $b := index $.base $k -}}
+    {{- if and (reflect.IsSlice $v) (reflect.IsSlice $b) (gt (len $v) 0) (gt (len $b) 0) (reflect.IsMap (index $b 0)) -}}
+      {{- $merged := slice -}}
+      {{- range $i, $item := $b -}}
+        {{- if lt $i (len $v) }}{{ $merged = $merged | append (merge $item (index $v $i)) }}{{ else }}{{ $merged = $merged | append $item }}{{ end -}}
+      {{- end -}}
+      {{- $out = merge $out (dict $k $merged) -}}
+    {{- else -}}
+      {{- $out = merge $out (dict $k $v) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $out -}}

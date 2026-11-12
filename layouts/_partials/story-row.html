@@ -6,7 +6,7 @@
 {{- $stays := partial "refs.html" (dict "refs" $p.Params.stays "section" "stays") -}}
 {{- $trip := partial "ref.html" (dict "ref" $p.Params.trip "section" "trips") -}}
 {{- $st := partialCached "data/stats.html" $p $p.Path -}}
-<article class="story-row" data-filter-item="stories" data-tags="{{ with $trail }}{{ .File.ContentBaseName }}{{ end }}">
+<article class="story-row" data-filter-item="stories" data-tags="{{ with $trail }}{{ path.Base .Path }}{{ end }}">
   <div class="story-row__date"><time datetime="{{ $p.Date.Format "2006-01-02" }}">{{ $p.Date | time.Format "2 Jan" }}</time></div>
   <div class="story-row__body">
     {{- if and $trip (not $hideTrip) }}<p class="story-row__series"><a href="{{ $trip.RelPermalink }}" style="color: inherit; position: relative; z-index: 1">{{ $trip.Title }}</a></p>{{ end }}

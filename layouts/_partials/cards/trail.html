@@ -15,7 +15,7 @@
   <div class="card__body">
     <p class="subtle-label">{{ with .Params.country }}{{ . }} · {{ end }}{{ .Params.region }}</p>
     <h3 class="card__title" style="font-size: 28px"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-    {{- with .Description }}<p class="card__text">{{ . }}</p>{{ end }}
+    {{- with (.Params.description | default .Description) }}<p class="card__text">{{ . }}</p>{{ end }}
     <div class="metas">
       <span class="meta">{{ partial "icon.html" (dict "name" "route" "size" 15) }}{{ with $st.distance }}{{ partial "num.html" (dict "v" . "unit" "km") }} km{{ else }}<span class="placeholder">[km]</span>{{ end }}</span>
       <span class="meta">{{ partial "icon.html" (dict "name" "flag" "size" 15) }}{{ if gt $pr.total 1 }}{{ T "stage_count" (dict "Count" $pr.total) }}{{ else }}{{ T "single_route" }}{{ end }}</span>

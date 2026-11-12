@@ -7,11 +7,23 @@ Built with [Hugo](https://gohugo.io) (no theme, everything lives in this repo), 
 ## Run it locally
 
 ```sh
-# Hugo extended, 0.146 or newer (built and tested with 0.169)
-hugo server -D        # -D also shows drafts
+./hugow server -D     # preview with drafts: http://localhost:1313/en/ and /nl/
+./hugow               # build into public/
 ```
 
-Open http://localhost:1313/en/ or http://localhost:1313/nl/. All migrated stories are still **drafts**, so without `-D` the site only shows the trails and pages.
+`./hugow` is a small wrapper that runs the Hugo version pinned in **`.hugo-version`**. That is the only place the version is set: the GitHub workflow builds with `./hugow` too, so your machine and the live site always use the same Hugo. The first run downloads that release from GitHub into `.hugo/` (git-ignored), after checking its SHA-256 against Hugo's published checksums.
+
+| Command | What it does |
+|---|---|
+| `./hugow <anything>` | runs Hugo with those arguments |
+| `./hugow --hugow-version` | shows the pinned version |
+| `./hugow --hugow-update` | pins the latest Hugo release and downloads it |
+| `./hugow --hugow-update 0.170.0` | pins a specific version |
+| `./hugow --hugow-clean` | deletes the downloaded binaries |
+
+It works on Linux, macOS (Intel and Apple silicon) and Windows via Git Bash or WSL, and needs `curl` (or `wget`) plus `sha256sum` (or `shasum`). After `--hugow-update`, commit `.hugo-version`: the next deploy uses the new version. `hugo.toml` also sets a minimum (`module.hugoVersion`), so a too-old system `hugo` gives a clear error instead of a broken site.
+
+All migrated stories are still **drafts**, so without `-D` the site only shows the trails and pages.
 
 ## Two languages
 
@@ -85,6 +97,8 @@ Everything under `static/gpx/samples/` is **made-up GPX** so the maps have somet
 ## Project structure
 
 ```
+hugow                      Hugo wrapper (runs the version in .hugo-version)
+.hugo-version              the one place the Hugo version is pinned
 .pages.yml                 Pages CMS config (generated, see scripts/)
 scripts/pages.base.yml     Pages CMS fields, written once for both languages
 scripts/pages-config.py    expands the base into .pages.yml (nl + en)
@@ -112,6 +126,6 @@ Forest and ridge, minimal: fog `#F3F4EF`, ink `#18211C`, forest `#1E3D2F`, pine 
 
 ## Deploying
 
-`.github/workflows/hugo.yml` builds with Hugo 0.169 extended on every push to `main` and deploys to GitHub Pages. In the repo settings, Pages → Source must be **GitHub Actions**. `static/CNAME` keeps the custom domain.
+`.github/workflows/hugo.yml` builds with `./hugow` (so with the Hugo version in `.hugo-version`) on every push to `main` and deploys to GitHub Pages. In the repo settings, Pages → Source must be **GitHub Actions**. `static/CNAME` keeps the custom domain.
 
 Privacy: no Google Fonts and no analytics. YouTube loads only after a click (youtube-nocookie). Only resized WebP copies of photos are published (no original files, so no EXIF/GPS data).

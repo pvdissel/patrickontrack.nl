@@ -23,19 +23,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      HUGO_VERSION: 0.169.0
       HUGO_ENVIRONMENT: production
       TZ: Europe/Amsterdam
     steps:
-      - name: Install Hugo (extended)
-        run: |
-          curl -sSL -o "${{ runner.temp }}/hugo.tar.gz" \
-            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
-          mkdir -p "${{ runner.temp }}/hugo"
-          tar -xzf "${{ runner.temp }}/hugo.tar.gz" -C "${{ runner.temp }}/hugo"
-          echo "${{ runner.temp }}/hugo" >> "$GITHUB_PATH"
       - name: Checkout
         uses: actions/checkout@v4
+      # Same Hugo as locally: ./hugow reads the version from .hugo-version
+      - name: Cache Hugo binary
+        uses: actions/cache@v4
+        with:
+          path: .hugo
+          key: hugo-${{ runner.os }}-${{ hashFiles('.hugo-version') }}
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
@@ -47,8 +45,8 @@ jobs:
           restore-keys: hugo-resources-
       - name: Build
         run: |
-          hugo version
-          hugo --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+          ./hugow version
+          ./hugow --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

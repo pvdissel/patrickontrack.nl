@@ -118,6 +118,12 @@ timeZone = "Europe/Amsterdam"
     disableDate = true
     disableLatLong = true   # never leak GPS from photo EXIF
 
+# The exact version is pinned in .hugo-version and used by ./hugow and the
+# GitHub workflow. This minimum only protects against an older system Hugo.
+[module.hugoVersion]
+  extended = true
+  min = "0.158.0"
+
 # Pages CMS uploads to static/; mount those folders into assets/ too, so
 # templates can resize photos and read GPX files at build time.
 [module]

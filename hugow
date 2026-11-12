@@ -1,0 +1,144 @@
+#!/usr/bin/env sh
+# -----------------------------------------------------------------------------
+# hugow — Hugo wrapper for this repo
+#
+# Runs the Hugo version pinned in .hugo-version (the only place the version is
+# set; the GitHub workflow uses this wrapper too). The first run downloads that
+# exact release from GitHub into .hugo/<version>/, checks its SHA-256 against
+# Hugo's published checksums, and reuses it from then on.
+#
+#   ./hugow server -D              any Hugo command, e.g. local preview with drafts
+#   ./hugow version                prints the Hugo version in use
+#   ./hugow --hugow-version        prints the pinned version
+#   ./hugow --hugow-update [X.Y.Z] pins a new version (default: latest release)
+#   ./hugow --hugow-clean          removes downloaded Hugo binaries
+#
+# Works on Linux (amd64/arm64), macOS (Intel/Apple silicon) and Windows via
+# Git Bash or WSL. Needs curl or wget, and sha256sum or shasum.
+# -----------------------------------------------------------------------------
+set -eu
+
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+VERSION_FILE="$ROOT/.hugo-version"
+CACHE="$ROOT/.hugo"
+EDITION="extended"   # extended: WebP/image processing as used by the templates
+REPO_URL="https://github.com/gohugoio/hugo"
+
+die() { echo "hugow: $*" >&2; exit 1; }
+say() { echo "hugow: $*" >&2; }
+
+pinned_version() {
+  [ -f "$VERSION_FILE" ] || die "missing $VERSION_FILE (it should contain a version like 0.169.0)"
+  v=$(tr -d ' \t\r\n' < "$VERSION_FILE")
+  v=${v#v}
+  echo "$v" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || die "invalid version '$v' in .hugo-version"
+  echo "$v"
+}
+
+fetch() { # url dest
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL --retry 3 -o "$2" "$1"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -q -O "$2" "$1"
+  else
+    die "need curl or wget to download Hugo"
+  fi
+}
+
+sha256() {
+  if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | cut -d' ' -f1
+  elif command -v shasum >/dev/null 2>&1; then shasum -a 256 "$1" | cut -d' ' -f1
+  else die "need sha256sum or shasum to verify the download"
+  fi
+}
+
+latest_version() {
+  if command -v git >/dev/null 2>&1; then
+    git ls-remote --tags --refs "$REPO_URL" 'v*' 2>/dev/null \
+      | sed -n 's#.*refs/tags/v\([0-9]*\.[0-9]*\.[0-9]*\)$#\1#p' \
+      | sort -t. -k1,1n -k2,2n -k3,3n | tail -n 1
+  else
+    tmp=$(mktemp); fetch "https://api.github.com/repos/gohugoio/hugo/releases/latest" "$tmp"
+    sed -n 's/.*"tag_name": *"v\([^"]*\)".*/\1/p' "$tmp" | head -n 1; rm -f "$tmp"
+  fi
+}
+
+platform() { # prints "<platform> <archive-ext> <binary-name>"
+  os=$(uname -s); arch=$(uname -m)
+  case "$arch" in
+    x86_64|amd64) arch=amd64 ;;
+    aarch64|arm64) arch=arm64 ;;
+    *) die "unsupported CPU architecture: $arch" ;;
+  esac
+  case "$os" in
+    Linux) echo "linux-$arch tar.gz hugo" ;;
+    Darwin) echo "darwin-universal pkg hugo" ;;
+    MINGW*|MSYS*|CYGWIN*)
+      [ "$arch" = amd64 ] || die "the extended edition is only published for 64-bit Intel/AMD Windows"
+      echo "windows-amd64 zip hugo.exe" ;;
+    *) die "unsupported operating system: $os" ;;
+  esac
+}
+
+install() { # version
+  version=$1
+  set -- $(platform)
+  plat=$1; ext=$2; exe=$3
+  dest="$CACHE/$version"
+  asset="hugo_${EDITION}_${version}_${plat}.${ext}"
+  [ "$EDITION" = "standard" ] && asset="hugo_${version}_${plat}.${ext}"
+  base="$REPO_URL/releases/download/v${version}"
+
+  tmp=$(mktemp -d "${TMPDIR:-/tmp}/hugow.XXXXXX")
+  trap 'rm -rf "$tmp"' EXIT INT TERM
+
+  say "downloading Hugo $version ($EDITION, $plat)…"
+  fetch "$base/hugo_${version}_checksums.txt" "$tmp/checksums.txt" || die "Hugo $version not found on GitHub"
+  fetch "$base/$asset" "$tmp/$asset" || die "could not download $asset"
+
+  expected=$(grep " ${asset}\$" "$tmp/checksums.txt" | cut -d' ' -f1)
+  [ -n "$expected" ] || die "no checksum published for $asset"
+  actual=$(sha256 "$tmp/$asset")
+  [ "$expected" = "$actual" ] || die "checksum mismatch for $asset (expected $expected, got $actual)"
+
+  mkdir -p "$tmp/out"
+  case "$ext" in
+    tar.gz) tar -xzf "$tmp/$asset" -C "$tmp/out" ;;
+    zip) unzip -q "$tmp/$asset" -d "$tmp/out" ;;
+    pkg) command -v pkgutil >/dev/null 2>&1 || die "pkgutil (macOS) is needed to unpack $asset"
+         pkgutil --expand-full "$tmp/$asset" "$tmp/out/pkg" >/dev/null ;;
+  esac
+  found=$(find "$tmp/out" -type f -name "$exe" | head -n 1)
+  [ -n "$found" ] || die "no $exe inside $asset"
+
+  mkdir -p "$dest"
+  mv "$found" "$dest/$exe.part"
+  chmod +x "$dest/$exe.part"
+  mv "$dest/$exe.part" "$dest/$exe"
+  rm -rf "$tmp"; trap - EXIT INT TERM
+  say "Hugo $version installed in .hugo/$version/"
+}
+
+case "${1:-}" in
+  --hugow-version)
+    pinned_version; exit 0 ;;
+  --hugow-clean)
+    rm -rf "$CACHE"; say "removed .hugo/"; exit 0 ;;
+  --hugow-update)
+    new=${2:-}
+    [ -n "$new" ] || new=$(latest_version)
+    new=${new#v}
+    echo "$new" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || die "could not determine a version (got '$new')"
+    old=$(pinned_version 2>/dev/null || echo none)
+    echo "$new" > "$VERSION_FILE"
+    say "pinned Hugo $new (was $old) in .hugo-version"
+    install "$new"
+    exit 0 ;;
+esac
+
+VERSION=$(pinned_version)
+exe=hugo
+case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) exe=hugo.exe ;; esac
+BIN="$CACHE/$VERSION/$exe"
+[ -x "$BIN" ] || install "$VERSION"
+exec "$BIN" "$@"

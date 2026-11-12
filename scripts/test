@@ -1,0 +1,91 @@
+#!/usr/bin/env sh
+# -----------------------------------------------------------------------------
+# Tests for patrickontrack.nl. Run from anywhere in the repo.
+#
+#   ./scripts/test quick   build checks + content checks + link check on the real
+#                          content (drafts and production)            ~10 s, no Node needed
+#   ./scripts/test e2e     browser tests on the fixed test site in tests/fixtures
+#   ./scripts/test a11y    accessibility scan (axe) on the test site — reports only
+#   ./scripts/test         quick + e2e + a11y
+#
+# Browser tests need Node 20+ and, once: npm install && npx playwright install chromium
+# -----------------------------------------------------------------------------
+set -eu
+
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$ROOT"
+CACHE="$ROOT/.cache/test"
+STRICT="--panicOnWarning --printI18nWarnings --printPathWarnings"
+PORT=4173
+
+step() { printf '\n\033[1m▸ %s\033[0m\n' "$*"; }
+fail() { printf '\n\033[31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
+
+build() { # label dest hugo-args...
+  label=$1; dest=$2; shift 2
+  rm -rf "$dest"
+  if ! out=$(./hugow $STRICT --minify -d "$dest" "$@" 2>&1); then
+    echo "$out" | grep -E 'WARN|ERROR' >&2 || echo "$out" >&2
+    fail "$label failed"
+  fi
+  echo "✓ $label"
+}
+
+quick() {
+  step "Build + content checks (real content)"
+  build "build with drafts" "$CACHE/drafts" -D --baseURL https://patrickontrack.nl/
+  build "production build" "$CACHE/production" --baseURL https://patrickontrack.nl/
+  step "Link check"
+  node tests/links.mjs "$CACHE/drafts" https://patrickontrack.nl || fail "broken links (drafts build)"
+  node tests/links.mjs "$CACHE/production" https://patrickontrack.nl || fail "broken links (production build)"
+}
+
+fixture() {
+  step "Build the test site (tests/fixtures)"
+  site="$CACHE/fixture-site"
+  rm -rf "$site"; mkdir -p "$site/content" "$site/static"
+  # the real templates, styles and config …
+  cp -R hugo.toml layouts assets i18n data archetypes "$site/"
+  cp -R content/en "$site/content/en"
+  for f in static/*; do
+    case "$f" in static/images|static/gpx) ;; *) cp -R "$f" "$site/static/" ;; esac
+  done
+  # … with the fixed test content
+  cp -R tests/fixtures/content/nl "$site/content/nl"
+  cp -R tests/fixtures/translations "$site/translations"
+  cp -R tests/fixtures/static/images tests/fixtures/static/gpx "$site/static/"
+  build "test site" "$CACHE/fixture-public" --source "$site" --baseURL "http://localhost:$PORT/"
+  node tests/links.mjs "$CACHE/fixture-public" "http://localhost:$PORT" || fail "broken links (test site)"
+}
+
+need_node() {
+  command -v node >/dev/null 2>&1 || fail "Node 20+ is needed for the browser tests"
+  [ -d node_modules/@playwright/test ] || fail "run 'npm install' and 'npx playwright install chromium' first"
+}
+
+e2e() {
+  need_node
+  fixture
+  step "Browser tests"
+  npx playwright test --project=e2e || fail "browser tests failed (report: npx playwright show-report)"
+}
+
+a11y() {
+  need_node
+  [ -d "$CACHE/fixture-public" ] || fixture
+  step "Accessibility scan (reports only, does not fail the run)"
+  if [ ! -d node_modules/@axe-core/playwright ]; then
+    printf '\033[33m! skipped: @axe-core/playwright is not installed (run npm install)\033[0m\n'; return 0
+  fi
+  if npx playwright test --project=a11y; then echo "✓ no serious accessibility problems"
+  else printf '\033[33m! accessibility problems found (see above); not blocking yet\033[0m\n'; fi
+}
+
+case "${1:-all}" in
+  quick) quick ;;
+  e2e) e2e ;;
+  a11y) a11y ;;
+  all) quick; e2e; a11y ;;
+  *) echo "usage: $0 [quick|e2e|a11y|all]" >&2; exit 2 ;;
+esac
+printf '\n\033[32m✓ done\033[0m\n'

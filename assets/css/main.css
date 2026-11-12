@@ -43,7 +43,7 @@ h1, h2, h3, h4 { font-family: var(--f-head); font-weight: 600; line-height: 1.05
 p { margin: 0; }
 .skip { position: absolute; left: -9999px; top: 8px; background: var(--forest); color: var(--on-dark); padding: 10px 16px; border-radius: 8px; z-index: 1000; }
 .skip:focus { left: 8px; }
-.visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 .wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
 .section { margin-top: var(--section); }
@@ -302,7 +302,7 @@ a.chip--stage:hover { background: #C9D6BC; color: var(--forest); box-shadow: non
 .sample-note .icon { flex: none; margin-top: 2px; }
 
 /* ---- tables -------------------------------------------------------- */
-.table-box { overflow-x: auto; border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow-line); }
+.table-box { position: relative; overflow-x: auto; border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow-line); }
 .table { width: 100%; border-collapse: collapse; }
 .table th { text-align: left; padding: 12px 14px; font: 500 11.5px/1.3 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); white-space: nowrap; }
 .table td { padding: 15px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }

@@ -47,6 +47,29 @@ The site is in **English** (`/en/`) and **Dutch** (`/nl/`).
 - Visitors whose browser language is neither Dutch nor English get `defaultContentLanguage` (English) in `hugo.toml`.
 - Texts shown before the language is known (root page, 404, banner) are in `data/languages.yaml`.
 
+## Testing
+
+```sh
+./scripts/test quick   # ~2 s: builds + content checks + link check on your real content
+./scripts/test         # everything: quick + browser tests + accessibility scan (~30 s)
+```
+
+Browser tests need Node 20+. Set them up once with `npm install && npx playwright install chromium`. If a test fails, `npx playwright show-report` shows what happened, with a screenshot and a step-by-step trace.
+
+| Layer | What it catches | Where |
+|---|---|---|
+| **Build checks** | template errors, missing interface translations, any Hugo warning. The test builds use `--panicOnWarning`, so every warning fails them | `scripts/test` |
+| **Content checks** | a link to a trail, stage, stay, gear list or trip that doesn’t exist (or is still a draft), a missing or empty GPX file, two stages with the same number, an English translation of a page that doesn’t exist, an English list with more items than the Dutch one | `layouts/_partials/checks/content.html`, `content/en/_content.gotmpl`. They also run in `./hugow server`, where they show up as warnings |
+| **Link check** | broken internal links, images, GPX downloads and redirects; i18n files with different keys | `tests/links.mjs` |
+| **Browser tests** | language choice at `/`, saved choice, banner, old links, 404 in both languages; filters; maps, “Show my tracks”, the mobile menu; translated vs untranslated pages; number and date formats; trip totals; drafts not published; no JavaScript errors; no sideways scrolling on a phone; every image has alt text and every link/button a name | `tests/e2e/*.spec.mjs` |
+| **Accessibility scan** | contrast, labels, landmarks, keyboard (axe, serious and critical issues only) | `tests/e2e/a11y.spec.mjs` |
+
+**Test content.** The browser tests run on a small fixed site in `tests/fixtures/`, not on your real content, so they don’t break when you add stories. `scripts/test` builds it with the real templates, styles and config. If you add a feature, add an example of it there and a test in `tests/e2e/`.
+
+**On GitHub** (`.github/workflows/hugo.yml`), every push and pull request runs the tests. A push to `main` is only built and deployed when they pass, so a broken commit (also one from Pages CMS) never reaches the live site. The test report is attached to every run, under *Artifacts*. The accessibility scan reports problems but doesn't block yet. Once it passes, remove `continue-on-error: true` from that step to make it blocking.
+
+`package.json` is only there for the test tools. Commit the `package-lock.json` that `npm install` creates, so GitHub uses exactly the same versions.
+
 ## Content model
 
 | Type | Folder | What it is | Links to |
@@ -117,6 +140,9 @@ assets/css/main.css        all styling (colours and fonts are custom properties 
 assets/css/fonts.css       self-hosted fonts (Barlow Condensed, Inter, IBM Plex Mono — OFL)
 assets/js/main.js          mobile menu, filter chips, click-to-load YouTube
 assets/js/map.js           Leaflet maps
+scripts/test               runs the tests (quick, e2e, a11y)
+tests/                     link checker, test server, browser tests (e2e/), fixed test content (fixtures/)
+package.json               test tools only (Playwright, axe)
 layouts/                   templates (Hugo ≥0.146 layout structure)
   _partials/gpx/parse.html   GPX → distance, ascent, points, profile (build time)
   _partials/data/*.html      lookups: stats, trail stages/stories/stays, progress, gear totals, map data

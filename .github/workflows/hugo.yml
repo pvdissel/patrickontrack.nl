@@ -1,9 +1,11 @@
-# Build the site with Hugo and deploy it to GitHub Pages.
-name: Deploy Hugo site to Pages
+# Test the site, then build it with Hugo and deploy it to GitHub Pages.
+# Pull requests only run the tests; pushes to main deploy when the tests pass.
+name: Test and deploy
 
 on:
   push:
     branches: ["main"]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -12,7 +14,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 defaults:
@@ -20,7 +22,45 @@ defaults:
     shell: bash
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Amsterdam
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cache Hugo binary
+        uses: actions/cache@v4
+        with:
+          path: .hugo
+          key: hugo-${{ runner.os }}-${{ hashFiles('.hugo-version') }}
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install test tools
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+          npx playwright install --with-deps chromium
+      - name: Build, content and link checks
+        run: ./scripts/test quick
+      - name: Browser tests
+        run: ./scripts/test e2e
+      - name: Accessibility scan (not blocking yet)
+        # Remove the next line once this step is green, to make it block deploys too.
+        continue-on-error: true
+        run: npx playwright test --project=a11y
+      - name: Upload test report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
   build:
+    needs: test
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     env:
       HUGO_ENVIRONMENT: production
@@ -46,18 +86,19 @@ jobs:
       - name: Build
         run: |
           ./hugow version
-          ./hugow --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+          ./hugow --gc --minify --panicOnWarning --baseURL "${{ steps.pages.outputs.base_url }}/"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
 
   deploy:
+    needs: build
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

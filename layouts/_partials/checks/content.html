@@ -1,0 +1,61 @@
+{{- /*
+  Content checks, run once per build (from home.html, Dutch site).
+  Each problem becomes a Hugo warning with the file it is in; the test
+  script and CI build with --panicOnWarning, so any warning fails the build
+  (and blocks the deploy) instead of silently breaking the live site.
+  Locally, `./hugow server` just prints the warnings.
+*/ -}}
+{{- $refs := dict
+  "stories" (slice (slice "trip" "trips") (slice "trail" "trails") (slice "stages" "stages") (slice "stays" "stays") (slice "gear" "gear"))
+  "trips" (slice (slice "trail" "trails") (slice "gear" "gear") (slice "run_up" "trips"))
+  "stages" (slice (slice "trail" "trails"))
+  "stays" (slice (slice "trail" "trails") (slice "stage" "stages"))
+  "gear" (slice (slice "trail" "trails"))
+-}}
+{{- range $p := site.RegularPages -}}
+  {{- $where := cond (and $p.File $p.File.Path) (printf "content/%s/%s" $p.Language.Lang $p.File.Path) $p.Path -}}
+
+  {{- /* 1. every reference points to an existing (and, in production, published) page */ -}}
+  {{- range index $refs $p.Section -}}
+    {{- $field := index . 0 }}{{ $section := index . 1 -}}
+    {{- $vals := index $p.Params $field -}}
+    {{- if $vals -}}
+      {{- if not (reflect.IsSlice $vals) }}{{ $vals = slice $vals }}{{ end -}}
+      {{- range $vals -}}
+        {{- if not (partial "ref.html" (dict "ref" . "section" $section)) -}}
+          {{- warnf "%s: %s %q not found (missing, misspelled, or still a draft)" $where $field . -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* 2. GPX files exist and contain a track or route */ -}}
+  {{- range slice "gpx" "track" -}}
+    {{- with index $p.Params . -}}
+      {{- if not (resources.Get (strings.TrimPrefix "/" .)) -}}
+        {{- warnf "%s: GPX file %q not found in static/" $where . -}}
+      {{- else if not (partialCached "gpx/parse.html" . .).ok -}}
+        {{- warnf "%s: GPX file %q has no track points" $where . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* 3. stages need a number */ -}}
+  {{- if and (eq $p.Section "stages") (not $p.Params.number) }}{{ warnf "%s: stage has no number" $where }}{{ end -}}
+{{- end -}}
+
+{{- /* 4. no two stages of one trail share a number */ -}}
+{{- range where site.RegularPages "Section" "trails" -}}
+  {{- $seen := dict -}}
+  {{- $trail := . -}}
+  {{- range $s := partialCached "data/trail-stages.html" . .Path -}}
+    {{- $n := string $s.Params.number -}}
+    {{- with index $seen $n }}{{ warnf "trail %q: stage number %s is used by both %s and %s" $trail.Title $n . $s.Path }}{{ end -}}
+    {{- $seen = merge $seen (dict $n $s.Path) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* 5. the featured trail on the home page exists */ -}}
+{{- with site.Home.Params.featured_trail -}}
+  {{- if not (partial "ref.html" (dict "ref" . "section" "trails")) }}{{ warnf "content/nl/_index.md: featured_trail %q not found" . }}{{ end -}}
+{{- end -}}

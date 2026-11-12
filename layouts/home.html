@@ -1,4 +1,5 @@
 {{ define "main" }}
+{{- if eq site.Language.Lang "nl" }}{{ partial "checks/content.html" . }}{{ end -}}
 {{- $stories := (where site.RegularPages "Section" "stories").ByDate.Reverse -}}
 {{- $trails := where site.RegularPages "Section" "trails" -}}
 {{- $stays := (where site.RegularPages "Section" "stays").ByLastmod.Reverse -}}

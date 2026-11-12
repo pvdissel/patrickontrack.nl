@@ -8,6 +8,7 @@
   {{- if ne $k "of" -}}
     {{- $b := index $.base $k -}}
     {{- if and (reflect.IsSlice $v) (reflect.IsSlice $b) (gt (len $v) 0) (gt (len $b) 0) (reflect.IsMap (index $b 0)) -}}
+      {{- if gt (len $v) (len $b) }}{{ warnf "%s: %q has %d items in English but only %d in Dutch; the extra English ones are ignored" ($.where | default "translation") $k (len $v) (len $b) }}{{ end -}}
       {{- $merged := slice -}}
       {{- range $i, $item := $b -}}
         {{- if lt $i (len $v) }}{{ $merged = $merged | append (merge $item (index $v $i)) }}{{ else }}{{ $merged = $merged | append $item }}{{ end -}}

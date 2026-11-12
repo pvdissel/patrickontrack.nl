@@ -22,6 +22,13 @@
   {{- $translations = merge $translations (dict $key $t) -}}
 {{- end -}}
 
+{{- /* translations whose Dutch page doesn't exist */ -}}
+{{- range $key, $t := $translations -}}
+  {{- if not (resources.Get (printf "_i18nsrc/nl/%s" $key)) -}}
+    {{- warnf "translations/en: %q is a translation of %q, which doesn't exist in content/nl" ($t.fm.title | default $key) $key -}}
+  {{- end -}}
+{{- end -}}
+
 {{- /* 2. one English page per Dutch file */ -}}
 {{- range resources.Match "_i18nsrc/nl/**.md" -}}
   {{- $rel := strings.TrimPrefix "/_i18nsrc/nl/" .Name -}}
@@ -29,7 +36,7 @@
   {{- if not $nl.fm.url -}}{{- /* pages with a fixed url (the root 404) exist once */ -}}
     {{- $fm := $nl.fm }}{{ $body := $nl.body }}{{ $src := "nl" -}}
     {{- with index $translations $rel -}}
-      {{- $fm = partial "i18n/merge.html" (dict "base" $fm "tr" .fm) -}}
+      {{- $fm = partial "i18n/merge.html" (dict "base" $fm "tr" .fm "where" (printf "translations/en/%s" $rel)) -}}
       {{- $body = .body }}{{ $src = "en" -}}
     {{- end -}}
 

@@ -1,0 +1,17 @@
+{
+  "name": "patrickontrack-nl",
+  "private": true,
+  "type": "module",
+  "description": "Tests for patrickontrack.nl (the site itself is built with Hugo, see hugow)",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "./scripts/test",
+    "test:quick": "./scripts/test quick",
+    "test:e2e": "./scripts/test e2e",
+    "test:a11y": "./scripts/test a11y"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "1.63.0"
+  }
+}

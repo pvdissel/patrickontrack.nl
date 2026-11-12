@@ -109,7 +109,7 @@ Upload GPX files in Pages CMS (they go to `static/gpx/`). At build time Hugo rea
 - Story → `track`: what **I actually walked** (orange). The story map shows the official stages I walked, the rest of the trail faded, my track and where I slept.
 - Trail → totals are the sum of its stages unless `distance_km`/`ascent_m` are set (the DMT uses 101 km / 2000 m).
 
-Maps use [Leaflet](https://leafletjs.com) (bundled in `assets/vendor/`, no CDN) with OpenTopoMap tiles. Swap the tile server in `hugo.toml` → `params.map`.
+Maps use [Leaflet](https://leafletjs.com) (bundled in `assets/vendor/`, no CDN). Visitors can switch every map between four styles with the buttons in its top-right corner: **Topo** (OpenTopoMap, the default), **Standard** (OpenStreetMap), **Satellite** (Esri World Imagery) and **CyclOSM**. Their choice is remembered for all maps. The styles are listed in `hugo.toml` → `[[params.map.styles]]` (the first one is the default; only services that need no API key), and each button label comes from `i18n` (`map_style_<id>`). Add, remove or reorder styles there. Mark aerial-photo styles with `photo = true`, so they aren't toned down like the drawn maps.
 
 ### Sample data to replace
 
@@ -176,4 +176,4 @@ Forest and ridge, minimal: fog `#F3F4EF`, ink `#18211C`, forest `#1E3D2F`, pine 
 
 Light and dark theme: the site follows the visitor's system setting, and the switch in the header (Auto / Light / Dark) lets them pick one, remembered in their browser. Every colour is a custom property at the top of `assets/css/main.css`, with its dark value in the `[data-theme="dark"]` block right below it: change both together. Maps are the exception: they look the same in both themes (dark map tiles were too hard to read), so the map tokens (`--route-*`) have no dark value, while route drawings, elevation profiles and gear weights use the theme-aware `--draw-*` tokens. The script that picks the theme before the page is drawn is `layouts/_partials/theme/init.js.html`. Printouts are always light. The accessibility scan checks every page in both themes.
 
-Privacy: no Google Fonts and no analytics. YouTube loads only after a click (youtube-nocookie). Only resized WebP copies of photos are published (no original files, so no EXIF/GPS data).
+Privacy: no Google Fonts and no analytics. YouTube loads only after a click (youtube-nocookie). Map tiles come from the chosen style's tile server (OpenTopoMap by default; Esri only after choosing Satellite). Only resized WebP copies of photos are published (no original files, so no EXIF/GPS data).

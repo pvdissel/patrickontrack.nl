@@ -156,6 +156,11 @@ map_finish: "Finish · {{ . }}"
 map_stage_label: "Stage {{ .N }} · {{ .Title }}"
 map_my_track: "My track · {{ . }}"
 map_needs_js: The map needs JavaScript. The GPX files work in any map app.
+map_style: Map style
+map_style_topo: Topo
+map_style_osm: Standard
+map_style_satellite: Satellite
+map_style_cyclosm: CyclOSM
 
 # stays
 where_i_slept_heading: Where I slept.

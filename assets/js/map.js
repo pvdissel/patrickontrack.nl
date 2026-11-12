@@ -12,6 +12,21 @@ const STYLE = {
 };
 const css = (el, name) => getComputedStyle(el).getPropertyValue(name).trim();
 
+// The chosen map style, shared by all maps (localStorage "pot-map-style").
+const STYLE_KEY = 'pot-map-style';
+const mapStyle = {
+  current: null,
+  get() {
+    if (this.current === null) { try { this.current = localStorage.getItem(STYLE_KEY) || ''; } catch (e) { this.current = ''; } }
+    return this.current;
+  },
+  set(id) {
+    this.current = id;
+    try { localStorage.setItem(STYLE_KEY, id); } catch (e) { /* private mode */ }
+    document.dispatchEvent(new Event('pot:mapstyle'));
+  },
+};
+
 const TENT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M3 20L12 4l9 16H3z"/><path d="M9 20l3-5 3 5"/></svg>';
 
 function esc(s) {
@@ -34,11 +49,46 @@ function initMap(el) {
     zoomSnap: 0.25,
     attributionControl: true,
   });
-  L.tileLayer(el.dataset.tiles, {
-    maxZoom: Number(el.dataset.maxzoom) || 17,
-    attribution: el.dataset.attribution,
-    subdomains: 'abc',
-  }).addTo(map);
+  // Map styles (hugo.toml → params.map.styles), switchable with buttons in the top-right corner.
+  // The choice is remembered and applies to every map, on this page and later ones.
+  const styles = data.styles || [];
+  let tiles = null;
+  const buttons = [];
+  function useStyle(id) {
+    const style = styles.find((s) => s.id === id) || styles[0];
+    if (!style) return;
+    if (tiles) map.removeLayer(tiles);
+    tiles = L.tileLayer(style.tiles, { maxZoom: style.maxZoom, attribution: style.attribution, subdomains: style.subdomains }).addTo(map);
+    tiles.bringToBack();
+    map.setMaxZoom(style.maxZoom);
+    el.dataset.mapStyle = style.id;
+    el.classList.toggle('map--photo', !!style.photo);
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.style === style.id)));
+  }
+  if (styles.length > 1) {
+    const StyleControl = L.Control.extend({
+      options: { position: 'topright' },
+      onAdd() {
+        const box = L.DomUtil.create('div', 'map-styles');
+        box.setAttribute('role', 'group');
+        box.setAttribute('aria-label', el.dataset.styleLabel || 'Map style');
+        styles.forEach((s) => {
+          const b = L.DomUtil.create('button', '', box);
+          b.type = 'button';
+          b.dataset.style = s.id;
+          b.textContent = s.name;
+          b.addEventListener('click', () => mapStyle.set(s.id));
+          buttons.push(b);
+        });
+        L.DomEvent.disableClickPropagation(box);
+        L.DomEvent.disableScrollPropagation(box);
+        return box;
+      },
+    });
+    map.addControl(new StyleControl());
+    document.addEventListener('pot:mapstyle', () => useStyle(mapStyle.get()));
+  }
+  useStyle(mapStyle.get());
 
   // Scroll-zoom only after the map is clicked, so the page keeps scrolling.
   map.once('click', () => map.scrollWheelZoom.enable());
@@ -108,11 +158,30 @@ function initMap(el) {
   if (!('mineHidden' in el.dataset)) mine.addTo(map);
   const bounds = focus.getLayers().length ? focus.getBounds() : all.getBounds();
   if (mine.getLayers().length && map.hasLayer(mine)) bounds.extend(mine.getBounds());
-  // keep markers clear of the map credits, which wrap to more lines on a phone
-  const credits = map.attributionControl ? map.attributionControl.getContainer().offsetHeight : 0;
-  if (bounds.isValid()) map.fitBounds(bounds, { paddingTopLeft: [28, 28], paddingBottomRight: [28, 28 + credits] });
-  else map.setView([52.1, 5.3], 7);
-  spread();
+  // Keep markers clear of the controls in the top corners (zoom, map styles) and of the
+  // credits at the bottom, which wrap to more lines on a phone. The corners can still change
+  // size after this (web fonts arriving, another map style's credits), so fit again when they
+  // do, until the visitor moves or zooms the map themselves.
+  const corners = [...el.querySelectorAll('.leaflet-top, .leaflet-bottom')];
+  const height = (sel) => { const c = el.querySelector(sel); return c ? c.offsetHeight : 0; };
+  const clear = 18;   // half the largest marker (26 px) plus a little room
+  let fitting = false;
+  let moved = false;
+  function fit() {
+    const top = Math.max(height('.leaflet-top.leaflet-left'), height('.leaflet-top.leaflet-right'));
+    const bottom = Math.max(height('.leaflet-bottom.leaflet-left'), height('.leaflet-bottom.leaflet-right'));
+    fitting = true;
+    if (bounds.isValid()) map.fitBounds(bounds, { paddingTopLeft: [28, Math.max(28, top + clear)], paddingBottomRight: [28, Math.max(28, bottom + clear)], animate: false });
+    else map.setView([52.1, 5.3], 7, { animate: false });
+    fitting = false;
+    spread();
+  }
+  fit();
+  map.on('dragstart zoomstart', () => { if (!fitting) moved = true; });
+  if (window.ResizeObserver) {
+    const watch = new ResizeObserver(() => { if (moved) watch.disconnect(); else fit(); });
+    corners.forEach((c) => watch.observe(c));
+  }
   map.on('zoomend', spread);
 
   // Optional toggle button for "my tracks"

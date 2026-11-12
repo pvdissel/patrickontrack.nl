@@ -11,11 +11,30 @@ timeZone = "Europe/Amsterdam"
   youtube = "https://www.youtube.com/pvdissel"
   email = ""                              # optional contact address shown on About
 
-  # Map tiles. OpenTopoMap shows contour lines; swap for OSM if you prefer.
-  [params.map]
+  # Map styles visitors can switch between on every map (the first one is the default).
+  # Only tile services that need no API key. The button label comes from i18n: map_style_<id>.
+  # {s} in a URL is replaced by one of "subdomains" (default a, b, c).
+  [[params.map.styles]]
+    id = "topo"
     tiles = "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
     attribution = "Map data © <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, SRTM · Style © <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
     maxZoom = 17
+  [[params.map.styles]]
+    id = "osm"
+    tiles = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+    attribution = "© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
+    maxZoom = 19
+  [[params.map.styles]]
+    id = "satellite"
+    tiles = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+    attribution = "Imagery © <a href=\"https://www.esri.com\">Esri</a> — Source: Esri, Maxar, Earthstar Geographics and the GIS User Community"
+    maxZoom = 19
+    photo = true   # aerial photos: shown in their own colours, not toned down
+  [[params.map.styles]]
+    id = "cyclosm"
+    tiles = "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png"
+    attribution = "Map data © <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors · Style © <a href=\"https://www.cyclosm.org\">CyclOSM</a>, hosted by OpenStreetMap France"
+    maxZoom = 20
 
 [taxonomies]
   tag = "tags"   # trips are their own pages now (content/<lang>/trips)

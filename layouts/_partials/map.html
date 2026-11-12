@@ -12,10 +12,13 @@
 {{- $markers := .markers | default slice -}}
 {{- if or $layers $markers -}}
 {{- .page.Store.Set "needsMap" true -}}
-{{- $cfg := site.Params.map -}}
+{{- $styles := slice -}}
+{{- range site.Params.map.styles -}}
+  {{- $styles = $styles | append (dict "id" .id "name" (T (printf "map_style_%s" .id)) "tiles" .tiles "attribution" .attribution "maxZoom" (.maxZoom | default 18) "subdomains" (.subdomains | default "abc") "photo" (.photo | default false)) -}}
+{{- end -}}
 <div class="map{{ with .size }} map--{{ . }}{{ end }}" id="{{ .id }}" role="region" aria-label="{{ .label | default "Map" }}"
-  {{ if .mineHidden }}data-mine-hidden {{ end }}data-show="{{ T "show_my_tracks" }}" data-showing="{{ T "showing_my_tracks" }}" data-tiles="{{ $cfg.tiles }}" data-attribution="{{ $cfg.attribution }}" data-maxzoom="{{ $cfg.maxZoom | default 17 }}">
-  <script type="application/json">{{ dict "layers" $layers "markers" $markers | jsonify | safeJS }}</script>
+  {{ if .mineHidden }}data-mine-hidden {{ end }}data-show="{{ T "show_my_tracks" }}" data-showing="{{ T "showing_my_tracks" }}" data-style-label="{{ T "map_style" }}">
+  <script type="application/json">{{ dict "layers" $layers "markers" $markers "styles" $styles | jsonify | safeJS }}</script>
   <noscript><p class="map__noscript">{{ T "map_needs_js" }}</p></noscript>
 </div>
 {{- end -}}

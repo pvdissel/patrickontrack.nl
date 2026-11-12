@@ -80,6 +80,43 @@ test.describe('maps', () => {
   }
 });
 
+test.describe('map styles', () => {
+  const tileHosts = (page) => page.$$eval('.leaflet-tile', (imgs) => [...new Set(imgs.map((i) => new URL(i.src).hostname.split('.').slice(-2).join('.')))]);
+
+  test('every map offers the styles, with Topo as the default', async ({ page }) => {
+    await page.goto(URLS.en.trail);
+    const buttons = page.locator('.map-styles button');
+    await expect(buttons).toHaveText(['Topo', 'Standard', 'Satellite', 'CyclOSM']);
+    await expect(page.locator('.map-styles button[aria-pressed="true"]')).toHaveText('Topo');
+    await expect.poll(() => tileHosts(page)).toEqual(['opentopomap.org']);
+  });
+
+  test('a chosen style loads its tiles and credits, and is remembered on other maps', async ({ page }) => {
+    await page.goto(URLS.en.trail);
+    await page.locator('.map-styles button', { hasText: 'Satellite' }).click();
+    await expect(page.locator('.map-styles button[aria-pressed="true"]')).toHaveText('Satellite');
+    await expect.poll(() => tileHosts(page)).toEqual(['arcgisonline.com']);
+    await expect(page.locator('.leaflet-control-attribution')).toContainText('Esri');
+    await expect(page.locator('.leaflet-control-attribution')).not.toContainText('OpenTopoMap');
+    await expect(page.locator('.map')).toHaveClass(/map--photo/);   // aerial photos are not toned down
+
+    await page.goto(URLS.nl.stage);
+    await expect(page.locator('.map-styles button[aria-pressed="true"]')).toHaveText('Satelliet');
+    await expect.poll(() => tileHosts(page)).toEqual(['arcgisonline.com']);
+
+    await page.locator('.map-styles button', { hasText: 'Standaard' }).click();
+    await expect.poll(() => tileHosts(page)).toEqual(['openstreetmap.org']);
+    await expect(page.locator('.map')).not.toHaveClass(/map--photo/);
+  });
+
+  test('clicking a style button does not click the map underneath', async ({ page }) => {
+    await page.goto(URLS.en.trail);
+    await page.locator('.map-styles button', { hasText: 'CyclOSM' }).click();
+    await expect(page.locator('.leaflet-popup')).toHaveCount(0);
+    expect(page.url()).toContain(URLS.en.trail);
+  });
+});
+
 test.describe('wide content on small screens', () => {
   test('the elevation chart scrolls sideways on a phone and can then be focused, not on a desktop', async ({ page }) => {
     await page.goto(URLS.en.stage);

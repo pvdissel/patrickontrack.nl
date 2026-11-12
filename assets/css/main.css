@@ -353,6 +353,16 @@ a.chip--stage:hover { background: var(--moss-hover); color: var(--link); box-sha
 .map__noscript { padding: 24px; color: var(--muted); }
 .leaflet-container { font-family: var(--f-body); background: var(--map-bg); }
 .leaflet-tile-pane { filter: saturate(.55) contrast(.95) brightness(1.03); }
+.map--photo .leaflet-tile-pane { filter: none; }
+.map-styles { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px; padding: 3px; border-radius: 10px; background: var(--paper); box-shadow: 0 1px 6px var(--shadow-pop); }
+.map-styles button { min-height: 30px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent; color: var(--ink); font: 500 12.5px/1 var(--f-body); cursor: pointer; }
+.map-styles button:hover { background: var(--fog); }
+.map-styles button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+/* on a narrow map (phone), the style buttons form a 2×2 block so they stay clear of the zoom buttons */
+.map { container-type: inline-size; }
+@container (max-width: 520px) {
+  .map-styles { display: grid; grid-template-columns: auto auto; }
+}
 .leaflet-control-attribution { font-size: 10.5px; }
 .leaflet-container .leaflet-control-attribution { background: var(--paper); color: var(--muted); opacity: .92; }
 .leaflet-container .leaflet-control-attribution a, .leaflet-container .leaflet-popup-content a { color: var(--link); }

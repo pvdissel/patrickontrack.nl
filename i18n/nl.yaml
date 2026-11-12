@@ -156,6 +156,11 @@ map_finish: "Finish · {{ . }}"
 map_stage_label: "Etappe {{ .N }} · {{ .Title }}"
 map_my_track: "Mijn route · {{ . }}"
 map_needs_js: De kaart heeft JavaScript nodig. De GPX-bestanden werken in elke kaart-app.
+map_style: Kaartstijl
+map_style_topo: Topo
+map_style_osm: Standaard
+map_style_satellite: Satelliet
+map_style_cyclosm: CyclOSM
 
 # stays
 where_i_slept_heading: Waar ik sliep.

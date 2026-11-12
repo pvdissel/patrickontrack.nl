@@ -1,14 +1,16 @@
 /* global L */
 // Draws the trail / track maps. Data comes from Hugo (parsed GPX) as JSON inside each .map element.
 
+// Colours come from the CSS custom properties (--route-*); maps look the same in both themes.
 const STYLE = {
-  official: { color: '#2F5D46', weight: 4, dashArray: '9 7', casing: 7 },
-  faded: { color: '#8E9C8E', weight: 3, dashArray: '5 7', casing: 0 },
-  'stage-a': { color: '#1E3D2F', weight: 5, casing: 8 },
-  'stage-b': { color: '#4E8A68', weight: 5, casing: 8 },
-  mine: { color: '#C8641E', weight: 4.5, casing: 8 },
-  'mine-b': { color: '#7A3510', weight: 4.5, casing: 8 },
+  official: { color: '--route-official', weight: 4, dashArray: '9 7', casing: 7 },
+  faded: { color: '--route-faded', weight: 3, dashArray: '5 7', casing: 0 },
+  'stage-a': { color: '--route-a', weight: 5, casing: 8 },
+  'stage-b': { color: '--route-b', weight: 5, casing: 8 },
+  mine: { color: '--route-mine', weight: 4.5, casing: 8 },
+  'mine-b': { color: '--route-mine-b', weight: 4.5, casing: 8 },
 };
+const css = (el, name) => getComputedStyle(el).getPropertyValue(name).trim();
 
 const TENT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M3 20L12 4l9 16H3z"/><path d="M9 20l3-5 3 5"/></svg>';
 
@@ -54,9 +56,9 @@ function initMap(el) {
       const s = STYLE[layer.kind] || STYLE.official;
       const group = layer.kind.startsWith('mine') ? mine : all;
       if (s.casing) {
-        L.polyline(layer.points, { color: '#ffffff', weight: s.casing, opacity: 0.9, interactive: false }).addTo(group);
+        L.polyline(layer.points, { color: css(el, '--route-casing'), weight: s.casing, opacity: 0.9, interactive: false }).addTo(group);
       }
-      const line = L.polyline(layer.points, { color: s.color, weight: s.weight, dashArray: s.dashArray, lineCap: 'round', lineJoin: 'round' });
+      const line = L.polyline(layer.points, { color: css(el, s.color), weight: s.weight, dashArray: s.dashArray, lineCap: 'round', lineJoin: 'round' });
       if (layer.name) line.bindTooltip(esc(layer.name), { sticky: true });
       if (layer.url) line.on('click', () => { window.location.href = layer.url; });
       line.addTo(group);

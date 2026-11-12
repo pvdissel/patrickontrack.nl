@@ -91,3 +91,13 @@ if (scrollers.length) {
   markScrollable();
   window.addEventListener('resize', markScrollable);
 }
+
+// Theme switch (Auto / Light / Dark). The choice itself is handled by the inline script
+// in <head> (theme/init.js.html); these buttons only call it and show the current choice.
+if (window.potTheme) {
+  const buttons = document.querySelectorAll('[data-theme-choice]');
+  const show = () => buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeChoice === window.potTheme.get())));
+  buttons.forEach((b) => b.addEventListener('click', () => window.potTheme.set(b.dataset.themeChoice)));
+  document.addEventListener('pot:theme', show);
+  show();
+}

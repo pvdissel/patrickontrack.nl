@@ -1,7 +1,8 @@
 {{ define "main" }}
 {{- $t := partialCached "data/gear-totals.html" . .Path -}}
 {{- $order := slice "Pack" "Shelter" "Sleep" "Kitchen" "Water" "Clothing" "Electronics" "Navigation & safety" "Hygiene" "Other" "Food" -}}
-{{- $colors := dict "Pack" "#1E3D2F" "Shelter" "#2F5D46" "Sleep" "#4E8A68" "Kitchen" "#7B9E6B" "Water" "#7FA7BE" "Clothing" "#A9B8A0" "Electronics" "#59625B" "Navigation & safety" "#8C7A5B" "Hygiene" "#B9C8B4" "Other" "#CFD6C6" "Food" "#C8641E" -}}
+{{- /* the darker colours are theme tokens, so they lighten in the dark theme */ -}}
+{{- $colors := dict "Pack" "var(--draw-a)" "Shelter" "var(--draw-official)" "Sleep" "var(--draw-b)" "Kitchen" "#7B9E6B" "Water" "#7FA7BE" "Clothing" "#A9B8A0" "Electronics" "var(--muted)" "Navigation & safety" "#8C7A5B" "Hygiene" "#B9C8B4" "Other" "#CFD6C6" "Food" "var(--draw-mine)" -}}
 {{- $icons := dict "Pack" "pack" "Shelter" "tent" "Sleep" "moon" "Kitchen" "food" "Water" "water" "Clothing" "shirt" "Electronics" "battery" "Navigation & safety" "compass" "Hygiene" "first-aid" "Other" "route" "Food" "food" -}}
 {{- $items := .Params.items | default slice -}}
 {{- $cats := slice }}{{ range $order }}{{ if where $items "category" . }}{{ $cats = $cats | append . }}{{ end }}{{ end -}}
@@ -41,7 +42,7 @@
       {{- if gt $t.total 0.0 }}
       {{- $parts := slice }}
       {{- range $cats }}{{ $w := index $t.categories . | default 0.0 }}{{ if gt $w 0.0 }}{{ $parts = $parts | append (dict "name" (partial "label.html" (dict "prefix" "cat" "value" .)) "kg" (div $w 1000.0) "color" (index $colors . | default "#CFD6C6")) }}{{ end }}{{ end }}
-      {{- if gt $t.unlisted 0.05 }}{{ $parts = $parts | append (dict "name" (T "not_itemised") "kg" $t.unlisted "color" "#E3E6DD") }}{{ end }}
+      {{- if gt $t.unlisted 0.05 }}{{ $parts = $parts | append (dict "name" (T "not_itemised") "kg" $t.unlisted "color" "var(--moss)") }}{{ end }}
       {{- $desc := slice }}{{ range $parts }}{{ $desc = $desc | append (printf "%s %s kg" .name (lang.FormatNumber 1 .kg)) }}{{ end }}
       <div class="weightbar" role="img" aria-label="{{ T "weight_split" (delimit $desc ", ") }}">
         {{- range $parts }}<span style="flex: {{ printf "%.3f" .kg }} 1 0; background: {{ .color | safeCSS }}" title="{{ .name }}"></span>{{ end }}

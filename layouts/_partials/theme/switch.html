@@ -1,0 +1,9 @@
+{{- /* Light / dark theme choice. Needs JavaScript (see theme/init.js.html); without it the
+       site is shown in the light theme and this control is hidden. */ -}}
+<div class="theme-switch" role="group" aria-label="{{ T "theme" }}" data-theme-switch>
+  {{- range slice (dict "v" "auto" "icon" "theme-auto") (dict "v" "light" "icon" "sun") (dict "v" "dark" "icon" "moon") }}
+  <button type="button" data-theme-choice="{{ .v }}" aria-pressed="{{ cond (eq .v "auto") "true" "false" }}" title="{{ T (printf "theme_%s" .v) }}">
+    {{- partial "icon.html" (dict "name" .icon "size" 16) }}<span class="visually-hidden">{{ T (printf "theme_%s" .v) }}</span>
+  </button>
+  {{- end }}
+</div>

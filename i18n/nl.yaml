@@ -3,6 +3,10 @@ skip: Naar de inhoud
 menu: Menu
 main_nav: Hoofdmenu
 youtube_channel: YouTube-kanaal
+theme: Thema
+theme_auto: Automatisch (volgt je systeem)
+theme_light: Licht
+theme_dark: Donker
 language: Taal
 read_in: "Lees in het {{ .Name }}"
 only_in: "Deze pagina is alleen in het {{ .Name }} beschikbaar."

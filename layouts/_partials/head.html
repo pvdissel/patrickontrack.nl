@@ -1,5 +1,6 @@
 <meta charset="utf-8">
 <script>document.documentElement.className = "js";</script>
+{{ partial "theme/init.js.html" . }}
 <meta name="viewport" content="width=device-width, initial-scale=1">
 {{- $title := cond .IsHome (printf "%s · %s" site.Title site.Params.tagline) (printf "%s · %s" .Title site.Title) }}
 <title>{{ $title }}</title>

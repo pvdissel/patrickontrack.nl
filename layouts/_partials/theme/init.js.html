@@ -1,0 +1,31 @@
+{{- /* Inline script, first thing in <head> so the page never flashes in the wrong theme.
+       Sets <html data-theme="light|dark">: the visitor's choice (localStorage "pot-theme"),
+       or, for "auto" (the default), the system setting, following it when it changes.
+       window.potTheme.get() / .set("auto"|"light"|"dark"); fires "pot:theme" on document. */ -}}
+<script>
+(function () {
+  var root = document.documentElement, KEY = "pot-theme", choice = "auto";
+  var media = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  function valid(v) { return v === "light" || v === "dark" ? v : "auto"; }
+  try { choice = valid(localStorage.getItem(KEY)); } catch (e) {}
+  function apply() {
+    root.setAttribute("data-theme", choice === "auto" ? (media && media.matches ? "dark" : "light") : choice);
+    document.dispatchEvent(new Event("pot:theme"));
+  }
+  window.potTheme = {
+    get: function () { return choice; },
+    set: function (v) {
+      choice = valid(v);
+      try { if (choice === "auto") localStorage.removeItem(KEY); else localStorage.setItem(KEY, choice); } catch (e) {}
+      apply();
+    }
+  };
+  if (media) {
+    var follow = function () { if (choice === "auto") apply(); };
+    if (media.addEventListener) media.addEventListener("change", follow); else media.addListener(follow);
+  }
+  window.addEventListener("storage", function (e) { if (e.key === KEY) { choice = valid(e.newValue); apply(); } });
+  apply();
+})();
+</script>
+{{- /**/ -}}

@@ -5,6 +5,6 @@
     {{- $lang := .Language -}}
     {{- $target := . -}}
     {{- range $page.Translations }}{{ if eq .Language.Lang $lang.Lang }}{{ $target = . }}{{ end }}{{ end -}}
-    <a class="lang-switch" href="{{ $target.RelPermalink }}" hreflang="{{ $lang.Lang }}" lang="{{ $lang.Lang }}" title="{{ $lang.Label }}" aria-label="{{ $lang.Label }}">{{ upper $lang.Lang }}</a>
+    <a class="lang-switch" href="{{ $target.RelPermalink }}" data-set-lang="{{ $lang.Lang }}" hreflang="{{ $lang.Lang }}" lang="{{ $lang.Lang }}" title="{{ $lang.Label }}" aria-label="{{ $lang.Label }}">{{ upper $lang.Lang }}</a>
   {{- end -}}
 {{- end -}}

@@ -378,3 +378,10 @@ a.chip--stage:hover { background: #C9D6BC; color: var(--forest); box-shadow: non
 @media (max-width: 760px) {
   .js .site-nav .lang-switch { align-self: flex-start; margin-top: 12px; height: 40px; border-bottom: 1.5px solid var(--line) !important; }
 }
+.lang-suggest { background: var(--forest); color: var(--on-dark); }
+.lang-suggest__inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding-block: 12px; }
+.lang-suggest p { font-size: 15px; }
+.lang-suggest .btn { background: var(--on-dark); color: var(--forest); }
+.lang-suggest .btn:hover { background: #fff; color: var(--forest); }
+.lang-suggest .btn--ghost { background: transparent; color: var(--on-dark); box-shadow: inset 0 0 0 1.5px var(--on-dark-muted); }
+.lang-suggest .btn--ghost:hover { background: rgba(255,255,255,.08); color: #fff; }

@@ -11,11 +11,18 @@ Built with [Hugo](https://gohugo.io) (no theme, everything lives in this repo), 
 hugo server -D        # -D also shows drafts
 ```
 
-Open http://localhost:1313 (English) or http://localhost:1313/nl/ (Nederlands). All migrated stories are still **drafts**, so without `-D` the site only shows the trails and pages.
+Open http://localhost:1313/en/ or http://localhost:1313/nl/. All migrated stories are still **drafts**, so without `-D` the site only shows the trails and pages.
 
 ## Two languages
 
-The site is in **English** (at `/`) and **Dutch** (at `/nl/`), with a language switch in the header.
+The site is in **English** (`/en/`) and **Dutch** (`/nl/`).
+
+**Which language a visitor gets**
+1. If they clicked **NL/EN** in the header (or a banner button) before, that choice wins. It is stored in the browser (`localStorage`, key `pot-lang`).
+2. Otherwise `/` sends them to the first of their browser languages the site supports; anything else (e.g. German) gets English. This is done in JavaScript by `layouts/alias.html`, because GitHub Pages can’t read the `Accept-Language` header.
+3. Deeper pages are never redirected (shared links and Google always get the page they asked for). If the browser language differs and no choice was made, a small banner offers the page in the other language: “Deze pagina is ook in het Nederlands beschikbaar.” Both of its buttons save a choice.
+
+**Old links keep working.** GitHub Pages serves `/404.html` for every missing path. That page (`layouts/root404.html`) sends paths without a language prefix, like `/adventures/2022-09-dmt/2022-09-dmt-day-1/` or `/trails/dmt/`, to the same path under the visitor’s language, where Hugo has the redirects (`aliases`). A real “not found” is shown in the language of the URL.
 
 - Content lives in `content/en/…` and `content/nl/…` with the **same file names**; that is how Hugo knows two files are translations of each other.
 - **A page that exists in only one language still appears in the other**, with a short note ("This page is only available in Dutch"), a language badge on cards, and a canonical link to the original. Your stories are written in Dutch, so they live in `content/nl/stories/` and the English site shows them with that note. Translate one by adding the same file name under `content/en/stories/`.
@@ -23,7 +30,8 @@ The site is in **English** (at `/`) and **Dutch** (at `/nl/`), with a language s
 - Interface text (menus, labels, buttons) is in `i18n/en.yaml` and `i18n/nl.yaml`. Dates and numbers follow the language (`za 10 sep 2022`, `29,6 km`).
 - Values chosen from a list in the CMS (stay type, gear category, route type) are stored in English and translated on the page.
 - In Pages CMS you get a **Nederlands** and an **English** section. References always point to the same language. To change the CMS fields, edit `scripts/pages.base.yml` and run `python3 scripts/pages-config.py`, which writes `.pages.yml` for both languages.
-- Want Dutch at `/` and English at `/en/`? Swap `defaultContentLanguage` in `hugo.toml` and swap the language weights.
+- Visitors whose browser language is neither Dutch nor English get `defaultContentLanguage` (English) in `hugo.toml`.
+- Texts shown before the language is known (root page, 404, banner) are in `data/languages.yaml`.
 
 ## Content model
 

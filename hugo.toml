@@ -1,7 +1,7 @@
 baseURL = "https://patrickontrack.nl/"
 title = "Patrick on Track"
 defaultContentLanguage = "en"
-defaultContentLanguageInSubdir = false   # English at /, Dutch at /nl/
+defaultContentLanguageInSubdir = true    # /en/ and /nl/; "/" picks a language (layouts/alias.html)
 enableRobotsTXT = true
 timeZone = "Europe/Amsterdam"
 
@@ -155,6 +155,7 @@ timeZone = "Europe/Amsterdam"
   [[module.mounts]]
     source = "content/en"
     target = "content"
+    files = ["! root404.md"]   # the root 404 page is built once, not per language
     [module.mounts.sites.matrix]
       languages = ["nl"]
   [[module.mounts]]

@@ -20,6 +20,9 @@
 {{- end }}
 <meta name="theme-color" content="#1E3D2F">
 {{- if .Draft }}<meta name="robots" content="noindex">{{ end }}
+{{- if .IsHome }}
+<link rel="alternate" hreflang="x-default" href="{{ "/" | absURL }}">
+{{- end }}
 <meta property="og:type" content="{{ cond .IsPage "article" "website" }}">
 <meta property="og:title" content="{{ .Title | default site.Title }}">
 <meta property="og:description" content="{{ $desc }}">

@@ -1,0 +1,18 @@
+# Text shown before we know the visitor's language (root page, 404, suggestion banner).
+# Each entry is written in its own language.
+en:
+  name: English
+  suggest: "This page is also available in English."
+  switch: "Read in English"
+  stay: "Stay here"
+  notFoundTitle: "This path doesn’t go anywhere."
+  notFoundText: "The page you were looking for has moved or never existed."
+  backHome: "Back to the start"
+nl:
+  name: Nederlands
+  suggest: "Deze pagina is ook in het Nederlands beschikbaar."
+  switch: "Lees in het Nederlands"
+  stay: "Blijf hier"
+  notFoundTitle: "Dit pad loopt dood."
+  notFoundText: "De pagina die je zocht is verplaatst of heeft nooit bestaan."
+  backHome: "Terug naar het begin"

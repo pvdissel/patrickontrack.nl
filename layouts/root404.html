@@ -1,0 +1,58 @@
+{{- /*
+  /404.html at the site root (GitHub Pages only serves this one).
+  - A path without a language prefix (old links like /adventures/…, /trails/dmt/) is
+    sent to the same path under the visitor's language, where Hugo has the redirects.
+  - Otherwise it shows "not found" in the language of the URL.
+*/ -}}
+{{- $langs := slice }}{{ range hugo.Sites }}{{ $langs = $langs | append .Language.Lang }}{{ end -}}
+{{- $text := hugo.Data.languages -}}
+<!doctype html>
+<html lang="{{ hugo.Sites.Default.Language.Lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>404 · {{ site.Title }}</title>
+<link rel="icon" href="{{ "favicon.svg" | absURL }}" type="image/svg+xml">
+{{ partial "lang/detect.js.html" . }}
+<script>
+(function () {
+  var langs = {{ $langs | jsonify | safeJS }};
+  var root = "{{ "/" | relURL }}";
+  var path = location.pathname.slice(root.length - 1);
+  var first = path.split("/")[1];
+  if (langs.indexOf(first) < 0) {
+    location.replace(root + window.potLang + path + location.search + location.hash);
+  } else {
+    window.potLang = first;
+    document.documentElement.lang = first;
+  }
+})();
+</script>
+{{- $fonts := resources.Get "css/fonts.css" | resources.ExecuteAsTemplate "css/fonts.css" . -}}
+{{- $css := slice $fonts (resources.Get "css/main.css") | resources.Concat "css/site.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.Permalink }}">
+<style>.nf [data-lang] { display: none; }</style>
+</head>
+<body class="nf">
+<header class="site-header"><div class="wrap site-header__inner">
+  <a class="brand" href="{{ "/" | absURL }}">{{ partial "logo.html" (dict "size" 40) }}<span class="wordmark">Patrick <span>on</span> Track</span></a>
+</div></header>
+<main id="main">
+{{- range $langs }}
+{{- $t := index $text . }}
+<section class="wrap page-head stack" data-lang="{{ . }}" lang="{{ . }}" style="--gap: 20px; padding-block: 64px">
+  <p class="eyebrow">404</p>
+  <h1 class="title-xl">{{ $t.notFoundTitle }}</h1>
+  <p class="lead">{{ $t.notFoundText }}</p>
+  <div class="row"><a class="btn" href="{{ printf "/%s/" . | absURL }}">{{ $t.backHome }}</a></div>
+</section>
+{{- end }}
+</main>
+<script>
+  var el = document.querySelector('[data-lang="' + window.potLang + '"]') || document.querySelector("[data-lang]");
+  if (el) el.style.display = "flex";
+</script>
+<noscript><style>.nf [data-lang] { display: flex; }</style></noscript>
+</body>
+</html>

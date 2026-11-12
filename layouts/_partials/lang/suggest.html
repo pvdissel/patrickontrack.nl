@@ -1,0 +1,20 @@
+{{- /* Hidden banners offering this page in another language; main.js shows the one that
+       matches the browser language, if the visitor has not chosen a language yet. */ -}}
+{{- $page := . -}}
+{{- range site.Home.AllTranslations -}}
+  {{- if ne .Language.Lang $page.Language.Lang -}}
+    {{- $lang := .Language.Lang -}}
+    {{- $target := . -}}
+    {{- range $page.Translations }}{{ if eq .Language.Lang $lang }}{{ $target = . }}{{ end }}{{ end -}}
+    {{- $t := index hugo.Data.languages $lang }}
+<div class="lang-suggest" data-suggest="{{ $lang }}" lang="{{ $lang }}" role="region" aria-label="{{ $t.name }}" hidden>
+  <div class="wrap lang-suggest__inner">
+    <p>{{ $t.suggest }}</p>
+    <div class="row" style="--gap: 8px">
+      <a class="btn btn--small" href="{{ $target.RelPermalink }}" hreflang="{{ $lang }}" data-set-lang="{{ $lang }}">{{ $t.switch }}</a>
+      <button class="btn btn--ghost btn--small" type="button" data-set-lang="{{ $page.Language.Lang }}" data-dismiss>{{ $t.stay }}</button>
+    </div>
+  </div>
+</div>
+  {{- end -}}
+{{- end -}}

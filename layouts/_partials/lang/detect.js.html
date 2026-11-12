@@ -1,0 +1,19 @@
+{{- /* Inline script: pick a language. A choice made on the site (localStorage) wins,
+       then the browser's languages, then the default language. Sets window.potLang. */ -}}
+{{- $langs := slice }}{{ range hugo.Sites }}{{ $langs = $langs | append .Language.Lang }}{{ end -}}
+<script>
+(function () {
+  var langs = {{ $langs | jsonify | safeJS }}, pick = null;
+  try { pick = localStorage.getItem("pot-lang"); } catch (e) {}
+  if (langs.indexOf(pick) < 0) {
+    pick = null;
+    var nav = navigator.languages || [navigator.language || ""];
+    for (var i = 0; i < nav.length && !pick; i++) {
+      var l = String(nav[i]).toLowerCase().slice(0, 2);
+      if (langs.indexOf(l) >= 0) pick = l;
+    }
+  }
+  window.potLang = pick || {{ hugo.Sites.Default.Language.Lang }};
+})();
+</script>
+{{- /**/ -}}

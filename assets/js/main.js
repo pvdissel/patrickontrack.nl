@@ -49,3 +49,29 @@ document.querySelectorAll('[data-youtube]').forEach((box) => {
     box.replaceChildren(iframe);
   });
 });
+
+// Language: remember an explicit choice, and suggest the visitor's own language
+// (from the browser) when they land on a page in the other one.
+const LANG_KEY = 'pot-lang';
+const storage = {
+  get() { try { return localStorage.getItem(LANG_KEY); } catch (e) { return null; } },
+  set(v) { try { localStorage.setItem(LANG_KEY, v); } catch (e) { /* private mode */ } },
+};
+document.querySelectorAll('[data-set-lang]').forEach((el) => {
+  el.addEventListener('click', () => {
+    storage.set(el.dataset.setLang);
+    if ('dismiss' in el.dataset) el.closest('.lang-suggest').hidden = true;
+  });
+});
+const suggestions = document.querySelectorAll('[data-suggest]');
+if (suggestions.length && !storage.get()) {
+  const offered = [...suggestions].map((s) => s.dataset.suggest);
+  const pageLang = document.documentElement.lang.slice(0, 2);
+  const browser = (navigator.languages || [navigator.language || ''])
+    .map((l) => String(l).toLowerCase().slice(0, 2))
+    .find((l) => l === pageLang || offered.includes(l));
+  if (browser && browser !== pageLang) {
+    const banner = document.querySelector(`[data-suggest="${browser}"]`);
+    if (banner) banner.hidden = false;
+  }
+}

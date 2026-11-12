@@ -90,7 +90,7 @@ content:
           collection: stages
           multiple: true
           search: title
-          label: "{primary} (stage {number})"
+          label: "{primary} · {name}"
       - name: track
         label: My GPX track
         description: What you actually walked (export from Komoot, Garmin, Strava…)
@@ -252,9 +252,30 @@ content:
         label: One-line description
         type: text
       - name: country
-        label: Country code
-        type: string
+        label: Country
+        description: Netherlands goes under the "Netherlands" filter, everything else under "Abroad"
+        type: select
         default: NL
+        options:
+          values:
+            - { name: NL, label: Netherlands }
+            - { name: BE, label: Belgium }
+            - { name: DE, label: Germany }
+            - { name: LU, label: Luxembourg }
+            - { name: FR, label: France }
+            - { name: UK, label: United Kingdom }
+            - { name: IE, label: Ireland }
+            - { name: AT, label: Austria }
+            - { name: CH, label: Switzerland }
+            - { name: IT, label: Italy }
+            - { name: ES, label: Spain }
+            - { name: PT, label: Portugal }
+            - { name: NO, label: Norway }
+            - { name: SE, label: Sweden }
+            - { name: FI, label: Finland }
+            - { name: DK, label: Denmark }
+            - { name: PL, label: Poland }
+            - { name: CZ, label: Czechia }
       - name: region
         label: Region
         type: string
@@ -296,8 +317,10 @@ content:
         type: string
       - name: status
         label: Status (optional)
-        description: Normally worked out from your stories (Planned / In progress / Completed)
-        type: string
+        description: Leave empty to work it out from your stories
+        type: select
+        options:
+          values: [Planned, In progress, Completed, Walked]
       - name: good_to_know
         label: Good to know
         type: object
@@ -451,7 +474,7 @@ content:
         options:
           collection: stages
           search: title
-          label: "{primary} (stage {number})"
+          label: "{primary} · {name}"
       - name: website
         label: Website
         type: string

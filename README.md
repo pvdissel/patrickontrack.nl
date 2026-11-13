@@ -128,7 +128,7 @@ Everything under `static/gpx/samples/` is **made-up GPX** so the maps have somet
 - [ ] Replace `dmt-2022-day-1..3.gpx` with your own recorded tracks from September 2022.
 - [ ] Delete `static/gpx/samples/` when done.
 - [ ] Fill in the names of the DMT day 1 and day 2 campsites (`content/nl/stays/farm-campsite-past-the-vaalserberg.md`, `campsite-noorbeek.md`; the English text is in `translations/en/stays/`).
-- [ ] Add `lat`/`lon` to stays so they appear on the maps (none have coordinates yet).
+- [ ] Add `lat`/`lon` to the two DMT campsites once they have a name (the other stays have coordinates).
 - [x] Roots Natuurpad: all 32 Wandelnet stages with names, details and GPX.
 - [x] Veluwe Zwerfpad (19), Utrechtse Mountain Trail (9), Nederlands Kustpad 2 (13) and N70 (1): stages with names, details and GPX.
 - [ ] StauSeeSteig: add the GPX (DMFF only sends it by email).

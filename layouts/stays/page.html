@@ -4,7 +4,8 @@
 {{- $nights := partialCached "data/stay-stories.html" . .Path -}}
 {{- $md := dict "layers" slice "markers" slice -}}
 {{- if and .Params.lat .Params.lon -}}
-  {{- $md = partial "data/mapdata.html" (dict "trail" $trail "stays" (slice .) "highlight" (cond (not $stage) dict (dict $stage.Path true))) -}}
+  {{- $hl := dict }}{{ with $stage }}{{ $hl = dict .Path true }}{{ end -}}
+  {{- $md = partial "data/mapdata.html" (dict "trail" $trail "stays" (slice .) "highlight" $hl) -}}
 {{- end -}}
 <section class="wrap page-head stack" style="--gap: 18px; padding-top: 32px">
   <nav class="crumbs" aria-label="{{ T "breadcrumb" }}"><a href="{{ (site.GetPage "/stays").RelPermalink }}">{{ T "stays" }}</a> / {{ .Title }}</nav>
@@ -30,7 +31,8 @@
     {{- with .Content }}<div class="prose" style="font-size: 17px">{{ . }}</div>{{ end }}
     {{- if $md.markers }}
     {{ partial "map.html" (dict "page" . "id" "map-stay" "size" "short" "layers" $md.layers "markers" $md.markers "label" (T "location_of" .Title)) }}
-    {{ partial "legend.html" (slice (slice "official" (cond (not $trail) (T "trail") $trail.Title)) (slice "stay" .Title)) }}
+    {{- $legend := slice (slice "stay" .Title) }}{{ with $trail }}{{ $legend = slice (slice "official" .Title) (slice "stay" $.Title) }}{{ end }}
+    {{ partial "legend.html" $legend }}
     {{- end }}
   </div>
   <aside class="layout__aside">

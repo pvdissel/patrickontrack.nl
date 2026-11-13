@@ -158,9 +158,14 @@ function initMap(el) {
       fixed.forEach((j) => { if (!done.has(j) && j !== i && group.some((k) => touch(k, j))) group.push(j); });
       stages.forEach((j) => { if (group.some((k) => touch(k, j) && markers[k].getLatLng().distanceTo(markers[j].getLatLng()) < SAME)) group.push(j); });
       group.forEach((k) => done.add(k));
+      if (group.length === 1) { show(i, -markers[i].size / 2); return; }
+      // Lay the group out left to right around its middle, in the order of the points, so
+      // markers that are near (not on) each other can't end up covering one another.
+      group.sort((a, b) => pts[a].x - pts[b].x);
       const width = group.reduce((w, k) => w + markers[k].size, 0) + GAP * (group.length - 1);
-      let x = -width / 2;
-      group.forEach((k) => { show(k, group.length > 1 ? x : -markers[k].size / 2); x += markers[k].size + GAP; });
+      const mid = group.reduce((s, k) => s + pts[k].x, 0) / group.length;
+      let x = mid - width / 2;
+      group.forEach((k) => { show(k, x - pts[k].x); x += markers[k].size + GAP; });
     });
     const hits = (b) => boxes.some((o) => b.x < o.x + o.w + GAP && o.x < b.x + b.w + GAP && b.y < o.y + o.h + GAP && o.y < b.y + b.h + GAP);
     stages.forEach((k) => {

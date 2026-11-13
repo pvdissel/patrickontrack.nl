@@ -2,6 +2,8 @@
 title: Boerderijcamping Limburgerhof
 stay_type: Farm campsite
 place: Landgraaf
+lat: 50.90724
+lon: 6.04919
 access: Ongeveer 1 km van bushalte Zilverschoon
 website: https://www.limburgerhof.nl
 trail: content/nl/trails/dutch-mountain-trail.md

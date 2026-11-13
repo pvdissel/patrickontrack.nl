@@ -12,7 +12,8 @@
 {{- if and (not $d) $g }}{{ $d = $g.distance }}{{ $sample = $g.sample }}{{ end -}}
 {{- if and (not $a) $g }}{{ $a = $g.ascent }}{{ end -}}
 {{- if and (not $de) $g }}{{ $de = $g.descent }}{{ end -}}
-{{- if and (eq $p.Section "trails") (not $d) -}}
+{{- /* a trail adds up its stages, also when it has a GPX of its own (that one is only for downloading) */ -}}
+{{- if and (eq $p.Section "trails") (not $p.Params.distance_km) -}}
   {{- $sd := 0.0 }}{{ $sa := 0.0 }}{{ $sde := 0.0 }}{{ $any := false -}}
   {{- range partialCached "data/trail-stages.html" $p $p.Path -}}
     {{- $s := partialCached "data/stats-leaf.html" . .Path -}}
@@ -21,7 +22,7 @@
     {{- with $s.descent }}{{ $sde = add $sde (float .) }}{{ end -}}
     {{- if $s.sample }}{{ $sample = true }}{{ end -}}
   {{- end -}}
-  {{- if $any }}{{ $d = $sd }}{{ if not $a }}{{ $a = $sa }}{{ end }}{{ if not $de }}{{ $de = $sde }}{{ end }}{{ end -}}
+  {{- if $any }}{{ $d = $sd }}{{ if not $p.Params.ascent_m }}{{ $a = $sa }}{{ end }}{{ if not $p.Params.descent_m }}{{ $de = $sde }}{{ end }}{{ end -}}
 {{- end -}}
 {{- $start := $p.Params.start_time | default "" -}}
 {{- $end := $p.Params.end_time | default "" -}}

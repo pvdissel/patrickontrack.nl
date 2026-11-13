@@ -10,7 +10,7 @@
     min, max  m
     start,end time.Time or nil (from <time> elements, if present)
     points    [{lat, lng}, ...]          downsampled for the map
-    profile   [{km, ele}, ...]           downsampled for the elevation chart
+    profile   [{km, ele}, ...]           downsampled for the elevation chart; empty when the GPX has no <ele>
     first,last {lat, lng}
 */ -}}
 {{- $path := strings.TrimPrefix "/" (string .) -}}
@@ -47,7 +47,7 @@
     {{- $ref := -99999.0 -}}
     {{- $min := 99999.0 -}}{{- $max := -99999.0 -}}
     {{- $plat := 0.0 -}}{{- $plon := 0.0 -}}{{- $first := true -}}
-    {{- $t0 := "" -}}{{- $t1 := "" -}}
+    {{- $t0 := "" -}}{{- $t1 := "" -}}{{- $anyEle := false -}}
     {{- range $i, $p := $raw -}}
       {{- if or (eq (mod $i $stride) 0) (eq $i (sub $n 1)) -}}
         {{- $lat := float (index $p "-lat") -}}
@@ -65,6 +65,7 @@
           {{- $dist = add $dist (mul 12742.0 (math.Asin (math.Sqrt $a))) -}}
         {{- end -}}
         {{- if $hasEle -}}
+          {{- $anyEle = true -}}
           {{- if lt $ref -9999.0 }}{{ $ref = $ele }}{{ end -}}
           {{- $diff := sub $ele $ref -}}
           {{- if gt $diff 4.0 }}{{ $up = add $up $diff }}{{ $ref = $ele }}{{ end -}}
@@ -106,7 +107,7 @@
         "start" $start
         "end" $end
         "points" $mapPts
-        "profile" $profile
+        "profile" (cond $anyEle $profile slice)
         "first" (dict "lat" $f.lat "lng" $f.lng)
         "last" (dict "lat" $l.lat "lng" $l.lng)
       -}}

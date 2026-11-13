@@ -115,7 +115,8 @@ Upload GPX files in Pages CMS (they go to `static/gpx/`). At build time Hugo rea
 
 - Stage → `gpx`: the **official** route of that stage (green dashed on the map).
 - Story → `track`: what **I actually walked** (orange). The story map shows the official stages I walked, the rest of the trail faded, my track and where I slept.
-- Trail → totals are the sum of its stages unless `distance_km`/`ascent_m` are set (the DMT uses 101 km / 2000 m).
+- Trail → totals are the sum of its stages unless `distance_km`/`ascent_m` are set (the DMT uses 101 km / 2000 m). A trail's own `gpx` is only the download for the whole route.
+- A GPX without elevation (`<ele>`), like Wandelnet's, gets no elevation profile and shows “—” for ascent and descent.
 
 Maps use [Leaflet](https://leafletjs.com) (bundled in `assets/vendor/`, no CDN). Visitors can switch every map between four styles with the buttons in its top-right corner: **Topo** (OpenTopoMap, the default), **Standard** (OpenStreetMap), **Satellite** (Esri World Imagery) and **CyclOSM**. Their choice is remembered for all maps. The styles are listed in `hugo.toml` → `[[params.map.styles]]` (the first one is the default; only services that need no API key), and each button label comes from `i18n` (`map_style_<id>`). Add, remove or reorder styles there. Mark aerial-photo styles with `photo = true`, so they aren't toned down like the drawn maps.
 
@@ -128,7 +129,8 @@ Everything under `static/gpx/samples/` is **made-up GPX** so the maps have somet
 - [ ] Delete `static/gpx/samples/` when done.
 - [ ] Fill in the names of the DMT day 1 and day 2 campsites (`content/nl/stays/farm-campsite-past-the-vaalserberg.md`, `campsite-noorbeek.md`; the English text is in `translations/en/stays/`).
 - [ ] Add `lat`/`lon` to stays so they appear on the maps (none have coordinates yet).
-- [ ] Section stubs for Veluwe Zwerfpad (8), Roots Natuurpad (5) and Utrechtse Mountain Trail (9) only have a number. Add names and GPX files when you have them.
+- [x] Roots Natuurpad: all 32 Wandelnet stages with names, details and GPX.
+- [ ] Section stubs for Veluwe Zwerfpad (8) and Utrechtse Mountain Trail (9) only have a number. Add names and GPX files when you have them.
 - [ ] Set your YouTube channel URL in `hugo.toml` → `params.youtube`.
 - [ ] Unmark **Draft** on the stories, stays and gear lists you want to publish.
 

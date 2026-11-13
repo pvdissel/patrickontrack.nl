@@ -1,5 +1,8 @@
 # Test the site, then build it with Hugo and deploy it to GitHub Pages.
 # Pull requests only run the tests; pushes to main deploy when the tests pass.
+# When only content changes (Markdown pages, photos, GPX files), only the quick
+# checks run: the browser and accessibility tests use the fixed test site in
+# tests/fixtures, so content can't change their outcome.
 name: Test and deploy
 
 on:
@@ -29,6 +32,37 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history, to see which files this push or PR changes
+      # Content only = every changed file is a page (content/**/*.md, translations/**/*.md),
+      # a photo or GPX upload (static/images, static/gpx) or the README.
+      # Anything else (templates, styles, scripts, config, tests), a new branch,
+      # a manual run or an unknown previous commit runs everything.
+      - name: What changed?
+        id: changes
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          case "$EVENT" in
+            push) from=$BEFORE ;;
+            pull_request) from=$BASE ;;
+            *) from= ;;
+          esac
+          if [ -z "$from" ] || ! git cat-file -e "$from^{commit}" 2>/dev/null; then
+            echo "Can't tell what changed: running all tests"
+            echo "content_only=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          files=$(git diff --name-only --no-renames "$from" HEAD)
+          echo "Changed files:"; echo "$files" | sed 's/^/  /'
+          other=$(echo "$files" | grep -vE '^((content|translations)/.*\.md|static/(images|gpx)/.*|README\.md)$' || true)
+          if [ -n "$files" ] && [ -z "$other" ]; then
+            echo "Content only: running the quick checks"
+            echo "content_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "content_only=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Cache Hugo binary
         uses: actions/cache@v4
         with:
@@ -41,17 +75,20 @@ jobs:
           path: .node
           key: node-${{ runner.os }}-${{ hashFiles('.node-version') }}
       - name: Install test tools
+        if: steps.changes.outputs.content_only != 'true'
         run: |
           if [ -f package-lock.json ]; then ./nodew npm ci; else ./nodew npm install --no-audit --no-fund; fi
           ./nodew npx playwright install --with-deps chromium
       - name: Build, content and link checks
         run: ./scripts/test quick
       - name: Browser tests
+        if: steps.changes.outputs.content_only != 'true'
         run: ./scripts/test e2e
       - name: Accessibility scan (WCAG 2.2 AA + best practices)
+        if: steps.changes.outputs.content_only != 'true'
         run: ./nodew npx playwright test --project=a11y
       - name: Upload test report
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.changes.outputs.content_only != 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report

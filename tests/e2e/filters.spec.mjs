@@ -30,6 +30,17 @@ test('trails: filter by status and country', async ({ page }) => {
   }
 });
 
+test('trails: every status on a card has a filter, and every status filter a card', async ({ page }) => {
+  await page.goto('/en/trails/');
+  const statuses = ['completed', 'in-progress', 'walked', 'planned'];
+  const onCards = await page.locator('[data-filter-item="trails"]').evaluateAll(
+    (els, st) => [...new Set(els.flatMap((e) => e.dataset.tags.split(' ')).filter((t) => st.includes(t)))].sort(), statuses);
+  const filters = await page.locator('[data-filter-group="trails"] [data-filter]').evaluateAll(
+    (els, st) => els.map((e) => e.dataset.filter).filter((f) => st.includes(f)).sort(), statuses);
+  expect(onCards.length).toBeGreaterThan(0);
+  expect(filters).toEqual(onCards);
+});
+
 test('stays: filter by type', async ({ page }) => {
   await page.goto('/nl/stays/');
   const cards = '[data-filter-item="stays"]';

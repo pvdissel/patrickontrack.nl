@@ -5,8 +5,11 @@
   {{- with .Params.intro }}<p class="lead">{{ . }}</p>{{ end }}
   <div class="filters" role="group" aria-label="{{ T "filter_trails" }}" data-filter-group="trails" style="margin-top: 16px">
     <button class="filter" type="button" data-filter="all" aria-pressed="true">{{ T "all" }}</button>
-    <button class="filter" type="button" data-filter="completed" aria-pressed="false">{{ T "status_completed" }}</button>
-    <button class="filter" type="button" data-filter="in-progress" aria-pressed="false">{{ T "status_in-progress" }}</button>
+    {{- /* one filter per status the trails actually have (see data/trail-progress.html), in a fixed order */ -}}
+    {{- $have := dict }}{{ range .Pages }}{{ $have = merge $have (dict ((partialCached "data/trail-progress.html" . .Path).status | urlize) true) }}{{ end }}
+    {{- range slice "completed" "in-progress" "walked" "planned" }}{{ if index $have . }}
+    <button class="filter" type="button" data-filter="{{ . }}" aria-pressed="false">{{ T (printf "status_%s" .) }}</button>
+    {{- end }}{{ end }}
     <button class="filter" type="button" data-filter="netherlands" aria-pressed="false">{{ T "netherlands" }}</button>
     <button class="filter" type="button" data-filter="abroad" aria-pressed="false">{{ T "abroad" }}</button>
   </div>

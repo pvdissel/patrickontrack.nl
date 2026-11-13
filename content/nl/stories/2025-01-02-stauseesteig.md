@@ -1,7 +1,7 @@
 ---
 title: Een oefening in verdwijnen op de StauSeeSteig
 date: '2025-01-02T00:00:00+01:00'
-draft: true
+draft: false
 description: Twee winterse dagen op de StauSeeSteig, door sneeuw en ijskoude wind, met een nacht in de tent bij de Wehebachtalsperre.
 cover: /images/youtube/2025-01-02-stauseesteig.jpg
 trail: content/nl/trails/stauseesteig.md

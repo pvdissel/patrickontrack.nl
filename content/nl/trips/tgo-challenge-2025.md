@@ -1,6 +1,6 @@
 ---
 title: 'TGO Challenge 2025: 320 km dwars door Schotland'
-draft: true
+draft: false
 tags:
 - tgo-challenge
 - solo-hiking

@@ -1,7 +1,7 @@
 ---
 title: Met het gezin naar Njupeskär, de hoogste waterval van Zweden
 date: '2025-08-21T00:00:00+02:00'
-draft: true
+draft: false
 description: Met het gezin over de Njupeskärsleden in Fulufjällets nationaal park, naar de hoogste waterval van Zweden.
 cover: /images/youtube/2025-08-21-njupeskar.jpg
 trip: content/nl/trips/zweden-2025.md

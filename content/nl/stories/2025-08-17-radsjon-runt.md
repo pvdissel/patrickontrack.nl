@@ -1,7 +1,7 @@
 ---
 title: In de vroege ochtend op zoek naar elanden rond Rädsjön
 date: '2025-08-17T00:00:00+02:00'
-draft: true
+draft: false
 description: Een stille ochtendwandeling van 5 km rond het meer Rädsjön bij Orsa Grönklitt, op zoek naar elanden.
 cover: /images/youtube/2025-08-17-radsjon-runt.jpg
 trip: content/nl/trips/zweden-2025.md

@@ -1,6 +1,6 @@
 ---
 title: Camping Beek en Hei
-draft: true
+draft: false
 stay_type: Campsite
 place: Otterlo
 description: Een nat, gezellig kampeerweekend met Milou, met code geel in de weersverwachting.

@@ -1,7 +1,7 @@
 ---
 title: 'TGO voorbereiding: de reis van Nederland naar Shiel Bridge'
 date: '2025-05-02T00:00:00+02:00'
-draft: true
+draft: false
 description: Met de boot, de trein en de bus zo’n 1500 km naar het startpunt van de TGO Challenge in Shiel Bridge.
 cover: /images/youtube/2025-05-02-tgo-reis-naar-schotland.jpg
 trip: content/nl/trips/tgo-challenge-2025.md

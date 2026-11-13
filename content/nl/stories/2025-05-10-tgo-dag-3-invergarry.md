@@ -1,7 +1,7 @@
 ---
 title: 'TGO dag 3: een ochtendwandeling van Poulary naar Invergarry'
 date: '2025-05-10T00:00:00+01:00'
-draft: true
+draft: false
 description: 'Het eerste deel van dag 3: een ochtendwandeling van Poulary naar Invergarry.'
 cover: /images/youtube/2025-05-10-tgo-dag-3-invergarry.jpg
 trip: content/nl/trips/tgo-challenge-2025.md

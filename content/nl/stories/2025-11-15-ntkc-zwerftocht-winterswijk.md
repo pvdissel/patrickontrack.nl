@@ -1,7 +1,7 @@
 ---
 title: NTKC-zwerftocht in Winterswijk
 date: '2025-11-15T00:00:00+01:00'
-draft: true
+draft: false
 description: 'De zwerftocht van de NTKC Zwerfgroep van november 2025: lopen op coördinaten naar het overnachtingspunt in Winterswijk.'
 cover: /images/youtube/2025-11-15-ntkc-zwerftocht-winterswijk.jpg
 stays:

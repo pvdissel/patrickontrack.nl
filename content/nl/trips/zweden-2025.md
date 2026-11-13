@@ -1,6 +1,6 @@
 ---
 title: Gezinsvakantie Zweden 2025
-draft: true
+draft: false
 description: Een gezinsvakantie in Dalarna, met een stille ochtendwandeling op zoek naar elanden en een tocht naar de hoogste waterval van Zweden.
 cover: /images/youtube/zweden-2025-radsjon.jpg
 cover_alt: Een bospad langs een meer, bij een houten bord met ‘Rädsjön runt’

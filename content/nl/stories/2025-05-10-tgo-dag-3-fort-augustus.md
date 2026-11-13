@@ -1,7 +1,7 @@
 ---
 title: 'TGO dag 3: over de Great Glen Way naar Fort Augustus en Loch Ness'
 date: '2025-05-10T12:00:00+01:00'
-draft: true
+draft: false
 description: 'Het tweede deel van dag 3: ik liep door, over de Great Glen Way naar Fort Augustus, en had zondag een rustdag aan Loch Ness.'
 cover: /images/youtube/2025-05-10-tgo-dag-3-fort-augustus.jpg
 trip: content/nl/trips/tgo-challenge-2025.md

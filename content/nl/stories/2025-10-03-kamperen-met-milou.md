@@ -1,7 +1,7 @@
 ---
 title: Kampeerweekend met Milou in Otterlo
 date: '2025-10-03T00:00:00+02:00'
-draft: true
+draft: false
 description: Een nat, gezellig en stoer kampeerweekend met Milou in Otterlo, met wandelen, fietsen en Museonder in de Hoge Veluwe.
 cover: /images/youtube/2025-10-03-kamperen-met-milou.jpg
 stays:

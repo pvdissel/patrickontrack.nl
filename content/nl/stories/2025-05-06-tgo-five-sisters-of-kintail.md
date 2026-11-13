@@ -1,7 +1,7 @@
 ---
 title: 'TGO opwarmhike: de Five Sisters of Kintail op'
 date: '2025-05-06T00:00:00+01:00'
-draft: true
+draft: false
 description: Een opwarmhike vanaf Glenshiel de Five Sisters of Kintail op, voor het uitzicht.
 cover: /images/youtube/2025-05-06-tgo-five-sisters-of-kintail.jpg
 trip: content/nl/trips/tgo-challenge-2025.md

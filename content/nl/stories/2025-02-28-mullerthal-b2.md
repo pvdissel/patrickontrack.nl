@@ -1,7 +1,7 @@
 ---
 title: Mullerthal B2 met een kleuter
 date: '2025-02-28T00:00:00+01:00'
-draft: true
+draft: false
 description: Tijdens onze gezinsvakantie in Luxemburg liepen we route B2 in het Mullerthal, met onze dochter Milou van 4.
 cover: /images/youtube/2025-02-28-mullerthal-b2.jpg
 trail: content/nl/trails/mullerthal-b2.md

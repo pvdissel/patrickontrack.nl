@@ -1,7 +1,7 @@
 ---
 title: 'Silent hike: NTKC-zwerftocht in Diever'
 date: '2026-02-21T00:00:00+01:00'
-draft: true
+draft: false
 description: De zwerftocht van de NTKC Zwerfgroep van februari 2026, in Diever, als stille hike.
 cover: /images/youtube/2026-02-21-ntkc-zwerftocht-diever.jpg
 cover_alt: Een bospad tussen de dennen, met het NTKC-logo en de tekst ‘Zwerfgroep February 2026 Diever’

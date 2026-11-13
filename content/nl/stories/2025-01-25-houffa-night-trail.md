@@ -1,7 +1,7 @@
 ---
 title: 'Houffa Night Trail: 10 km trailrunning in het donker'
 date: '2025-01-25T00:00:00+01:00'
-draft: true
+draft: false
 description: Elja liep de Houffa Night Trail van 10 km in Houffalize. Ik filmde de trail, en liep de dag erna de hele route nog eens bij daglicht.
 cover: /images/youtube/2025-01-25-houffa-night-trail.jpg
 cover_alt: Een rivier bij nacht met de lampjes van lopers, naast het logo van de Houffa Trail, 25-26 januari 2025

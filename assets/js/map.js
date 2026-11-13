@@ -127,31 +127,50 @@ function initMap(el) {
     const marker = L.marker([m.lat, m.lon], { icon, keyboard: true, title: m.title || m.label || '' });
     marker.bindPopup(m.popup || m.url ? popup({ label: m.popup || m.label, url: m.url }) : esc(m.label));
     marker.size = size;
+    marker.kind = m.kind;
     marker.addTo(all);
     markers.push(marker);
   });
 
-  // Markers on (nearly) the same spot, like a stay where the next stage starts, would cover each
-  // other. After every zoom, put markers that overlap on screen side by side around their point.
+  // Markers that overlap on screen would cover each other. After every zoom:
+  // - start/finish and stay markers that overlap sit side by side around their points, and so
+  //   does a stage number on the same spot as one of them (a stay where the next stage starts);
+  // - any other stage number that would cover a marker is hidden until you zoom in far enough.
+  //   Spreading those too would push a long trail's numbers far off the line when zoomed out.
   const GAP = 6;
+  const SAME = 200;   // metres: markers closer than this mark the same place
   function spread() {
     const pts = markers.map((mk) => map.latLngToLayerPoint(mk.getLatLng()));
+    const touch = (a, b) => pts[a].distanceTo(pts[b]) < (markers[a].size + markers[b].size) / 2 + GAP;
+    const fixed = markers.map((_, i) => i).filter((i) => markers[i].kind !== 'stage');
+    const stages = markers.map((_, i) => i).filter((i) => markers[i].kind === 'stage');
     const done = new Set();
-    markers.forEach((mk, i) => {
+    const boxes = [];
+    const show = (k, left) => {
+      const m = markers[k];
+      const el = m.getElement();
+      if (el) { el.style.display = ''; el.style.marginLeft = `${left}px`; }
+      boxes.push({ x: pts[k].x + left, y: pts[k].y - m.size / 2, w: m.size, h: m.size });
+    };
+    fixed.forEach((i) => {
       if (done.has(i)) return;
       const group = [i];
-      for (let j = i + 1; j < markers.length; j++) {
-        if (!done.has(j) && group.some((k) => pts[k].distanceTo(pts[j]) < (markers[k].size + markers[j].size) / 2 + GAP)) group.push(j);
-      }
+      fixed.forEach((j) => { if (!done.has(j) && j !== i && group.some((k) => touch(k, j))) group.push(j); });
+      stages.forEach((j) => { if (group.some((k) => touch(k, j) && markers[k].getLatLng().distanceTo(markers[j].getLatLng()) < SAME)) group.push(j); });
+      group.forEach((k) => done.add(k));
       const width = group.reduce((w, k) => w + markers[k].size, 0) + GAP * (group.length - 1);
       let x = -width / 2;
-      group.forEach((k) => {
-        const m = markers[k];
-        done.add(k);
+      group.forEach((k) => { show(k, group.length > 1 ? x : -markers[k].size / 2); x += markers[k].size + GAP; });
+    });
+    const hits = (b) => boxes.some((o) => b.x < o.x + o.w + GAP && o.x < b.x + b.w + GAP && b.y < o.y + o.h + GAP && o.y < b.y + b.h + GAP);
+    stages.forEach((k) => {
+      if (done.has(k)) return;
+      const m = markers[k];
+      const box = { x: pts[k].x - m.size / 2, y: pts[k].y - m.size / 2, w: m.size, h: m.size };
+      if (hits(box)) {
         const el = m.getElement();
-        if (el) el.style.marginLeft = `${group.length > 1 ? x : -m.size / 2}px`;
-        x += m.size + GAP;
-      });
+        if (el) el.style.display = 'none';
+      } else show(k, -m.size / 2);
     });
   }
 

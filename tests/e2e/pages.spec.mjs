@@ -59,8 +59,9 @@ test.describe('maps', () => {
   for (const name of ['trail', 'stage']) {
     test(`${name} page: markers on the same spot sit side by side at every zoom level`, async ({ page }) => {
       await page.goto(URLS.en[name]);
+      // Stage numbers that would cover another marker are hidden until you zoom in: skip those.
       const overlaps = () => page.$$eval('.leaflet-marker-icon', (els) => {
-        const boxes = els.map((e) => ({ t: e.title, r: e.getBoundingClientRect() }));
+        const boxes = els.filter((e) => e.style.display !== 'none').map((e) => ({ t: e.title, r: e.getBoundingClientRect() }));
         const out = [];
         boxes.forEach((a, i) => boxes.slice(i + 1).forEach((b) => {
           if (a.r.left < b.r.right && b.r.left < a.r.right && a.r.top < b.r.bottom && b.r.top < a.r.bottom) out.push(`${a.t} / ${b.t}`);
@@ -73,8 +74,10 @@ test.describe('maps', () => {
           await page.waitForTimeout(400);   // zoom animation
         }
         expect(await overlaps()).toEqual([]);
+        // the stage that starts at the hut is shown next to it, not hidden
+        if (name === 'trail') await expect(page.locator('.mk--stage', { hasText: /^2$/ })).toBeVisible();
       }
-      const sizes = await page.$$eval('.leaflet-marker-icon', (els) => els.map((e) => Math.min(e.offsetWidth, e.offsetHeight)));
+      const sizes = await page.$$eval('.leaflet-marker-icon', (els) => els.filter((e) => e.style.display !== 'none').map((e) => Math.min(e.offsetWidth, e.offsetHeight)));
       expect(Math.min(...sizes)).toBeGreaterThanOrEqual(24);
     });
   }

@@ -101,6 +101,14 @@ Links are stored as paths (`content/nl/trails/dutch-mountain-trail.md`), which i
 
 The Stories page has an **All stories / By trip** switch; `/trips/` lists every trip with at least one published story. Trips replace the old `trips` taxonomy.
 
+### Tags
+
+Trips, trails and stories can have **tags** (field `tags`), such as *TGO Challenge* or *Hiking with kids*. The tags are listed in `data/tags.yaml`, each with a Dutch and an English name, and Pages CMS shows them as a checklist. To add one, add a line there and run `python3 scripts/pages-config.py`. A tag that isn't in the list fails the content checks.
+
+- A story also gets the tags of its trip and its trail, and a trip those of its trail. Tag the TGO trip once and every day of it has the tag.
+- Trails are not tags: the trails a trip or story is on are linked next to its tags (for example *Scottish National Trail* on the TGO days).
+- `/tags/` lists the tags in use, and each tag has a page with its trips, trails and stories.
+
 ### GPX files → maps, numbers and elevation profiles
 
 Upload GPX files in Pages CMS (they go to `static/gpx/`). At build time Hugo reads them and calculates distance, ascent and descent, start/finish time and the elevation profile. **You never type those numbers**, but any `distance_km`, `ascent_m`, `descent_m`, `start_time` or `end_time` you set in front matter wins over the GPX.

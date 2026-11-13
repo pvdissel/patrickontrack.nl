@@ -6,6 +6,8 @@ trail: content/nl/trails/ben-nevis.md
 draft: true
 aliases:
 - /adventures/2022-07-scotland/2022-07-ben-nevis-alone-to-the-summit/
+tags:
+- solo-hiking
 ---
 
 10:00 vertrek

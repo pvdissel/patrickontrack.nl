@@ -1,6 +1,9 @@
 ---
 title: 'TGO Challenge 2025: 320 km dwars door Schotland'
 draft: true
+tags:
+- tgo-challenge
+- solo-hiking
 description: 'In mei 2025 liep ik in mijn eentje de TGO Challenge: zelfvoorzienend en te voet van de west- naar de oostkust van Schotland.'
 cover: /images/youtube/tgo-2025-afl-1.jpg
 cover_alt: 'Een pad door een groen dal in de Schotse Hooglanden, met de tekst ‘320km across Scotland, episode 1: Let’s GO!’'

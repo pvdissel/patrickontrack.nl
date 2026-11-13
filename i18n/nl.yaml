@@ -254,6 +254,7 @@ lang_nl: Nederlands
 # tochten
 view: Weergave
 by_trip: Per tocht
+tags: Tags
 trips: Tochten
 day_count:
   one: dag

@@ -44,6 +44,16 @@ NOTE = {
 
 base = yaml.safe_load(open(os.path.join(HERE, "pages.base.yml")))
 
+# the tags checklist comes from data/tags.yaml (key = what's stored, label = the English name)
+TAGS = yaml.safe_load(open(os.path.join(ROOT, "data", "tags.yaml")))
+
+
+def fill_tags(fields):
+    for f in fields or []:
+        if f.get("name") == "tags" and f.get("type") == "select":
+            f["options"]["values"] = [{"name": k, "label": v["en"]} for k, v in TAGS.items()]
+        fill_tags(f.get("fields"))
+
 
 def flat(items):
     for it in items:
@@ -54,6 +64,8 @@ def flat(items):
 
 
 ITEMS = list(flat(base["content"]))
+for _it in ITEMS:
+    fill_tags(_it.get("fields"))
 NAMES = {it["name"] for it in ITEMS}
 
 

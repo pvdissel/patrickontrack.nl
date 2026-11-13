@@ -1,0 +1,10 @@
+# Tags for trips, trails and stories (front-matter field "tags", a list of the keys below).
+# Pages CMS shows these as a checklist (scripts/pages-config.py reads this file).
+# To add a tag: add a line here, then run `python3 scripts/pages-config.py`.
+# A story also shows the tags of its trip and trail; a trip those of its trail.
+# Trails themselves are not tags: the trails a trip or story is on are linked next to its tags.
+tgo-challenge: { nl: TGO Challenge, en: TGO Challenge }
+ntkc-zwerfgroep: { nl: NTKC Zwerfgroep, en: NTKC Wandering Group }
+solo-hiking: { nl: Solo wandelen, en: Solo hiking }
+silent-hiking: { nl: Stille hikes, en: Silent hiking }
+hiking-with-kids: { nl: Wandelen met kinderen, en: Hiking with kids }

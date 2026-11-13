@@ -40,11 +40,18 @@
     {{- end -}}
   {{- end -}}
 
-  {{- /* 3. stages need a number */ -}}
+  {{- /* 3. tags exist in data/tags.yaml */ -}}
+  {{- with $p.Params.tags -}}
+    {{- range (cond (reflect.IsSlice .) . (slice .)) -}}
+      {{- if not (index hugo.Data.tags .) }}{{ warnf "%s: tag %q is not in data/tags.yaml" $where . }}{{ end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* 4. stages need a number */ -}}
   {{- if and (eq $p.Section "stages") (not $p.Params.number) }}{{ warnf "%s: stage has no number" $where }}{{ end -}}
 {{- end -}}
 
-{{- /* 4. no two stages of one trail share a number */ -}}
+{{- /* 5. no two stages of one trail share a number */ -}}
 {{- range where site.RegularPages "Section" "trails" -}}
   {{- $seen := dict -}}
   {{- $trail := . -}}
@@ -55,7 +62,7 @@
   {{- end -}}
 {{- end -}}
 
-{{- /* 5. the featured trail on the home page exists */ -}}
+{{- /* 6. the featured trail on the home page exists */ -}}
 {{- with site.Home.Params.featured_trail -}}
   {{- if not (partial "ref.html" (dict "ref" . "section" "trails")) }}{{ warnf "content/nl/_index.md: featured_trail %q not found" . }}{{ end -}}
 {{- end -}}

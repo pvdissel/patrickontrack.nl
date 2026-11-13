@@ -9,6 +9,8 @@ stays:
 - content/nl/stays/camping-martbusch.md
 cover_alt: Milou in een roze jas met een knuffel bij een wegwijzer in het bos, met de tekst ‘mullerthal, Hiking with toddler’
 youtube: https://www.youtube.com/watch?v=Wfn6CFeM_nI
+tags:
+- hiking-with-kids
 ---
 
 Tijdens onze gezinsvakantie in Luxemburg liepen we op 28 februari 2025 [route B2](https://www.mullerthal-trail.lu/nl/fiche/walking/plaatselijk-rondwandelpad-b2) in het Mullerthal, 4,4 km, samen met onze dochter Milou van 4. Een aanrader! Voor de stukjes in de draagzak hadden we de Rose & Rebellion Big Kid-draagzak mee, ideaal.

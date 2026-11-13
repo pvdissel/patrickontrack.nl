@@ -1,0 +1,6 @@
+{{- /* Chips linking to the tag pages of a page's tags (inherited ones included). Pass the page. */ -}}
+{{- range partialCached "data/tags.html" . .Path -}}
+  {{- with site.GetPage (printf "/tags/%s" .) -}}
+    <a class="chip chip--tag" href="{{ .RelPermalink }}">{{ partial "tag-name.html" (path.Base .Path) }}</a>
+  {{- end -}}
+{{- end -}}

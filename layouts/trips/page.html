@@ -15,6 +15,7 @@
   <div class="metas">
     {{- with partial "trip-dates.html" $t }}<span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}{{ . }}</span>{{ end }}
     {{- range $t.trails }}<a class="chip chip--trail" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+    {{- partial "tag-chips.html" . }}
     {{- if .Draft }}<span class="draft-badge">{{ T "draft" }}</span>{{ end }}
   </div>
 </header>

@@ -22,6 +22,7 @@
         {{- with .Params.route_type }}<span class="chip">{{ T (printf "route_%s" .) | default . }}</span>{{ end }}
         {{- if and .Params.start .Params.finish }}<span class="chip">{{ .Params.start }} → {{ .Params.finish }}</span>{{ end }}
         <span class="chip {{ if eq $pr.status "Completed" }}chip--ember{{ else }}chip--stage{{ end }}">{{ T (printf "status_%s" (urlize $pr.status)) }}</span>
+        {{- partial "tag-chips.html" . }}
       </div>
     </div>
   </div>

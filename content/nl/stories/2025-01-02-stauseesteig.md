@@ -7,6 +7,9 @@ cover: /images/youtube/2025-01-02-stauseesteig.jpg
 trail: content/nl/trails/stauseesteig.md
 cover_alt: Selfie van Patrick in winterjas, met een tentje in een besneeuwd bos en de tekst ‘Exercise in disappearing’
 youtube: https://www.youtube.com/watch?v=Wt3aWxVCbKc
+tags:
+- solo-hiking
+- silent-hiking
 ---
 
 Op 2 januari 2025 liep ik een stuk van de [StauSeeSteig](https://www.dmff.eu/stauseesteig/), door een winterwonderland met sneeuw en ijskoude wind. Het plan was om op 1 januari de hele StauSeeSteig te lopen, maar door problemen op het spoor door het winterweer werd het een dag later, en uiteindelijk liep ik twee dagen: van station Langerwehe, met een nacht in de tent bij de Wehebachtalsperre, naar station Zerkall.

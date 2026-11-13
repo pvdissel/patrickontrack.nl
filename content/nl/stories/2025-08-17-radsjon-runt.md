@@ -8,6 +8,9 @@ trip: content/nl/trips/zweden-2025.md
 trail: content/nl/trails/radsjon-runt.md
 cover_alt: Een bospad langs een meer, bij een houten bord met ‘Rädsjön runt’
 youtube: https://www.youtube.com/watch?v=oIlEskO42A8
+tags:
+- solo-hiking
+- silent-hiking
 ---
 
 Tijdens onze gezinsvakantie in Zweden ging ik op 17 augustus 2025 in de vroege ochtend alleen op pad, op zoek naar elanden in de omgeving van Orsa Grönklitt. Ik liep [Rädsjön runt](https://www.visitdalarna.se/en/do/activities/radsjon-runt-5-km), een rondje van 5 km om het meer.

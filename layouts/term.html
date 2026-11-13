@@ -1,8 +1,33 @@
 {{ define "main" }}
+{{- /* One tag: the trips, trails and stories with it (also those that get it from their trip or trail) */ -}}
+{{- $key := path.Base .Path -}}
+{{- $found := dict "trips" slice "trails" slice "stories" slice -}}
+{{- range $p := site.RegularPages -}}
+  {{- if and (in (slice "trips" "trails" "stories") $p.Section) (in (partialCached "data/tags.html" $p $p.Path) $key) -}}
+    {{- $found = merge $found (dict $p.Section ((index $found $p.Section) | append $p)) -}}
+  {{- end -}}
+{{- end -}}
+{{- $trips := slice -}}
+{{- range $found.trips }}{{ $t := partialCached "data/trip-totals.html" . .Path }}{{ if $t.days }}{{ $trips = $trips | append (dict "page" . "first" $t.first) }}{{ end }}{{ end -}}
 <section class="wrap page-head stack" style="--gap: 18px">
-  <nav class="crumbs" aria-label="{{ T "breadcrumb" }}"><a href="{{ (site.GetPage "/stories").RelPermalink }}">{{ T "stories" }}</a> / {{ .Parent.Title }}</nav>
-  <h1 class="title-l">{{ .Title }}</h1>
-  <p class="lead">{{ len .Pages }} {{ T "story_count" (len .Pages) }}</p>
+  <nav class="crumbs" aria-label="{{ T "breadcrumb" }}"><a href="{{ .Parent.RelPermalink }}">{{ T "tags" }}</a> / {{ partial "tag-name.html" $key }}</nav>
+  <h1 class="title-l">{{ partial "tag-name.html" $key }}</h1>
+  <p class="lead">{{ len $found.stories }} {{ T "story_count" (len $found.stories) }}</p>
 </section>
-<section class="wrap" style="margin-top: 24px">{{ range .Pages.ByDate }}{{ partial "story-row.html" (dict "page" . "level" 2) }}{{ end }}</section>
+{{- with $trips }}
+<section class="wrap section stack" style="--gap: 20px" aria-labelledby="tag-trips">
+  <h2 id="tag-trips" class="title-m" style="font-size: 32px">{{ T "trips" }}</h2>
+  <div class="grid" style="--min: 330px">{{ range sort . "first" "desc" }}{{ partial "cards/trip.html" (dict "page" .page) }}{{ end }}</div>
+</section>
+{{- end }}
+{{- with $found.trails }}
+<section class="wrap section stack" style="--gap: 20px" aria-labelledby="tag-trails">
+  <h2 id="tag-trails" class="title-m" style="font-size: 32px">{{ T "trails" }}</h2>
+  <div class="grid" style="--min: 330px">{{ range sort . "Weight" }}{{ partial "cards/trail.html" (dict "page" .) }}{{ end }}</div>
+</section>
+{{- end }}
+<section class="wrap section" aria-labelledby="tag-stories">
+  <h2 id="tag-stories" class="title-m" style="font-size: 32px">{{ T "stories" }}</h2>
+  {{- range sort $found.stories "Date" "desc" }}{{ partial "story-row.html" . }}{{ else }}<p class="empty">{{ T "no_stories" }}</p>{{ end }}
+</section>
 {{ end }}

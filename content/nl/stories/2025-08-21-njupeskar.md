@@ -8,6 +8,9 @@ trip: content/nl/trips/zweden-2025.md
 trail: content/nl/trails/njupeskarsleden.md
 cover_alt: Wandelaars bij de ingang van Fulufjällets nationaal park, met de tekst ‘Njupeskär, family hike to the highest waterfall of Sweden’
 youtube: https://www.youtube.com/watch?v=7IEXHD4inTo
+tags:
+- silent-hiking
+- hiking-with-kids
 ---
 
 Op 21 augustus 2025 gingen we naar Fulufjällets nationaal park bij Särna, om naar de hoogste waterval van Zweden te wandelen: Njupeskär. We volgden de [Njupeskärsleden](https://www.visitdalarna.se/en/do/activities/njupeskarsleden-39-km) van 3,9 km. Een gemakkelijke maar mooie wandeling.

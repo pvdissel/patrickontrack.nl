@@ -255,6 +255,7 @@ lang_nl: Dutch
 view: View
 by_trip: By trip
 trips: Trips
+tags: Tags
 day_count:
   one: day
   other: days

@@ -123,6 +123,23 @@ content:
       label: YouTube video or playlist
       description: Link to a video or a playlist (a video in a playlist starts there and plays on)
       type: string
+    - name: tags
+      label: Tags
+      description: Only tags that don't come from the trip or trail already (those are added by themselves)
+      type: select
+      options:
+        multiple: true
+        values:
+        - name: tgo-challenge
+          label: TGO Challenge
+        - name: ntkc-zwerfgroep
+          label: NTKC Wandering Group
+        - name: solo-hiking
+          label: Solo hiking
+        - name: silent-hiking
+          label: Silent hiking
+        - name: hiking-with-kids
+          label: Hiking with kids
     - name: route_note
       label: Compared to the plan
       description: e.g. "Stages 1 and 2, then off the trail to a campsite"
@@ -228,6 +245,23 @@ content:
       label: YouTube video or playlist (whole trip)
       description: Link to a video or a playlist, e.g. one with every day of the trip
       type: string
+    - name: tags
+      label: Tags
+      description: Every day of this trip gets these tags too
+      type: select
+      options:
+        multiple: true
+        values:
+        - name: tgo-challenge
+          label: TGO Challenge
+        - name: ntkc-zwerfgroep
+          label: NTKC Wandering Group
+        - name: solo-hiking
+          label: Solo hiking
+        - name: silent-hiking
+          label: Silent hiking
+        - name: hiking-with-kids
+          label: Hiking with kids
     - name: body
       label: Intro
       type: rich-text
@@ -346,6 +380,23 @@ content:
     - name: website
       label: Official website
       type: string
+    - name: tags
+      label: Tags
+      description: Every trip and story on this trail gets these tags too
+      type: select
+      options:
+        multiple: true
+        values:
+        - name: tgo-challenge
+          label: TGO Challenge
+        - name: ntkc-zwerfgroep
+          label: NTKC Wandering Group
+        - name: solo-hiking
+          label: Solo hiking
+        - name: silent-hiking
+          label: Silent hiking
+        - name: hiking-with-kids
+          label: Hiking with kids
     - name: cover
       label: Cover photo
       type: image

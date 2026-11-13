@@ -8,6 +8,8 @@ stays:
 - content/nl/stays/camping-beek-en-hei.md
 cover_alt: Milou in een paarse jas naast een groen tentje tussen de herfstbladeren, met de tekst ‘Kamperen met Milou in oktober’
 youtube: https://www.youtube.com/watch?v=ISBd99k9qRU
+tags:
+- hiking-with-kids
 ---
 
 Van vrijdag 3 tot en met zondag 5 oktober 2025 gingen Milou en ik kamperen in Otterlo, op [Camping Beek en Hei](https://campingbeekenhei.nl), met regen (code geel) in de weersverwachting. Op zaterdag hebben we gewandeld en gefietst, en zijn we naar Museonder geweest, in [Het Nationale Park De Hoge Veluwe](https://hogeveluwe.nl).

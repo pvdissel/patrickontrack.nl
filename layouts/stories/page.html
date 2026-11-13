@@ -20,6 +20,7 @@
     <span class="meta">{{ partial "icon.html" (dict "name" "calendar" "size" 15) }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format "Monday 2 January 2006" }}</time></span>
     {{- with $trail }}<a class="chip chip--trail" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
     {{- range $stages }}<a class="chip chip--stage" href="{{ .RelPermalink }}">{{ T "stage_n" .Params.number }}</a>{{ end }}
+    {{- partial "tag-chips.html" . }}
     {{- range $stays }}<a class="meta" href="{{ .RelPermalink }}">{{ partial "icon.html" (dict "name" "moon" "size" 15) }}{{ .Title }}</a>{{ end }}
     {{- if .Draft }}<span class="draft-badge">{{ T "draft" }}</span>{{ end }}
   </div>

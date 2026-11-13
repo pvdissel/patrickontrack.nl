@@ -6,6 +6,10 @@ description: De zwerftocht van de NTKC Zwerfgroep van februari 2026, in Diever, 
 cover: /images/youtube/2026-02-21-ntkc-zwerftocht-diever.jpg
 cover_alt: Een bospad tussen de dennen, met het NTKC-logo en de tekst ‘Zwerfgroep February 2026 Diever’
 youtube: https://www.youtube.com/watch?v=mLmBXxvMo28
+tags:
+- ntkc-zwerfgroep
+- solo-hiking
+- silent-hiking
 ---
 
 Op 21 februari 2026 liep ik de zwerftocht van de Zwerfgroep van de [Nederlandse Toeristen Kampeer Club (NTKC)](https://www.ntkc.nl), in Diever.

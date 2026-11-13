@@ -8,6 +8,9 @@ stays:
 - content/nl/stays/ntkc-terrein-winterswijk.md
 cover_alt: Patrick met rugzak in een herfstbos, met het NTKC-logo en de tekst ‘Zwerfgroep november 2025’
 youtube: https://www.youtube.com/watch?v=_dK6aRl5J9M
+tags:
+- ntkc-zwerfgroep
+- solo-hiking
 ---
 
 Op 15 november 2025 liep ik de zwerftocht van de Zwerfgroep van de [Nederlandse Toeristen Kampeer Club (NTKC)](https://www.ntkc.nl), in Winterswijk.

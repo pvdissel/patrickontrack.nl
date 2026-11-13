@@ -199,6 +199,7 @@ a.chip:hover { box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
 a.chip--trail:hover { background: var(--forest-hover); color: #fff; box-shadow: none; }
 .chip--stage { background: var(--moss); color: var(--link); box-shadow: none; }
 a.chip--stage:hover { background: var(--moss-hover); color: var(--link); box-shadow: none; }
+a.chip--tag:hover { box-shadow: inset 0 0 0 1px var(--ink); }
 .chip--ember { background: var(--ember-soft); color: var(--ember-text); box-shadow: none; }
 .chip--sample { background: var(--note-bg); color: var(--note-text); box-shadow: none; font-family: var(--f-mono); font-size: 11.5px; }
 

@@ -1,0 +1,2 @@
+{{- /* The name of a tag (key from data/tags.yaml) in the current language */ -}}
+{{- with index hugo.Data.tags . }}{{ index . site.Language.Lang | default (index . "nl") }}{{ else }}{{ . }}{{ end -}}

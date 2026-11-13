@@ -1,0 +1,17 @@
+{{- /* The tags of a page (keys from data/tags.yaml), including inherited ones:
+       a story gets its trip's and trail's tags, a trip its trail's. */ -}}
+{{- $p := . -}}
+{{- $out := slice -}}
+{{- with $p.Params.tags }}{{ $out = $out | append . }}{{ end -}}
+{{- if in (slice "stories" "trips") $p.Section -}}
+  {{- with partial "ref.html" (dict "ref" $p.Params.trail "section" "trails") }}{{ with .Params.tags }}{{ $out = $out | append . }}{{ end }}{{ end -}}
+{{- end -}}
+{{- if eq $p.Section "stories" -}}
+  {{- with partial "ref.html" (dict "ref" $p.Params.trip "section" "trips") -}}
+    {{- with .Params.tags }}{{ $out = $out | append . }}{{ end -}}
+    {{- with partial "ref.html" (dict "ref" .Params.trail "section" "trails") }}{{ with .Params.tags }}{{ $out = $out | append . }}{{ end }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- $known := slice -}}
+{{- range $out | uniq }}{{ if index hugo.Data.tags . }}{{ $known = $known | append . }}{{ end }}{{ end -}}
+{{- return $known -}}

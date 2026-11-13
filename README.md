@@ -130,7 +130,8 @@ Everything under `static/gpx/samples/` is **made-up GPX** so the maps have somet
 - [ ] Fill in the names of the DMT day 1 and day 2 campsites (`content/nl/stays/farm-campsite-past-the-vaalserberg.md`, `campsite-noorbeek.md`; the English text is in `translations/en/stays/`).
 - [ ] Add `lat`/`lon` to stays so they appear on the maps (none have coordinates yet).
 - [x] Roots Natuurpad: all 32 Wandelnet stages with names, details and GPX.
-- [ ] Section stubs for Veluwe Zwerfpad (8) and Utrechtse Mountain Trail (9) only have a number. Add names and GPX files when you have them.
+- [x] Veluwe Zwerfpad (19), Utrechtse Mountain Trail (9), Nederlands Kustpad 2 (13) and N70 (1): stages with names, details and GPX.
+- [ ] StauSeeSteig: add the GPX (DMFF only sends it by email).
 - [ ] Set your YouTube channel URL in `hugo.toml` → `params.youtube`.
 - [ ] Unmark **Draft** on the stories, stays and gear lists you want to publish.
 

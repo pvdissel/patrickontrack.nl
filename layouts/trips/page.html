@@ -60,8 +60,9 @@
       <h2 class="title-m" style="font-size: 32px">{{ T "day_by_day" }}</h2>
       {{- range $t.stories }}{{ partial "story-row.html" (dict "page" . "hideTrip" true) }}{{ else }}<p class="muted" style="margin-top: 16px">{{ T "no_stories" }}</p>{{ end }}
     </div>
-    {{- range $s := $t.stories }}{{ with $s.Params.youtube }}{{ partial "youtube.html" (dict "id" . "title" $s.Title) }}{{ end }}{{ end }}
-    {{- with .Params.youtube }}{{ partial "youtube.html" (dict "id" . "title" $.Title) }}{{ end }}
+    {{- /* the trip's own video or playlist; without one, each day's video */ -}}
+    {{- with .Params.youtube }}{{ partial "youtube.html" (dict "id" . "title" $.Title) }}
+    {{- else }}{{ range $s := $t.stories }}{{ with $s.Params.youtube }}{{ partial "youtube.html" (dict "id" . "title" $s.Title) }}{{ end }}{{ end }}{{ end }}
   </div>
   <aside class="layout__aside">
     {{- with $gear }}

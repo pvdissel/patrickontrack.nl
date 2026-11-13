@@ -97,7 +97,7 @@ Links are stored as paths (`content/nl/trails/dutch-mountain-trail.md`), which i
 - a stage page shows who walked it (my stories) and stays near its end;
 - a stay page shows the stories that spent the night there;
 - a gear list shows which stories used it (directly or through their trip);
-- a trip page adds up its stories: dates, days, nights, distance and ascent. It shows every day’s track on one map, in alternating shades, plus one elevation profile, a day-by-day list, the stays, the gear list with “next time”, and earlier trips under “The run-up”.
+- a trip page adds up its stories: dates, days, nights, distance and ascent. It shows every day’s track on one map, in alternating shades, plus one elevation profile, a day-by-day list, the stays, the gear list with “next time”, and earlier trips under “The run-up”. Its video is the trip’s own YouTube video or playlist if it has one, otherwise each day’s video.
 
 The Stories page has an **All stories / By trip** switch; `/trips/` lists every trip with at least one published story. Trips replace the old `trips` taxonomy.
 

@@ -13,9 +13,9 @@ test('a story video loads the player only after a click', async ({ page }) => {
 
 test('a trip playlist embeds the whole playlist', async ({ page }) => {
   await page.goto(URLS.nl.trip);
-  // the day videos come first, the trip's own (here: a playlist) last
-  await expect(page.locator('.video__tag')).toHaveCount(1);
-  const box = page.locator('.video').last();
+  // a trip with its own video or playlist shows only that, not each day's video
+  const box = page.locator('.video');
+  await expect(box).toHaveCount(1);
   await expect(box.locator('.video__tag')).toHaveText('Afspeellijst');
   await expect(box.locator('img')).toHaveCount(0);
   await box.getByRole('button', { name: 'Afspeellijst afspelen: Testtocht' }).click();

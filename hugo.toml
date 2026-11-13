@@ -4,6 +4,7 @@ defaultContentLanguage = "en"
 defaultContentLanguageInSubdir = true    # /en/ and /nl/; "/" picks a language (layouts/alias.html)
 enableRobotsTXT = true
 timeZone = "Europe/Amsterdam"
+removePathAccents = true                 # "Rädsjön" in a title becomes "radsjon" in the URL
 
 [params]
   author = "Patrick van Dissel"

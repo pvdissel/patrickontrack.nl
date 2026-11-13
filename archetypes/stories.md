@@ -2,7 +2,7 @@
 title: "{{ replace .File.ContentBaseName "-" " " | title }}"
 date: {{ .Date }}
 description: ""
-trips: []
+trip: ""
 trail: ""
 stages: []
 stays: []

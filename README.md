@@ -123,7 +123,7 @@ Maps use [Leaflet](https://leafletjs.com) (bundled in `assets/vendor/`, no CDN).
 
 Everything under `static/gpx/samples/` is **made-up GPX** so the maps have something to draw. Pages using it show a yellow "Sample GPX" note.
 
-- [ ] Replace `dmt-stage-1..4.gpx` with the official DMT stage files and check the stage names (**stages 1 and 2 especially: Eygelshoven → Vaals → Gulpen is a guess**).
+- [x] Replace `dmt-stage-1..4.gpx` with the official DMT stage files (`static/gpx/dutch-mountain-trail*.gpx`, split from DMFF's Komoot tour of 1 Sep 2026 at the guidebook's four parts).
 - [ ] Replace `dmt-2022-day-1..3.gpx` with your own recorded tracks from September 2022.
 - [ ] Delete `static/gpx/samples/` when done.
 - [ ] Fill in the names of the DMT day 1 and day 2 campsites (`content/nl/stays/farm-campsite-past-the-vaalserberg.md`, `campsite-noorbeek.md`; the English text is in `translations/en/stays/`).

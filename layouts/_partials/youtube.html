@@ -1,8 +1,34 @@
-{{- /* Click-to-load YouTube (privacy-enhanced). dict "id" (id or URL) "title" */ -}}
-{{- $id := .id -}}
-{{- with findRESubmatch `(?:v=|youtu\.be/|embed/|shorts/)([A-Za-z0-9_-]{11})` $id 1 }}{{ $id = index (index . 0) 1 }}{{ end -}}
-<div class="video" data-youtube="{{ $id }}" data-title="{{ .title }}">
-  <img src="https://i.ytimg.com/vi/{{ $id }}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer">
-  <button class="video__play" type="button" aria-label="{{ T "play_video" .title }}">{{ partial "icon.html" (dict "name" "play" "size" 34) }}</button>
-  <noscript><a class="video__label" href="https://www.youtube.com/watch?v={{ $id }}">{{ T "watch_on_youtube" }}</a></noscript>
+{{- /* Click-to-load YouTube (privacy-enhanced). dict "id" (video/playlist URL or ID) "title"
+  Accepts: a video URL or 11-character ID; a playlist URL (playlist?list=…) or playlist ID;
+  or a video in a playlist (watch?v=…&list=…), which starts at that video and plays on. */ -}}
+{{- $in := trim (string .id) " " -}}
+{{- $video := "" -}}{{- $list := "" -}}
+{{- with findRESubmatch `(?:v=|youtu\.be/|embed/|shorts/)([A-Za-z0-9_-]{11})` $in 1 }}{{ $video = index (index . 0) 1 }}{{ end -}}
+{{- with findRESubmatch `[?&]list=([A-Za-z0-9_-]+)` $in 1 }}{{ $list = index (index . 0) 1 }}{{ end -}}
+{{- if and (not $video) (not $list) -}}
+  {{- if findRE `^[A-Za-z0-9_-]{11}$` $in }}{{ $video = $in }}
+  {{- else if findRE `^[A-Za-z0-9_-]{12,}$` $in }}{{ $list = $in }}{{ end -}}
+{{- end -}}
+{{- $src := "" -}}{{- $watch := "" -}}
+{{- if and $video $list }}
+  {{- $src = printf "https://www.youtube-nocookie.com/embed/%s?list=%s&autoplay=1&rel=0" $video $list }}
+  {{- $watch = printf "https://www.youtube.com/watch?v=%s&list=%s" $video $list }}
+{{- else if $list }}
+  {{- $src = printf "https://www.youtube-nocookie.com/embed/videoseries?list=%s&autoplay=1&rel=0" $list }}
+  {{- $watch = printf "https://www.youtube.com/playlist?list=%s" $list }}
+{{- else if $video }}
+  {{- $src = printf "https://www.youtube-nocookie.com/embed/%s?autoplay=1&rel=0" $video }}
+  {{- $watch = printf "https://www.youtube.com/watch?v=%s" $video }}
+{{- end -}}
+{{- if $src }}
+<div class="video" data-youtube-src="{{ $src }}" data-title="{{ .title }}">
+  {{- with $video }}
+  <img src="https://i.ytimg.com/vi/{{ . }}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer">
+  {{- end }}
+  <button class="video__play" type="button" aria-label="{{ T (cond (ne $list "") "play_playlist" "play_video") .title }}">{{ partial "icon.html" (dict "name" "play" "size" 34) }}</button>
+  {{- if $list }}<span class="video__tag" aria-hidden="true">{{ partial "icon.html" (dict "name" "list" "size" 15) }}{{ T "playlist" }}</span>{{ end }}
+  <noscript><a class="video__label" href="{{ $watch }}">{{ T (cond (ne $list "") "watch_playlist_on_youtube" "watch_on_youtube") }}</a></noscript>
 </div>
+{{- else }}
+  {{- warnf "YouTube: %q (%s) is not a YouTube video or playlist link" $in .title }}
+{{- end }}

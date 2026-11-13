@@ -113,8 +113,8 @@ content:
           collection: gear
           search: title
       - name: youtube
-        label: YouTube video
-        description: Video URL or ID
+        label: YouTube video or playlist
+        description: Link to a video or a playlist (a video in a playlist starts there and plays on)
         type: string
       - name: route_note
         label: Compared to the plan
@@ -214,7 +214,8 @@ content:
           multiple: true
           search: title
       - name: youtube
-        label: YouTube video (whole trip)
+        label: YouTube video or playlist (whole trip)
+        description: Link to a video or a playlist, e.g. one with every day of the trip
         type: string
       - name: body
         label: Intro

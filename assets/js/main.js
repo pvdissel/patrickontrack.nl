@@ -38,13 +38,14 @@ document.querySelectorAll('[data-filter-group]').forEach((group) => {
 });
 
 // YouTube: load the (privacy-enhanced) player only after a click
-document.querySelectorAll('[data-youtube]').forEach((box) => {
+// (the embed URL, for a video or a playlist, is built by layouts/_partials/youtube.html)
+document.querySelectorAll('[data-youtube-src]').forEach((box) => {
   const btn = box.querySelector('button');
-  if (!btn) return;
+  const src = box.dataset.youtubeSrc;
+  if (!btn || !src.startsWith('https://www.youtube-nocookie.com/embed/')) return;
   btn.addEventListener('click', () => {
-    const id = box.dataset.youtube;
     const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0`;
+    iframe.src = src;
     iframe.title = box.dataset.title || 'YouTube video';
     iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen';
     iframe.allowFullscreen = true;

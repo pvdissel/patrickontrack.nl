@@ -242,6 +242,9 @@ read_stories: Lees de verhalen
 # youtube
 play_video: "Video afspelen: {{ . }}"
 watch_on_youtube: Bekijk op YouTube
+play_playlist: "Afspeellijst afspelen: {{ . }}"
+playlist: Afspeellijst
+watch_playlist_on_youtube: Bekijk de afspeellijst op YouTube
 elevation_label: "Hoogteprofiel van {{ .Lo }} tot {{ .Hi }} meter over {{ .Km }} km"
 
 # taalnamen

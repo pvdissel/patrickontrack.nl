@@ -150,7 +150,7 @@ translations/en            English text for those pages
 content/en/_content.gotmpl builds the English pages from the two
 assets/css/main.css        all styling (colours and fonts are custom properties at the top)
 assets/css/fonts.css       self-hosted fonts (Barlow Condensed, Inter, IBM Plex Mono — OFL)
-assets/js/main.js          mobile menu, filter chips, click-to-load YouTube
+assets/js/main.js          mobile menu, filter chips, click-to-load YouTube (videos and playlists)
 assets/js/map.js           Leaflet maps
 scripts/test               runs the tests (quick, e2e, a11y)
 tests/                     link checker, test server, browser tests (e2e/), fixed test content (fixtures/)

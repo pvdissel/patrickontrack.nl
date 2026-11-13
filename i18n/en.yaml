@@ -242,6 +242,9 @@ read_stories: Read the stories
 # youtube
 play_video: "Play video: {{ . }}"
 watch_on_youtube: Watch on YouTube
+play_playlist: "Play playlist: {{ . }}"
+playlist: Playlist
+watch_playlist_on_youtube: Watch the playlist on YouTube
 elevation_label: "Elevation profile from {{ .Lo }} to {{ .Hi }} metres over {{ .Km }} km"
 
 # language names (in this language)
